@@ -20,17 +20,7 @@ var codeSchema = new mongoose.Schema({
     failed_test_cases: Array, // [String] or [Number]
 });
 
-// define studentSchema
-var studentSchema = new mongoose.Schema({
-    name : String,
-    status : Boolean,
-    reviews: Array,
-    utorid : {
-        type: String, // data type
-        required: true,
-        unique: true // avoid duplicates
-    },
-});
+
 
 var directoryPath = "../a2/";
 var collectionName = 'a2'; // name of this work in general
@@ -39,7 +29,6 @@ var primaryWorkReportName = 'a2-report.txt';
 
 
 var Code = mongoose.model(collectionName, codeSchema);
-var Student = mongoose.model('students', studentSchema);
 
 
 // Loop through all the files in the directory
@@ -51,27 +40,31 @@ fs.readdir( directoryPath, function( err, files ) {
             // update students collection
             var newCodePath = directoryPath + studentUtorid + '/a2/' + primaryWorkCodeName;
             var newReportPath = directoryPath + studentUtorid + '/a2/' + primaryWorkReportName;
-            console.log(newCodePath);
-            Student.findOneAndUpdate({ utorid: studentUtorid }, { $set: { a2Code : newCodePath, a2Report : newReportPath } }, { new: true }, function(err, doc) {
-                if (err) console.log(err);
-                console.log(doc);
+            fs.stat(newCodePath, function(err, stat) {
+                if (err == null) {
+                    //console.log('file exists');
+                    // update code(a2) collection
+                    // update primary
+                    var code = new Code({
+                        name: primaryWorkCodeName,
+                        utorid: studentUtorid,
+                        review_by: [],
+                        to_review: [],
+                        ta: "",
+                        code_path: newCodePath,
+                        report_path: newReportPath,
+                        failed_test_cases: []
+                    });
+                    code.save( function(err) {
+                        console.log("added ", code.utorid);
+                        if (err) console.log(err);
+                    });
+                } else if (err.code == 'ENOENT') {
+                    console.log("file doesn't exist. the utorid is ", studentUtorid);
+                } else {
+                    console.log('some other error', err.code);
+                }
             });
-            // update code(a2) collection
-            // update primary
-            var code = new Code({
-                name: primaryWorkCodeName,
-                utorid: studentUtorid,
-                review_by: [],
-                to_review: [],
-                ta: "",
-                code_path: newCodePath,
-                report_path: newReportPath,
-                failed_test_cases: []
-            });
-            code.save( function(err) {
-                if (err) console.log(err);
-            });
-            // update additional TODO
         });
     }
 });
