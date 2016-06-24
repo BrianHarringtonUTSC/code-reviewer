@@ -4,12 +4,24 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+
+// connect to the database
+mongoose.connect('mongodb://localhost/csca08');
+
 
 var routes = require('./routes/index');
-//var users = require('./routes/users');
+var users = require('./routes/users');
+var kenny = require('./routes/kenny');
+var students = require('./routes/students');
+var peer_editing = require('./routes/peerEditing');
+var instructor = require('./routes/instructor');
+var create_new_work = require('./routes/create_new_work');
+
 
 var app = express();
 
+//--------------------------------------------------------------------------------------------------------------
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -18,12 +30,21 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+
 app.use('/', routes);
-//app.use('/users', users);
+app.use('/users', users);
+app.use('/kenny', kenny);
+app.use('/peerEditing', peer_editing);
+app.use('/students', students);
+app.use('/instructor', instructor);
+app.use('/create_new_work', create_new_work);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
