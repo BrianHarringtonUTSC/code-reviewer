@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>students</title>
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
+  </head>
+
+  <body>
+    <li><a href="/instructor">Go back to instructor</a></li>
+    <p> All students </p>
+
+    <section class="ac-container">
+      <% students.forEach( function(item) { %>
+      <p><%= item.utorid + ' ' + item.email + ' ' + item.student_number %></p>
+      <% }); %>
+    </section>
+    <script type="text/javascript" src="javascripts/test.js"></script>
+  </body>
+</html>

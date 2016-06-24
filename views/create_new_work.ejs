@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+
+  </head>
+
+  <body>
+    <p><%= title %></p>
+    <form action="create_new_work/create" method="post">
+      <label>New work name: </label><input type="text" name="work_name"><br>
+      <label>Number of peers: </label><input type="text" name="num_peers"><br>
+      <label>Required_files: </label><input type="text" name="required_files"><br>
+      <label>Student submission deadline: </label><input type="date" name="student_submission_deadline"><br>
+      <label>Peer review deadline: </label><input type="date" name="student_submission_deadline"><br>
+      <input type="submit" value ="Submit">
+    <li><a href="/instructor">Go back to instructor</a></li>
+  </body>
+
+</html>

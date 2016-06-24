@@ -1,5 +1,5 @@
 {
-  "name": "codeReviewer",
+  "name": "code_viewer",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -11,9 +11,10 @@
     "debug": "~2.2.0",
     "ejs": "~2.3.3",
     "express": "~4.13.1",
+    "mongoose": "^4.4.20",
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
-    "mongodb": "latest",
-    "mongoose": "latest"
+    "line-reader": "latest",
+    "mongodb" : "latest"
   }
 }
