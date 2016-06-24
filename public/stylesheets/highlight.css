@@ -1,0 +1,48 @@
+ol { 
+    counter-reset: item;
+    list-style-type: none;
+
+}
+
+ol li {
+	display: block;
+}
+
+ol li:before { 
+    content: counter(item) "  ";
+    counter-increment: item;
+    left: 0em;
+    width: 40px;
+    text-align: right;
+}
+
+.row:nth-child(even) {
+	background: #f8f8f8;
+}
+
+.border {
+	border-style: solid;
+    border:1px solid black;
+    width:100%;
+    height:300px;
+    overflow-y:scroll;
+    overflow-x:hide;
+} 
+
+.code {
+    display: block;
+    font-family: monospace;
+    margin: 1em 0;
+}
+
+.highlight-1 {
+	background-color: #fffcc4;
+}
+
+.highlight-2 {
+	background-color: #fff085;
+}
+
+.highlight-3 {
+	background-color: #ffea49;
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/normalize.css' />
+  </head>
+  <body>
+	<section class="ac-container">
+	  <% var i = 1;%>
+	  <% entries.forEach(function(item) { %>
+	  <div>
+	  <% if (i == 1) { %>
+		<input id=<%= String(i) %> name="accordion-1" type="radio" checked="">
+	  <% } else { %>
+		<input id=<%= String(i) %> name="accordion-1" type="radio">
+	  <% } %>
+		<label for=<%= String(i) %> >Peer <%= String(i) %>:</label>
+		<article class="ac-large">
+		  <div style="border:1px solid black;width:100%;height:300px;overflow-y:scroll;overflow-x:hide;margin-top:12px;">
+            <pre style="height:200%;"><%= code %></pre>
+          </div>
+          <p>How can it be improved?</p>
+          <p><%= feedback_entries[i] %></p>
+		</article>
+
+
+	  </div>
+	  <% i = i + 1;%>
+	  <% }); %>
+	</section>
+  </body>
+</html>
