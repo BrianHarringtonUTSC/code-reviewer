@@ -17,7 +17,8 @@ var peer_review = require('./routes/peer_review');
 var self_assesment = require('./routes/self_assesment');
 var students = require('./routes/students');
 var instructor = require('./routes/instructor');
-var create_new_work = require('./routes/create_new_work');;
+var create_new_work = require('./routes/create_new_work');
+var home = require('./routes/home');
 
 
 var app = express();
@@ -46,7 +47,7 @@ app.use('/self_assesment', self_assesment);
 app.use('/students', students);
 app.use('/instructor', instructor);
 app.use('/create_new_work', create_new_work);
-
+app.use('/home', home);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

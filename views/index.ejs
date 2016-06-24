@@ -8,20 +8,15 @@
   </head>
 
   <body class="login_body">
-    <form id="main_form" enctype="application/json" action="/" method="post">
-      <input type="text" name="firstname" placeholder="Brian" required="required" />
-      <input type="text" name="lastname" placeholder="Harrington" required="required" />
-      <input type="text" name="studentnumber" placeholder="1001311127" required="required" />
-      <input type="submit" value="add student"></input>
+
+    <form enctype="application/json" action="/go_to_instructor" method="post">
+      <input type="submit" value="go to instructor page"></input>
     </form>
 
-    <form enctype="application/json" action="/go_to_instruction" method="post">
-      <input type="submit" value="start review"></input>
+    <form enctype="application/json" action="/go_to_home" method="post">
+      <input type="submit" value="go to student page"></input>
     </form>
 
-    <form enctype="application/json" action="/go_to_self_review" method="post">
-      <input type="submit" value="go to self_review"></input>
-    </form>
 
 
     <script type="text/javascript" src="javascripts/test.js"></script>
