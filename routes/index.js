@@ -18,26 +18,6 @@ router.use(function(req, res, next) {
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
-/*
-router.post('/', function(req, res) {
-	// open the form
-	/*
-	var student = new Student({
-		last_name: req.body.lastname,
-		first_name: req.body.firstname,
-		student_number: req.body.studentnumber
-	});
-	student.save(function (err) {
-	  if (err) {
-	    console.log(err);
-	  } else {
-	    console.log(req.body.lastname + " Added");
-	    console.log("the number is " + req.body.studentnumber);
-	  }
-	});
-	 res.render('index', { title: 'Express' });
-});
-*/
 
 router.post('/go_to_instruction', function(req, res, next) {
 	res.redirect('/instruction');
