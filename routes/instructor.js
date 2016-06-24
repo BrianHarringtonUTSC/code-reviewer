@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
+	console.log("ddd");
   // loop through collection rules
   var rule_model = require('./models/rule_model.js');
   // find all documents in collection rules
