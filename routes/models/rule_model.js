@@ -7,7 +7,7 @@ var rule_schema = new mongoose.Schema({
     num_peers : {
         type: Number,
         max: 7
-    }
+    },
     required_files : [String],
     student_submission_deadline : Date,
     release_to_peers : Date,
