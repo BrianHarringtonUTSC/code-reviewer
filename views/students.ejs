@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>students</title>
-
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
   </head>
 
   <body>
-    <li><a href="/peer_review">Go back to instructor</a></li>
+    <li><a href="/instructor">Go back to instructor</a></li>
+    <form action="students/load" method="post">
+      <input type="submit" value ="Load new students">
+    </form>
     <p> All students </p>
-
+    <p> number of students is <%= num_students %> </p>
     <section class="ac-container">
       <% students.forEach( function(item) { %>
       <p><%= item.utorid + ' ' + item.email + ' ' + item.student_number %></p>
       <% }); %>
     </section>
-    <script type="text/javascript" src="javascripts/test.js"></script>
   </body>
 </html>
