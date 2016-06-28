@@ -1,25 +1,38 @@
 <!DOCTYPE html>
-<html >
+
+<html ng-app="myApp">
   <head>
     <meta charset="UTF-8">
     <title>Login Form</title>
 
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
+    <script type="text/javascript" src="C:\Users\admin\Desktop\code-reviewer\public\js\login.js"></script>
   </head>
 
   <body class="login_body">
 
-    <form enctype="application/json" action="/go_to_instructor" method="post">
-      <input type="submit" value="go to instructor page"></input>
-    </form>
+    <div id="main" ng-controller='mainController'>
+      <div ng-show="loginPage">
+        <input placeholder="Username" type="text" ng-model ="username">
+        <input placeholder="Password" type="text" ng-model ="password">
+        <button ng-click="login(username, password)" ng-mouseover="mouseOverExample()">Login</button>
+      </div>
+      <div ng-show="assignmentsPage" ng-repeat="assignment in assignments">
+          <button ng-click="selectAssignment(assignment)">{{assignment}}</button>
+      </div>
+      <div ng-show="reviewSelection">
+          <button ng-click="review('self')">Review Self</button>
+          <button ng-click="review('others')">Review Others</button>
+      </div>
+      <div ng-show="reviewSection" ng-controller='reviewController'>
+        <div ng-repeat="peer in peers">
+          <button ng-click="setPeer(peer)">{{peer}}</button>
+      </div>
 
-    <form enctype="application/json" action="/go_to_home" method="post">
-      <input type="submit" value="go to student page"></input>
-    </form>
+      <!-- Andrew's Text Stuff-->
+      </div>
+    </div>
 
-
-
-    <script type="text/javascript" src="javascripts/test.js"></script>
 
   </body>
 </html>

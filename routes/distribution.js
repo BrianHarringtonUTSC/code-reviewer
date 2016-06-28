@@ -1,29 +1,26 @@
 var mongoose = require('mongoose');
 
-var courseName = 'csca08'; // by convention, courseName == name of its database
-mongoose.connect('mongodb://localhost/' + courseName);
 
-// schemas
-var codeSchema = new mongoose.Schema({
-    name: String, // name of this file
-    utorid: String, // utorid of the student
-    review_by: Array,
-    to_review: Array,
-    ta: String,
-    code_path: String, // file path to the actual code
-    report_path: String, // file path to the report.txt
-    failed_test_cases: Array, // [String] or [Number]
-});
+// // schemas
+// var codeSchema = new mongoose.Schema({
+//     name: String, // name of this file
+//     utorid: String, // utorid of the student
+//     review_by: Array,
+//     to_review: Array,
+//     ta: String,
+//     code_path: String, // file path to the actual code
+//     report_path: String, // file path to the report.txt
+//     failed_test_cases: Array, // [String] or [Number]
+// });
 
-var reviewSchema= new mongoose.Schema({
-	author: String,
-	review_by: String,
-	comment: Array,
-	high_light: Array
-});
+// var reviewSchema= new mongoose.Schema({
+// 	author: String,
+// 	review_by: String,
+// 	comment: Array,
+// 	high_light: Array
+// });
 
 var collectionName = 'a2'; // name of this work in general
-
 var Code = mongoose.model(collectionName, codeSchema);
 var Review = mongoose.model('a2_reviews', reviewSchema);
 

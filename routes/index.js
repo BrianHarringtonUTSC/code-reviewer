@@ -14,6 +14,8 @@ router.use(function(req, res, next) {
 	next();
 });
 
+
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
@@ -26,6 +28,16 @@ router.post('/go_to_home', function(req, res, next) {
 
 router.post('/go_to_instructor', function(req, res, next) {
 	res.redirect('/instructor');
+});
+
+router.get('/login_student', function(req, res, next) {
+	console.log(req.query);
+	res.send({"status": 200});
+});
+
+router.get('/assignments/names', function(req, res, next) {
+	console.log(req.query);
+	res.send({"assignments": ["Assignment 1", "Assignment 2", "Excercise 3"]});
 });
 
 

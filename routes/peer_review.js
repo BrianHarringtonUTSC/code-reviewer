@@ -1,11 +1,20 @@
 var express = require('express');
-var router = express.Router();
-var PeerEditing = express();
-
+var mongoose = require('mongoose');
 var fs = require('fs');
+var router = express.Router();
 
-var code_model = require("./models/code_model.js");
-var review_model = require("./models/review_model.js");
+
+var submission_schema = require("./models/submission_schema.js");
+var review_schema = require("./models/review_schema.js");
+
+// name of this work, TODO: read work name from rule collection
+var work_name = "a2";
+// define submission model with work name
+var new_submission_collection = work_name + "_submission";
+var submission_model = mongoose.model(new_submission_collection, submission_schema);
+// define review model with work name
+var new_review_collection = work_name + "_review";
+var review_model = mongoose.model(new_review_collection, review_schema);
 
 var peer_number = 1;
 var is_saved = 0;
@@ -30,14 +39,14 @@ var code_path = '';
 var feedbacks = [];
 
 function find_student_code(res, site){
-  code_model.findOne({ utorid: self_utorid }, function(err, code) {
+  submission_model.findOne({ utorid: self_utorid }, function(err, code) {
   	review_array = code.to_review;
   	find_to_review_code_path(res, site);
   });
 }
 
 function find_to_review_code_path(res, site) {
-  code_model.findOne({ utorid: review_array[peer_number-1] }, function(err, code) {
+  submission_model.findOne({ utorid: review_array[peer_number-1] }, function(err, code) {
   	code_path = code.code_path;
   	find_feedbacks(res, site);
   });

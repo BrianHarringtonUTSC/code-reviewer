@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>students</title>
+  </head>
+
+  <body>
+    <li><a href="/create_new_work">Create New Work</a></li>
+    <li><a href="/students">Show all students</a></li>
+    <section class="ac-container">
+      <% rules.forEach( function(item) { %>
+      <p><%= item.work_name + ' ' + item.num_peers + ' ' + item.required_files %></p>
+      <% }); %>
+    </section>
+  </body>
+</html>
