@@ -6,11 +6,41 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
-
   <body>
+    <nav>
+      <ul>
+      <li><a href="/home">Home</a></li>
+      <li class="drop">
+        <a href="#">You</a>
+        
+        <div class="dropdownContain">
+          <div class="dropOut">
+            <div class="triangle"></div>
+            <ul>
+              <li>Plan</li>
+              <li>Account Settings</li>
+              <li>Switch Account</li>
+              <li>Sign Out</li>
+            </ul>
+          </div>
+        </div>
+      
+      </li>
+      <li><a href="#">Help</a></li>
+    </ul>
+  </nav>
+
+    <div class="breadcrumb">
+      <a>Instruction &#38; Tips</a>
+      <a class="active">Give Feedback</a>
+      <a>Self Assess</a>
+    </div>
+
     <ul class="tab">
       <% var i = 1;%>
       <% entries.forEach(function(item) { 
@@ -46,7 +76,7 @@
         <button onclick="highlight()">Highlight me!</button>
       </div>
 
-      <div class="border" >
+      <div class="border" style="text-align: left;">
         <ol class="code">
           <%
           var lines = code.split("\n");
@@ -65,7 +95,7 @@
         </ol>
       </div>
 
-      <p>How can it be improved?</p>
+      <p style="text-align: left;">How can it be improved?</p>
       
       <form enctype="application/json" action="peer_review/save" method="post">
         <input type="text" required="required" style="height:40px; width:90%" name="feedback" value="<%= feedback[0] %>"></input>

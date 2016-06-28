@@ -8,13 +8,15 @@ var rule_schema = new mongoose.Schema({
         type: Number,
         max: 7
     },
-    required_files : [String],
+    required_files : [String], // an array of string
     student_submission_deadline : Date,
     release_to_peers : Date,
     peer_review_deadline : Date,
     release_to_tas : Date,
     ta_review_deadline : Date,
-    release_to_students : Date
+    release_to_students : Date,
+    code_repo_path : String,
+    instruction_path : String
 });
 
 module.exports = mongoose.model('rules', rule_schema);

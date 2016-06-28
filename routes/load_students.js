@@ -1,29 +1,11 @@
 var mongoose = require('mongoose');
 var lineReader = require('line-reader');
 
-var courseName = 'csca08'; // by convention, courseName == name of its database
-mongoose.connect('mongodb://localhost/' + courseName);
 
-var csv_file = "../roster-4.csv"; // path to a csv file
-
-// define student schema
-var studentSchema = new mongoose.Schema({
-    first_name : String,
-    last_name : String,
-    utorid : {
-        type: String, // data type
-        required: true,
-        unique: true // avoid duplicates
-    },
-    student_number : String,
-    email : String,
-    is_active : Boolean // true == active, false == inactive
-});
-
-var Student = mongoose.model('students', studentSchema);
-var csv_file = "../roster-4.csv"; // path to a csv file
+var csv_file = "../simple.csv"; // path to a csv file
 var counter = 0;
 var fields, first_name_index, last_name_index, utorid_index, student_number_index, email_index;
+var student_model = require('./models/student_model.js');
 
 lineReader.eachLine(csv_file, function(line, last) {
     if (counter == 0) {
@@ -37,7 +19,7 @@ lineReader.eachLine(csv_file, function(line, last) {
     } else {
         var values = line.split(',');
         // create a new student
-        var new_student = new Student({
+        var new_student = new student_model({
             first_name : values[first_name_index],
             last_name : values[last_name_index],
             utorid : values[utorid_index],
@@ -45,6 +27,7 @@ lineReader.eachLine(csv_file, function(line, last) {
             email : values[email_index],
             is_active : true
         });
+        console.log(new_student.first_name);
         // write new student into database
         new_student.save(function (err) {
             if (err) console.log(err);

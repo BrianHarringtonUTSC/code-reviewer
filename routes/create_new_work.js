@@ -9,7 +9,7 @@ router.get('/', function(req, res, next) {
 	res.render('create_new_work', {title : 'create new work'});
 });
 
-
+// create a new work
 router.post('/create', function(req, res, next) {
 	var rule_model = require('./models/rule_model.js');
 	// create a new rule

@@ -10,7 +10,7 @@ router.use(bodyParser.urlencoded( {extended: true} ));
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
-	console.log('Aaaand here we go...');
+	console.log('\nAaaand here we go...');
 	next();
 });
 
@@ -28,7 +28,6 @@ router.post('/go_to_instructor', function(req, res, next) {
 	res.redirect('/instructor');
 });
 
-console.log("Connection opened.");
 
 module.exports = router;
 

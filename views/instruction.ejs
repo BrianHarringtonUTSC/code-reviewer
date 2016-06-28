@@ -1,9 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+  	<meta charset="utf-8" />
+  	<link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
+   	<link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
   <body>
-    <p>Instruction page</p>
+  	<nav>
+  	  <ul>
+			<li><a href="/home">home</a></li>
+			<li class="drop">
+				<a href="#">You</a>
+				
+				<div class="dropdownContain">
+					<div class="dropOut">
+						<div class="triangle"></div>
+						<ul>
+							<li>Plan</li>
+							<li>Account Settings</li>
+							<li>Switch Account</li>
+							<li>Sign Out</li>
+						</ul>
+					</div>
+				</div>
+			
+			</li>
+			<li><a href="#">Help</a></li>
+		</ul>
+	</nav>
+    <div class="breadcrumb">
+      <a class="active">Instruction &#38; Tips</a>
+      <a>Give Feedback</a>
+      <a>Self Assess</a>
+    </div>
 
     <form enctype="application/json" action="instruction/go_to_peer_review" method="post">
       <input type="submit" value="I am ready"></input>
