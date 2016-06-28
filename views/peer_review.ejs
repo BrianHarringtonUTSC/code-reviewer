@@ -29,8 +29,7 @@
             </ul>
           </div>
         </div>
-      
-      </li>
+
       <li><a href="#">Help</a></li>
     </ul>
   </nav>
@@ -40,40 +39,37 @@
       <a class="active">Give Feedback</a>
       <a>Self Assess</a>
     </div>
-
+    <form enctype="application/json" action="peer_review/go_to_peer_review" method="post">
     <ul class="tab">
       <% var i = 1;%>
-      <% entries.forEach(function(item) { 
-        var action_name = "peer_review/go_to_peer_review_" + String(i); %>
-        <form enctype="application/json" action="<%= action_name %>" method="post">
+      <% entries.forEach(function(item) { %>
+        <% var btn_name = "peer_" + String(i); %>
+        <% var btn_value = "Peer " + String(i); %>
         <% if (i == peer_num) { %>
-          <li><input type="submit" value="<%= "Peer" + String(i)%>" class="tablinks active"></input></li>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks active"></input></li>
         <% } else { %>
-          <li><input type="submit" value="<%= "Peer" + String(i)%>" class="tablinks"></input></li>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks"></input></li>
         <% } %>
-        </form>
         <% i = i + 1;%>
       <% }); %>
     </ul>
 
-    <div style="display:block;" class="tabcontent">
+    <div class="tabcontent">
       <div class="stars">
-        <form action="">
           <input class="star star-5" id="star-5" type="radio" name="star"/>
-          <label class="star star-5" for="star-5"></label>
+          <label class="star star-5" for="star-5" name="star5" ></label>
           <input class="star star-4" id="star-4" type="radio" name="star"/>
-          <label class="star star-4" for="star-4"></label>
+          <label class="star star-4" for="star-4" name="star4"></label>
           <input class="star star-3" id="star-3" type="radio" name="star"/>
-          <label class="star star-3" for="star-3"></label>
+          <label class="star star-3" for="star-3" name="star3"></label>
           <input class="star star-2" id="star-2" type="radio" name="star"/>
-          <label class="star star-2" for="star-2"></label>
+          <label class="star star-2" for="star-2" name="star2"></label>
           <input class="star star-1" id="star-1" type="radio" name="star"/>
-          <label class="star star-1" for="star-1"></label>
-        </form>
+          <label class="star star-1" for="star-1" name="star1"></label>
       </div>
 
       <div>
-        <button onclick="highlight()">Highlight me!</button>
+        <input type="button" onclick="addCommentFromSelection()" value="Add Comment!"></input>
       </div>
 
       <div class="border" style="text-align: left;">
@@ -81,28 +77,31 @@
           <%
           var lines = code.split("\n");
           var count = 1;
-          var line = "line-" + String(count); 
           lines.forEach(function(next_line){
+            var line = "line-" + String(count); 
             if (next_line.length <= 1) {
               next_line = next_line + String.fromCharCode(160);
             }
             next_line = next_line.replace(" ", String.fromCharCode(160)); %>
-          <li id="<%= line %>" class="row">
-            <span><%= next_line %></span>
-          </li>
-          <% %>
+            <li id="<%= line %>" class="row">
+              <span><%= next_line %></span>
+            </li>
+            <% count = count + 1; %>
           <% }); %>
         </ol>
       </div>
+      
+      <div id="popup" class="annotation">comment text</div>
+
+      
 
       <p style="text-align: left;">How can it be improved?</p>
-      
-      <form enctype="application/json" action="peer_review/save" method="post">
+
         <input type="text" required="required" style="height:40px; width:90%" name="feedback" value="<%= feedback[0] %>"></input>
-        <input type="submit" value="save"></input>
-      </form>
-      
+        <input type="submit" name="btn_1" value="save"></input>
+
     </div> <!-- end of div tab_content-->
+    </form>
 
 
     <form enctype="application/json" action="peer_review/go_to_self_assesment" method="post">
