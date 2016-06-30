@@ -15,7 +15,6 @@
     "mongodb": "latest",
     "mongoose": "^4.4.20",
     "morgan": "~1.6.1",
-    "node-inspector": "^0.12.8",
     "serve-favicon": "~2.3.0"
   }
 }
