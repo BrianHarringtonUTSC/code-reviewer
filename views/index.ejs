@@ -29,9 +29,28 @@
           <button ng-click="setPeer(peer)">{{peer}}</button>
       </div>
 
-      <!-- Andrew's Text Stuff-->
+
       </div>
     </div>
+    <hr>
+
+    <script src="https://cdn.auth0.com/js/lock-9.1.min.js"></script>
+    <script type="text/javascript">
+      
+      var lock = new Auth0Lock('QyxHv4FYYgvhSTj2JYvISNkAijO3nBky', 'uteach.auth0.com');
+      
+      
+      function signin() {
+        lock.show({
+            callbackURL: 'http://localhost:3000/callback'
+          , responseType: 'code'
+          , authParams: {
+            scope: 'openid email'  // Learn about scopes: https://auth0.com/docs/scopes 
+          }
+        });
+      }
+    </script>
+    <button onclick="window.signin();">Login</button>
 
 
   </body>

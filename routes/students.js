@@ -1,7 +1,9 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var lineReader = require('line-reader');
+var multer = require('multer');
 var router = express.Router();
+var upload = multer({ dest: 'uploads/' })
 
 
 // GET this page.
@@ -26,7 +28,7 @@ router.get('/', function(req, res, next) {
 });
 
 // load students info via a csv file
-router.post('/load', function(req, res, next) {
+router.post('/load', upload.single('rosters'), function(req, res, next) {
 	
 	var counter = 0; // count the number of lines
 	var num_new_students = 0; // count the number of newly added students

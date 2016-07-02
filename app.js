@@ -5,6 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var passport = require('passport');
+var session = require('express-session');
+var dotenv  = require('dotenv');
+
+var strategy = require('./setup-passport');
+// load environment variables
+dotenv.load();
+
 
 // connect to the database
 mongoose.connect('mongodb://localhost/csca08');
@@ -23,7 +31,6 @@ var create_new_work = require('./routes/create_new_work');
 var home = require('./routes/home');
 
 
-
 var app = express();
 
 //--------------------------------------------------------------------------------------------------------------
@@ -38,7 +45,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(session({ secret: process.env.AUTH0_CLIENT_SECRET, resave: true,  saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 app.use('/', routes);
@@ -50,6 +59,20 @@ app.use('/students', students);
 app.use('/instructor', instructor);
 app.use('/create_new_work', create_new_work);
 app.use('/home', home);
+
+
+// Auth0 callback handler
+app.get('/callback',
+  passport.authenticate('auth0', { failureRedirect: '/', successRedirect: 'instructor' }),
+  function(req, res) {
+    if (!req.user) {
+      throw new Error('user null');
+    }
+    res.redirect("/instruction");
+  });
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
