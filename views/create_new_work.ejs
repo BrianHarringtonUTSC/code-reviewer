@@ -3,18 +3,32 @@
   <head>
     <meta charset="UTF-8">
     <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
 
   </head>
 
   <body>
     <p><%= title %></p>
     <form action="create_new_work/create" method="post">
-      <label>New work name: </label><input type="text" name="work_name"><br>
-      <label>Number of peers: </label><input type="text" name="num_peers"><br>
-      <label>Required_files: </label><input type="text" name="required_files"><br>
-      <label>Student submission deadline: </label><input type="date" name="student_submission_deadline"><br>
-      <label>Peer review deadline: </label><input type="date" name="student_submission_deadline"><br>
+      <label>New work name: </label><input type="text" name="work_name"></input><br></br>
+      <label>Number of peers: </label><input type="text" name="num_peers"></input><br></br>
+      <label>Required_files: </label><input type="text" name="required_files"></input><br></br>
+      <label>Repo path: </label><input type="text" name="code_path"></input><br></br>
+      <label>Student submission deadline: </label><input type="date" name="student_submission_deadline"></input><br></br>
+      <label>Peer review deadline: </label><input type="date" name="student_submission_deadline"></input><br></br>
       <input type="submit" value ="Submit">
+    </form>
+
+    <form action="create_new_work/load_assignment" method="post">
+      <input type="text" name="loading_work_name" value="<%= init_loading_work_name %>"></input>
+      <input type="submit" value="load_assignment" class="button"></input>
+    </form>
+    <br></br>
+    <form action="create_new_work/distribute" method="post">
+      <input type="text" name="distributing_work_name" value="<%= init_distributing_work_name %>"></input>
+      <input type="submit" value="distribute for peer review" class="button"></input>
+    </form>
+
     <li><a href="/instructor">Go back to instructor</a></li>
   </body>
 

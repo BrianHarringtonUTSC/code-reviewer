@@ -1,3 +1,26 @@
+var highlight_str = '';
+var highlight_array = [];
+function set_up_highlight(init_highlights) {
+	highlight_array = [];
+	var temp_highlight_array = [];
+	var temp = [];
+	temp_highlight_array = init_highlights.toString().split(",");
+	for (var i = 1; i <= temp_highlight_array.length; i++) {
+		temp.push(temp_highlight_array[i-1]);
+		if (i % 3 == 0) {
+			highlight_array.push(temp);
+			temp = [];
+		}
+	}
+
+	for (var i = 0; i < highlight_array.length; i ++) {
+		highlight(parseInt(highlight_array[i][0]), parseInt(highlight_array[i][1]), highlight_array[i][2]);
+	}
+	
+	document.getElementById('storage').value = highlight_array;
+}
+
+
 function addCommentFromSelection() {
 	var selection = window.getSelection();
 	if (!selection || selection.isCollapsed) {
@@ -36,10 +59,17 @@ function addCommentFromSelection() {
 	var comment = window.prompt('Please enter your comment:');
 
 	if (comment) {
+		store_comments(startLine, endLine, comment);		
 		highlight(startLine, endLine, comment);
+
 	}
 
 	window.getSelection().removeAllRanges();
+}
+
+function store_comments(startLine, endLine, comment) {
+	highlight_array.push([startLine, endLine, comment]);
+	document.getElementById('storage').value = highlight_array;
 }
 
 function highlight(startLine, endLine, comment) {
@@ -54,23 +84,33 @@ function highlight(startLine, endLine, comment) {
 		} else {
 			nextElement.className = "highlight-1";
 		}
-		nextElement.addEventListener("mouseover", showPopup.bind(null, i));
-		nextElement.addEventListener("mouseout", hidePopup);
+		nextElement.onmouseover = showPopup;
+		//nextElement.addEventListener("mouseover", function(){showPopup(line);});
+		nextElement.onmouseout = hidePopup;
 
 		nextElement.setAttribute('comment', (nextElement.getAttribute('comment') ? nextElement.getAttribute('comment') : '') + comment + '<br>');
 	};
 }
 
-function showPopup(line) {
-	var x = event.clientX;
-	var y = event.clientY;
+function showPopup(e) {
+	var x = e.clientX;
+	var y = e.clientY;
+	console.log(x, y);
 	var element = document.getElementById('popup');
 	element.style.display = 'block';
-	element.style.top = y;
-	element.style.left = x;
-	document.getElementById('popup').innerHTML = document.getElementById('line-' + String(line)).getAttribute('comment');
+	element.style.top = String(y) + 'px';
+	element.style.left = String(x) + 'px';
+	var target = e.target;
+	while (target && target.nodeName !== 'LI') {
+		target = target.parentNode;
+	}
+	document.getElementById('popup').innerHTML = target.getAttribute('comment');
 }
 
-function hidePopup() {
+function hidePopup(e) {
 	document.getElementById('popup').style.display = 'none';
+}
+
+function get_star(num) {
+	document.getElementById('star_number').value = num;
 }

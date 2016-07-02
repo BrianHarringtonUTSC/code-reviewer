@@ -7,11 +7,13 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/textbox.css">
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
-  <body>
+  <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
     <nav>
       <ul>
       <li><a href="/home">Home</a></li>
@@ -56,17 +58,21 @@
 
     <div class="tabcontent">
       <div class="stars">
-          <input class="star star-5" id="star-5" type="radio" name="star"/>
-          <label class="star star-5" for="star-5" name="star5" ></label>
-          <input class="star star-4" id="star-4" type="radio" name="star"/>
-          <label class="star star-4" for="star-4" name="star4"></label>
-          <input class="star star-3" id="star-3" type="radio" name="star"/>
-          <label class="star star-3" for="star-3" name="star3"></label>
-          <input class="star star-2" id="star-2" type="radio" name="star"/>
-          <label class="star star-2" for="star-2" name="star2"></label>
-          <input class="star star-1" id="star-1" type="radio" name="star"/>
-          <label class="star star-1" for="star-1" name="star1"></label>
+        <% for(var i = 5; i >= 1; i --){
+            var class_name = "star star-" + String(i);
+            var id_name = "star-" + String(i);
+            var func_name = "get_star(" + String(i) + ")";
+            if (i == number_of_stars) { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked"></input>
+         <% } else { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>"></input>
+         <% } %>
+            <label class="<%= class_name %>" for="<%= id_name %>"></label>
+        <% } %>
       </div>
+
+      <input id="star_number" value="<%= number_of_stars%>" name="star_num" style="display:none;"></input>
+      <input id="storage" name="highlight_storage" type="text" style="display:none;"></input>
 
       <div>
         <input type="button" onclick="addCommentFromSelection()" value="Add Comment!"></input>
@@ -94,25 +100,27 @@
       <div id="popup" class="annotation">comment text</div>
 
       
+      <div style="text-align: left; font-family: monospace; margin-top:1%;">
 
-      <p style="text-align: left;">How can it be improved?</p>
-
-        <input type="text" required="required" style="height:40px; width:90%" name="feedback" value="<%= feedback[0] %>"></input>
-        <input type="submit" name="btn_1" value="save"></input>
+        <h1 style="font-size: 30px;">Overall Comments</h1>
+        <p style="margin-top:1%;">1. Give at least one positive comment about your peers assignment.</p>
+        <input type="text" class="tb1" name="feedback1" value="<%= feedback[0] %>"></input>
+        <p style="margin-top:1%;">2. Give at least one constructive comment to help your peer improve the assignment.</p>
+        <input type="text" class="tb1" name="feedback2" value="<%= feedback[1] %>"></input>
+      </div>
+      <input class="button" type="submit" name="save_btn" value="save"></input>
 
     </div> <!-- end of div tab_content-->
     </form>
 
 
     <form enctype="application/json" action="peer_review/go_to_self_assesment" method="post">
-      <input type="submit" value="save and go to self assesment"></input>
+      <input class="button" type="submit" value="save and go to self assesment"></input>
     </form>
 
-
-
-    <form enctype="application/json" action="peer_review/go_to_index" method="post">
-      <input type="submit" value="go back to index"></input>
-    </form>
+  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+    <i class="material-icons right">send</i>
+  </button>
 
     <script type="text/javascript" src="javascripts/test.js"></script>
     <script type="text/javascript" src="javascripts/highlight.js"></script>

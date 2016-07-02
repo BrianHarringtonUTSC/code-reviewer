@@ -1,35 +1,43 @@
 var express = require('express');
-var mongoose = require('mongoose');
-var fs = require('fs');
 var router = express.Router();
 
-var submission_schema = require("./models/submission_schema.js");
-var review_schema = require("./models/review_schema.js");
-
-// name of this work, TODO: read work name from rule collection
-var work_name = "a2";
-// define submission model with work name
-var new_submission_collection = work_name + "_submission";
-var submission_model = mongoose.model(new_submission_collection, submission_schema);
-// define review model with work name
-var new_review_collection = work_name + "_review";
-var review_model = mongoose.model(new_review_collection, review_schema);
+var fs = require('fs');
+// import module mongodb
+var code_model = require("./models/code_model.js");
+var review_model = require("./models/review_model.js");
 
 
-// GET users listing.
+var num_of_peers = 10;
+var peer_number = 1;
+var review_array = [];
+var feedback_array = [];
+var num_of_stars = [];
+var highlight_str = "";
+//var self_utorid = "luijerr1";
+//var self_utorid = "lossevki";
+var self_utorid = "luchenya";
+var code_path = "";
+
+/* GET users listing. */
 router.get('/', function(req, res, next) {
   find_student(res, 'self_review');
 });
 
+router.post('/go_to_self_review', function(req, res, next) {
+	console.log(req.body);
+	for (var i = 1; i <= num_of_peers; i++) {
+	  var key = "peer_" + String(i);
+	  if (key in req.body) {
+	    peer_number = i;
+	  }
+	}
+	res.redirect('/self_review');
+});
 
-var review_array = [];
-var feedback_array = [];
-var self_utorid = "luijerr1";
-var code_path = "";
 
-// find a student with given utorid
+
 function find_student(res, site) {
-  submission_model.findOne({ utorid: self_utorid }, function(err, code) {
+  code_model.findOne({ utorid: self_utorid }, function(err, code) {
   	review_array = code.review_by;
   	code_path = code.code_path;
   	find_feedback(res, site);
@@ -37,15 +45,15 @@ function find_student(res, site) {
 }
 
 function find_feedback(res, site) {
-  for(var i = 0; i < review_array.length; i++) {
-    review_model.findOne({ author: self_utorid, review_by:review_array[i] }, function(err, review) {
-  	  feedback_array.push(review.comment);
-  	  console.log(feedback_array.length);
-  	  if (feedback_array.length == review_array.length) {
-  	  	read_file(res, site);
-  	  }
-    });
-  }
+  review_model.findOne({ author: self_utorid, review_by:review_array[peer_number-1] }, function(err, review) {
+	  feedback_array = review.feedbacks;
+	  num_of_stars = review.num_stars;
+	  highlight_str = review.highlights;
+  	console.log("---------");
+  	console.log(highlight_str);
+  	console.log(review);
+	  read_file(res, site);
+  });
   
 }
 
@@ -68,14 +76,15 @@ function read_file(res, site) {
 			title: site,
 			entries: review_array,
 			code: str,
-			feedback_entries: feedback_array
+			peer_num: peer_number,
+			feedback: feedback_array,
+			number_of_stars: num_of_stars,
+			init_highligts: highlight_str
 		});
 	  // do something on finish here
 	  //console.log(str);
 	  //console.log("finished");
 	  //console.log(str_array.length);
-	  feedback_array = [];
-
 	});
 }
 

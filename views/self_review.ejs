@@ -2,31 +2,98 @@
 <html>
   <head>
     <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
     <link rel='stylesheet' href='/stylesheets/normalize.css' />
+    <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/textbox.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   </head>
-  <body>
-	<section class="ac-container">
-	  <% var i = 1;%>
-	  <% entries.forEach(function(item) { %>
-	  <div>
-	  <% if (i == 1) { %>
-		<input id=<%= String(i) %> name="accordion-1" type="radio" checked="">
-	  <% } else { %>
-		<input id=<%= String(i) %> name="accordion-1" type="radio">
-	  <% } %>
-		<label for=<%= String(i) %> >Peer <%= String(i) %>:</label>
-		<article class="ac-large">
-		  <div style="border:1px solid black;width:100%;height:300px;overflow-y:scroll;overflow-x:hide;margin-top:12px;">
-            <pre style="height:200%;"><%= code %></pre>
+  <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
+    <nav>
+      <ul>
+      <li><a href="/home">Home</a></li>
+      <li class="drop">
+        <a href="#">You</a>
+        
+        <div class="dropdownContain">
+          <div class="dropOut">
+            <div class="triangle"></div>
+            <ul>
+              <li>Plan</li>
+              <li>Account Settings</li>
+              <li>Switch Account</li>
+              <li>Sign Out</li>
+            </ul>
           </div>
-          <p>How can it be improved?</p>
-          <p><%= feedback_entries[i] %></p>
-		</article>
+        </div>
 
+      <li><a href="#">Help</a></li>
+    </ul>
+  </nav>
 
-	  </div>
-	  <% i = i + 1;%>
-	  <% }); %>
-	</section>
+    <form enctype="application/json" action="self_review/go_to_self_review" method="post">
+    <ul class="tab">
+      <% var i = 1;%>
+      <% entries.forEach(function(item) { %>
+        <% var btn_name = "peer_" + String(i); %>
+        <% var btn_value = "Peer " + String(i); %>
+        <% if (i == peer_num) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks active"></input></li>
+        <% } else { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks"></input></li>
+        <% } %>
+        <% i = i + 1;%>
+      <% }); %>
+    </ul>
+
+    <div class="tabcontent">
+      <div class="stars">
+        <% for(var i = 5; i >= 1; i --){
+            var class_name = "star star-" + String(i);
+            var id_name = "star-" + String(i);
+            var func_name = "get_star(" + String(i) + ")";
+            if (i == number_of_stars) { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" checked="checked" value="N" disabled></input>
+         <% } else { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" value="N" disabled></input>
+         <% } %>
+            <label class="<%= class_name %>" for="<%= id_name %>"></label>
+        <% } %>
+      </div>
+
+      <div class="border" style="text-align: left;">
+        <ol class="code">
+        <%var lines = code.split("\n");
+          var count = 1;
+          lines.forEach(function(next_line){
+            var line = "line-" + String(count); 
+            if (next_line.length <= 1) {
+              next_line = next_line + String.fromCharCode(160);
+            }
+            next_line = next_line.replace(" ", String.fromCharCode(160)); %>
+            <li id="<%= line %>" class="row">
+              <span><%= next_line %></span>
+            </li>
+            <% count = count + 1; %>
+          <% }); %>
+        </ol>
+      </div>
+      
+      <div id="popup" class="annotation">comment text</div>
+
+      
+      <div style="text-align: left; font-family: monospace; margin-top:1%;">
+
+        <h1 style="font-size: 30px;">Overall Comments</h1>
+        <p style="margin-top:1%;">1. Give at least one positive comment about your peers assignment.</p>
+        <input type="text" class="tb1" name="feedback1" value="<%= feedback[0] %>" disabled></input>
+        <p style="margin-top:1%;">2. Give at least one constructive comment to help your peer improve the assignment.</p>
+        <input type="text" class="tb1" name="feedback2" value="<%= feedback[1] %>" disabled></input>
+      </div>
+
+    </div> <!-- end of div tab_content-->
+    </form>
+    <script type="text/javascript" src="javascripts/highlight.js"></script>
   </body>
 </html>

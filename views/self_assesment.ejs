@@ -5,16 +5,41 @@
     <title>Login Form</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   </head>
 
   <body class="login_body">
+    <nav>
+      <ul>
+      <li><a href="/home">Home</a></li>
+      <li class="drop">
+        <a href="#">You</a>
+        
+        <div class="dropdownContain">
+          <div class="dropOut">
+            <div class="triangle"></div>
+            <ul>
+              <li>Plan</li>
+              <li>Account Settings</li>
+              <li>Switch Account</li>
+              <li>Sign Out</li>
+            </ul>
+          </div>
+        </div>
+
+      <li><a href="#">Help</a></li>
+    </ul>
+  </nav>
+  
     <div class="breadcrumb">
       <a>Instruction &#38; Tips</a>
       <a>Give Feedback</a>
       <a class="active">Self Assess</a>
     </div>
-    
+    <br></br>
     <div class="stars">
       <form action="">
         <input class="star star-5" id="star-5" type="radio" name="star"/>
@@ -30,6 +55,10 @@
       </form>
     </div>
 
+
+    <form enctype="application/json" action="self_assesment/go_to_home" method="post">
+      <input class="button" type="submit" value="finish"></input>
+    </form>
 
 
     <script type="text/javascript" src="javascripts/test.js"></script>

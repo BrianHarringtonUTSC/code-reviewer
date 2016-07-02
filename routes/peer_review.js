@@ -1,21 +1,13 @@
 var express = require('express');
-var mongoose = require('mongoose');
-var fs = require('fs');
 var router = express.Router();
+var PeerEditing = express();
 
+var fs = require('fs');
 
-var submission_schema = require("./models/submission_schema.js");
-var review_schema = require("./models/review_schema.js");
+var code_model = require("./models/code_model.js");
+var review_model = require("./models/review_model.js");
 
-// name of this work, TODO: read work name from rule collection
-var work_name = "a2";
-// define submission model with work name
-var new_submission_collection = work_name + "_submission";
-var submission_model = mongoose.model(new_submission_collection, submission_schema);
-// define review model with work name
-var new_review_collection = work_name + "_review";
-var review_model = mongoose.model(new_review_collection, review_schema);
-
+var num_of_peers = 10;
 var peer_number = 1;
 var is_saved = 0;
 /* GET users listing. */
@@ -33,20 +25,22 @@ router.post('/go_to_index', function(req, res, next) {
 	res.redirect('/');
 });
 
+var num_of_stars = 0;
 var review_array = [];
 var self_utorid = 'luqian3';
 var code_path = '';
-var feedbacks = [];
+var feedbacks_array = [];
+var highlight_str = '';
 
 function find_student_code(res, site){
-  submission_model.findOne({ utorid: self_utorid }, function(err, code) {
+  code_model.findOne({ utorid: self_utorid }, function(err, code) {
   	review_array = code.to_review;
   	find_to_review_code_path(res, site);
   });
 }
 
 function find_to_review_code_path(res, site) {
-  submission_model.findOne({ utorid: review_array[peer_number-1] }, function(err, code) {
+  code_model.findOne({ utorid: review_array[peer_number-1] }, function(err, code) {
   	code_path = code.code_path;
   	find_feedbacks(res, site);
   });
@@ -54,7 +48,11 @@ function find_to_review_code_path(res, site) {
 
 function find_feedbacks(res, site) {
   review_model.findOne({ author: review_array[peer_number-1], review_by: self_utorid }, function(err, review) {
-  	feedbacks = review.comment;
+  	feedbacks_array = review.feedbacks;
+  	num_of_stars = review.num_stars;
+  	highlight_str = review.highlights;
+  	console.log("---------");
+  	console.log(review);
   	read_file(res, site);
   });
 }
@@ -77,48 +75,48 @@ function read_file(res, site) {
 			entries: review_array,
 			peer_num: peer_number,
 			code: str,
-			feedback: feedbacks
+			feedback: feedbacks_array,
+			number_of_stars: num_of_stars,
+			init_highligts: highlight_str
 		});
 	});
 }
 
-router.post('/save', function(req, res, next) {
-	var feedback_array = [];
-	feedback_array.push(req.body.feedback);
+function save() {
 	review_model.findOneAndUpdate(
 		{ author: review_array[peer_number-1],
 		  review_by: self_utorid},
-		{ $set: {comment: feedback_array } },
+		{ $set: {feedbacks: feedbacks_array,
+		num_stars: num_of_stars,
+		highlights: highlight_str } },
 		{ new: true},
 		function(err, doc) {
 			if (err) console.log(err);
 			console.log(doc);
 		}
 	);
-	console.log(feedback_array);
-	is_saved = 1;
+}
+
+router.post('/go_to_peer_review', function(req, res, next) {
+	var temp_feedback_array = [];
+	temp_feedback_array.push(req.body.feedback1);
+	temp_feedback_array.push(req.body.feedback2);
+	console.log(req.body.highlight_storage);
+	feedbacks_array = temp_feedback_array;
+	highlight_str = req.body.highlight_storage;
+	num_of_stars = req.body.star_num;
+
+	save();
+	console.log(req.body);
+	for (var i = 1; i <= num_of_peers; i++) {
+  	var key = "peer_" + String(i);
+  	if (key in req.body) {
+    	peer_number = i;
+  	}
+	}
+
+
 	res.redirect('/peer_review');
-});
-
-router.post('/go_to_peer_review_1', function(req, res, next) {
-		//window.alert("not save yet");
-		peer_number = 1;
-		is_saved = 0;
-		res.redirect('/peer_review');	
-});
-
-router.post('/go_to_peer_review_2', function(req, res, next) {
-		//window.alert("not save yet");
-		peer_number = 2;
-		is_saved = 0;
-		res.redirect('/peer_review');	
-});
-
-router.post('/go_to_peer_review_3', function(req, res, next) {
-		//window.alert("not save yet");
-		peer_number = 3;
-		is_saved = 0;
-		res.redirect('/peer_review');	
 });
 
 

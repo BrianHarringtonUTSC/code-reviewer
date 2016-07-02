@@ -4,15 +4,15 @@ ol {
 
 }
 
-ol li {
-	display: block;
-}
-
 ol li:before { 
     content: counter(item) "  ";
     counter-increment: item;
     left: 0em;
     width: 40px;
+    float: left;
+    margin: 0 1em 0 0em;
+    padding-right: 1em;
+    border-right: 1px solid;
     text-align: right;
 }
 
@@ -31,7 +31,6 @@ ol li:before {
 } 
 
 .code {
-    display: block;
     font-family: monospace;
     margin: 1em 0;
 }
@@ -50,12 +49,12 @@ ol li:before {
 
 .annotation {
     display: none;
+    position: fixed;
     background:#f6f6f6;
     border:1px solid #8d8d8d;
     border-radius:5px;
     max-width:400px;
     padding:0.25em 1em;
-    position:fixed;
     white-space:pre-wrap;
     width:auto;
     z-index:100000;

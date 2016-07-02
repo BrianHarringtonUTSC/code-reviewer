@@ -9,15 +9,17 @@ var passport = require('passport');
 var session = require('express-session');
 var dotenv  = require('dotenv');
 
+var strategy = require('./setup-passport');
 // load environment variables
 dotenv.load();
-// load passport
-var strategy = require('./setup-passport');
+
+
 // connect to the database
 mongoose.connect('mongodb://localhost/csca08');
 
 
 var routes = require('./routes/index');
+
 // require routes
 var self_review = require('./routes/self_review');
 var instruction = require('./routes/instruction');
@@ -27,7 +29,6 @@ var students = require('./routes/students');
 var instructor = require('./routes/instructor');
 var create_new_work = require('./routes/create_new_work');
 var home = require('./routes/home');
-var tas = require('./routes/tas');
 
 
 var app = express();
@@ -48,6 +49,7 @@ app.use(session({ secret: process.env.AUTH0_CLIENT_SECRET, resave: true,  saveUn
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 app.use('/', routes);
 app.use('/self_review', self_review);
 app.use('/instruction', instruction);
@@ -57,8 +59,6 @@ app.use('/students', students);
 app.use('/instructor', instructor);
 app.use('/create_new_work', create_new_work);
 app.use('/home', home);
-app.use('/tas', tas);
-
 
 // Auth0 callback handler
 app.get('/callback',

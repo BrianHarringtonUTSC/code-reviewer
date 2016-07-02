@@ -4,7 +4,8 @@
   border-radius: 5px;
   overflow: hidden;
   counter-reset:flag;
-  margin: auto;
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 
 .breadcrumb a {
@@ -17,18 +18,20 @@
   line-height: 36px;
   
   /*background: linear-gradient(#D8BFD8, #FF69B4);*/
-  background: linear-gradient(#5DA6E1, #185282);
-  color: white;
+  background: linear-gradient(#eeeeee, #999999);
+  color: #222;
   position:relative;
   
 }
 
 .breadcrumb a.active{
-  background: linear-gradient(#64D86A, #1D7521);
+  color: white;
+  background: linear-gradient(#777777, #222222);
 }
 
 .breadcrumb a.active:after{
-  background: linear-gradient(135deg, #64D86A, #1D7521);
+  color: white;
+  background: linear-gradient(135deg, #777777, #222222);
 }
 
 .breadcrumb a:after {
@@ -37,7 +40,7 @@
   height: 56px;
   /*background: linear-gradient(135deg, #D8BFD8, #FF69B4);*/
 
-  background: linear-gradient(135deg, #5DA6E1, #185282);
+  background: linear-gradient(135deg, #eeeeee, #999999);
   position: absolute;
   top: 0px;
   
@@ -65,11 +68,12 @@
 .breadcrumb a:before {
   content:counter(flag);
   counter-increment: flag;
+  color: white;
   
   width: 20px;
   height:20px;
   
-  background: #0E2F4A;
+  background: #000000;
   font-weight:bold;
   
   position:absolute;

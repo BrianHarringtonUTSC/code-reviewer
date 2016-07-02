@@ -1,11 +1,11 @@
-.stars {
+div.stars {
   width: 270px;
   display: inline-block;
 }
 
-input.star1 { display: none; }
+input.star { display: none; }
 
-label.star1 {
+label.star {
   float: right;
   padding: 10px;
   font-size: 36px;
@@ -13,234 +13,22 @@ label.star1 {
   transition: all .2s;
 }
 
-input.star1:checked ~ label.star1:before {
+input.star:checked ~ label.star:before {
   content: '\f005';
   color: #FD4;
   transition: all .25s;
 }
 
-input.star1-5:checked ~ label.star1:before {
+input.star-5:checked ~ label.star:before {
   color: #FE7;
   text-shadow: 0 0 20px #952;
 }
 
-input.star1-1:checked ~ label.star1:before { color: #F62; }
+input.star-1:checked ~ label.star:before { color: #F62; }
 
-label.star1:hover { transform: rotate(-15deg) scale(1.3); }
+label.star:hover { transform: rotate(-15deg) scale(1.3); }
 
-label.star1:before {
-  content: '\f006';
-  font-family: FontAwesome;
-}
-
-/* ---------------------------------------------------------*/
-input.star2 { display: none; }
-
-label.star2 {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
-}
-
-input.star2:checked ~ label.star2:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
-
-input.star2-5:checked ~ label.star2:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
-}
-
-input.star2-1:checked ~ label.star2:before { color: #F62; }
-
-label.star2:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star2:before {
-  content: '\f006';
-  font-family: FontAwesome;
-}
-
-/* ---------------------------------------------------------*/
-input.star3 { display: none; }
-
-label.star3 {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
-}
-
-input.star3:checked ~ label.star3:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
-
-input.star3-5:checked ~ label.star3:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
-}
-
-input.star3-1:checked ~ label.star3:before { color: #F62; }
-
-label.star3:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star3:before {
-  content: '\f006';
-  font-family: FontAwesome;
-}
-/* ---------------------------------------------------------*/
-input.star4 { display: none; }
-
-label.star4 {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
-}
-
-input.star4:checked ~ label.star4:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
-
-input.star4-5:checked ~ label.star4:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
-}
-
-input.star4-1:checked ~ label.star4:before { color: #F62; }
-
-label.star4:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star4:before {
-  content: '\f006';
-  font-family: FontAwesome;
-}
-/* ---------------------------------------------------------*/
-input.star5 { display: none; }
-
-label.star5 {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
-}
-
-input.star5:checked ~ label.star5:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
-
-input.star5-5:checked ~ label.star5:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
-}
-
-input.star5-1:checked ~ label.star5:before { color: #F62; }
-
-label.star5:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star5:before {
-  content: '\f006';
-  font-family: FontAwesome;
-}
-/* ---------------------------------------------------------*/
-input.star6 { display: none; }
-
-label.star6 {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
-}
-
-input.star6:checked ~ label.star6:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
-
-input.star6-5:checked ~ label.star6:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
-}
-
-input.star6-1:checked ~ label.star6:before { color: #F62; }
-
-label.star6:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star6:before {
-  content: '\f006';
-  font-family: FontAwesome;
-}
-/* ---------------------------------------------------------*/
-input.star7 { display: none; }
-
-label.star7 {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
-}
-
-input.star7:checked ~ label.star7:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
-
-input.star7-5:checked ~ label.star7:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
-}
-
-input.star7-1:checked ~ label.star7:before { color: #F62; }
-
-label.star7:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star7:before {
-  content: '\f006';
-  font-family: FontAwesome;
-}
-/* ---------------------------------------------------------*/
-input.star8 { display: none; }
-
-label.star8 {
-  float: right;
-  padding: 10px;
-  font-size: 36px;
-  color: #444;
-  transition: all .2s;
-}
-
-input.star8:checked ~ label.star8:before {
-  content: '\f005';
-  color: #FD4;
-  transition: all .25s;
-}
-
-input.star8-5:checked ~ label.star8:before {
-  color: #FE7;
-  text-shadow: 0 0 20px #952;
-}
-
-input.star8-1:checked ~ label.star8:before { color: #F62; }
-
-label.star8:hover { transform: rotate(-15deg) scale(1.3); }
-
-label.star8:before {
+label.star:before {
   content: '\f006';
   font-family: FontAwesome;
 }

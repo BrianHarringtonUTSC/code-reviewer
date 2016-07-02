@@ -5,6 +5,9 @@ var http = require('http');
 var router = express.Router();
 var fs = require('fs');
 
+//var io = require('socket.io').listen(80); // initiate socket.io server
+
+
 //Here we are configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded( {extended: true} ));
 
@@ -24,8 +27,18 @@ router.post('/go_to_self_review', function(req, res, next) {
 });
 
 
-console.log("Connection opened.");
 
+console.log("Connection opened.");
+/*
+io.sockets.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' }); // Send data to client
+
+  // wait for the event raised by the client
+  socket.on('my other event', function (data) {  
+    console.log(data);
+  });
+});
+*/
 module.exports = router;
 
 
