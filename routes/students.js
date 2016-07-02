@@ -1,9 +1,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var lineReader = require('line-reader');
-var multer = require('multer');
 var router = express.Router();
-var upload = multer({ dest: 'uploads/' })
 
 
 // GET this page.
@@ -27,15 +25,16 @@ router.get('/', function(req, res, next) {
 	});
 });
 
+
 // load students info via a csv file
-router.post('/load', upload.single('rosters'), function(req, res, next) {
-	
+router.post('/load', function(req, res, next) {
+  // check if an instructor uploaded rosters file
+  var rosters_file = req.body.rosters;
 	var counter = 0; // count the number of lines
 	var num_new_students = 0; // count the number of newly added students
   var fields, first_name_index, last_name_index, utorid_index, student_number_index, email_index;
   var student_model = require('./models/student_model.js');
-  var csv_file = "./roster-4.csv"; // path to a csv file
-  lineReader.eachLine(csv_file, function(line, last) {
+  lineReader.eachLine(rosters_file, function(line, last) {
     if (counter == 0) {
         // find index of each filed
         fields = line.split(',');

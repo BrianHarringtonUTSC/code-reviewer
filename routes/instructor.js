@@ -23,8 +23,8 @@ router.get('/', function(req, res, next) {
   	// TODO add flash messages, so users know what to do
   	else if (student === null) {
   		console.log("You're not in this class.");
-  		res.redirect('/');
-  		return;
+  		// res.redirect('/');
+  		// return;
   	// the student is found, do something
   	} else {
   		console.log('the student is found' + student.email);

@@ -9,17 +9,15 @@ var passport = require('passport');
 var session = require('express-session');
 var dotenv  = require('dotenv');
 
-var strategy = require('./setup-passport');
 // load environment variables
 dotenv.load();
-
-
+// load passport
+var strategy = require('./setup-passport');
 // connect to the database
 mongoose.connect('mongodb://localhost/csca08');
 
 
 var routes = require('./routes/index');
-
 // require routes
 var self_review = require('./routes/self_review');
 var instruction = require('./routes/instruction');
@@ -48,7 +46,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: process.env.AUTH0_CLIENT_SECRET, resave: true,  saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 app.use('/', routes);
 app.use('/self_review', self_review);
