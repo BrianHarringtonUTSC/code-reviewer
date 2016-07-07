@@ -1,7 +1,14 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var lineReader = require('line-reader');
+var fs = require('fs');
+var multer = require('multer');
+
+
 var router = express.Router();
+// temp destination for multer
+var temp_folder = './temp/';
+var upload = multer({ dest: temp_folder });
 
 
 // GET this page.
@@ -27,14 +34,16 @@ router.get('/', function(req, res, next) {
 
 
 // load students info via a csv file
-router.post('/load', function(req, res, next) {
+router.post('/load', upload.single('rosters'), function(req, res, next) {
   // check if an instructor uploaded rosters file
-  var rosters_file = req.body.rosters;
+  var rosters_file = temp_folder + req.file.filename;
 	var counter = 0; // count the number of lines
 	var num_new_students = 0; // count the number of newly added students
   var fields, first_name_index, last_name_index, utorid_index, student_number_index, email_index;
   var student_model = require('./models/student_model.js');
+  console.log(rosters_file);
   lineReader.eachLine(rosters_file, function(line, last) {
+
     if (counter == 0) {
         // find index of each filed
         fields = line.split(',');
@@ -67,6 +76,8 @@ router.post('/load', function(req, res, next) {
     // reach EOF
     if (last) {
       console.log(num_new_students + ' new students are added');
+      // delete this file from temp folder
+      fs.unlinkSync(rosters_file);
       res.redirect('/students');
     }
   });

@@ -8,7 +8,7 @@
   <body>
     <li><a href="/instructor">Go back to instructor</a></li>
 
-    <form action="students/load" method="post">
+    <form action="students/load" method="post" enctype="multipart/form-data">
       <input type="file" value ="Upload rosters file" name="rosters" required><br>
       <input type="submit" value ="Load new students">
     </form>

@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var session = require('express-session');
-var dotenv  = require('dotenv');
+var dotenv  = require('dotenv');  
 
 var strategy = require('./setup-passport');
 // load environment variables
@@ -21,13 +21,13 @@ mongoose.connect('mongodb://localhost/csca08');
 var routes = require('./routes/index');
 
 // require routes
-var self_review = require('./routes/self_review');
+//var self_review = require('./routes/self_review');
 var instruction = require('./routes/instruction');
-var peer_review = require('./routes/peer_review');
+//var peer_review = require('./routes/peer_review');
 var self_assesment = require('./routes/self_assesment');
 var students = require('./routes/students');
 var instructor = require('./routes/instructor');
-var create_new_work = require('./routes/create_new_work');
+//var create_new_work = require('./routes/create_new_work');
 var home = require('./routes/home');
 
 
@@ -51,13 +51,13 @@ app.use(passport.session());
 
 
 app.use('/', routes);
-app.use('/self_review', self_review);
+//app.use('/self_review', self_review);
 app.use('/instruction', instruction);
-app.use('/peer_review', peer_review);
+//app.use('/peer_review', peer_review);
 app.use('/self_assesment', self_assesment);
 app.use('/students', students);
 app.use('/instructor', instructor);
-app.use('/create_new_work', create_new_work);
+//app.use('/create_new_work', create_new_work);
 app.use('/home', home);
 
 // Auth0 callback handler
