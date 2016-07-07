@@ -43,7 +43,6 @@ router.post('/load', upload.single('rosters'), function(req, res, next) {
   var student_model = require('./models/student_model.js');
   console.log(rosters_file);
   lineReader.eachLine(rosters_file, function(line, last) {
-
     if (counter == 0) {
         // find index of each filed
         fields = line.split(',');
@@ -83,5 +82,12 @@ router.post('/load', upload.single('rosters'), function(req, res, next) {
   });
 });
 
-module.exports = router;
+router.post('/unload_all_students', function(req, res, next) {
+  var student_model = require('./models/student_model.js');
+  student_model.remove({}, function(err) {
+    console.log("student collection is dropped");
+    res.redirect('/students');
+  });
+});
 
+module.exports = router;
