@@ -1,11 +1,17 @@
 var express = require('express');
 var router = express.Router();
 var PeerEditing = express();
+var mongoose = require('mongoose');
+
 
 var fs = require('fs');
 
-var code_model = require("./models/code_model.js");
-var review_model = require("./models/review_model.js");
+var code_schema = require("./models/submission_schema.js");
+var review_schema = require("./models/review_schema.js");
+
+var code_model = mongoose.model('a2', code_schema);
+var review_model = mongoose.model('a2_reviews', review_schema);
+var student_model = require('./models/student_model.js');
 
 var num_of_peers = 10;
 var peer_number = 1;
@@ -13,7 +19,20 @@ var is_saved = 0;
 /* GET users listing. */
 
 router.get('/', function(req, res, next) {
-  find_student_code(res, 'peer_review');
+	// user authentication
+	if (!req.isAuthenticated()) {
+		console.log("Please log in");
+    return res.redirect('/');
+  }
+	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
+	  if (err) return err;
+	  if (student == null) {
+	  	res.redirect('/instructor')
+	  } else {
+	  	get_student_utorid(req, res, 'peer_review');
+	  }
+	});
+
 });
 
 router.post('/go_to_self_assesment', function(req, res, next) {
@@ -27,10 +46,18 @@ router.post('/go_to_index', function(req, res, next) {
 
 var num_of_stars = 0;
 var review_array = [];
-var self_utorid = 'luqian3';
+var self_utorid = '';
 var code_path = '';
 var feedbacks_array = [];
 var highlight_str = '';
+
+function get_student_utorid(req, res, site) {
+	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
+	  if (err) return err;
+	  self_utorid = student.utorid;
+	  find_student_code(res, site);
+	 });
+}
 
 function find_student_code(res, site){
   code_model.findOne({ utorid: self_utorid }, function(err, code) {

@@ -5,8 +5,11 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var router = express.Router();
 
-var code_model = require("./models/code_model.js");
-var review_model = require("./models/review_model.js");
+var code_schema = require("./models/submission_schema.js");
+var review_schema = require("./models/review_schema.js");
+
+var code_model = mongoose.model('a2', code_schema);
+var review_model = mongoose.model('a2_reviews', review_schema);
 var rule_model = require("./models/rule_model.js");
 
 var loading_code_collection_name = '';

@@ -1,11 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var mongoose = require('mongoose');
 
 var fs = require('fs');
 // import module mongodb
-var code_model = require("./models/code_model.js");
-var review_model = require("./models/review_model.js");
+var code_schema = require("./models/submission_schema.js");
+var review_schema = require("./models/review_schema.js");
 
+var code_model = mongoose.model('a2', code_schema);
+var review_model = mongoose.model('a2_reviews', review_schema);
 
 var num_of_peers = 10;
 var peer_number = 1;
@@ -15,7 +18,7 @@ var num_of_stars = [];
 var highlight_str = "";
 //var self_utorid = "luijerr1";
 //var self_utorid = "lossevki";
-var self_utorid = "luchenya";
+var self_utorid = "yujonat6";
 var code_path = "";
 
 /* GET users listing. */
@@ -49,9 +52,6 @@ function find_feedback(res, site) {
 	  feedback_array = review.feedbacks;
 	  num_of_stars = review.num_stars;
 	  highlight_str = review.highlights;
-  	console.log("---------");
-  	console.log(highlight_str);
-  	console.log(review);
 	  read_file(res, site);
   });
   
@@ -61,7 +61,6 @@ var readline = require('readline');
 var stream = require('stream');
 
 function read_file(res, site) {
-	console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 	var instream = fs.createReadStream(code_path);
 	var outstream = new stream;
 	var rl = readline.createInterface(instream, outstream);

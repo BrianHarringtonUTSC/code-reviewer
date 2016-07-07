@@ -7,17 +7,29 @@ var fs = require('fs');
 
 //var io = require('socket.io').listen(80); // initiate socket.io server
 
-
+var student_model = require('./models/student_model.js');
 //Here we are configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded( {extended: true} ));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	console.log("ccc");
-  res.render('home');
+	// user authentication
+	if (!req.isAuthenticated()) {
+		console.log("Please log in");
+    return res.redirect('/');
+  }
+	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
+	  if (err) return err;
+	  if (student == null) {
+	  	res.redirect('/instructor')
+	  } else {
+	  	  res.render('home');
+	  }
+	 });
 });
 
 router.post('/go_to_instruction', function(req, res, next) {
+	console.log("-------33333333333------");
 	res.redirect('/instruction');
 });
 

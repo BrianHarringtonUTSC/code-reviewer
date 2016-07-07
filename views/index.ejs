@@ -10,30 +10,6 @@
   </head>
 
   <body class="login_body">
-
-    <div id="main" ng-controller='mainController'>
-      <div ng-show="loginPage">
-        <input placeholder="Username" type="text" ng-model ="username">
-        <input placeholder="Password" type="text" ng-model ="password">
-        <button ng-click="login(username, password)" ng-mouseover="mouseOverExample()">Login</button>
-      </div>
-      <div ng-show="assignmentsPage" ng-repeat="assignment in assignments">
-          <button ng-click="selectAssignment(assignment)">{{assignment}}</button>
-      </div>
-      <div ng-show="reviewSelection">
-          <button ng-click="review('self')">Review Self</button>
-          <button ng-click="review('others')">Review Others</button>
-      </div>
-      <div ng-show="reviewSection" ng-controller='reviewController'>
-        <div ng-repeat="peer in peers">
-          <button ng-click="setPeer(peer)">{{peer}}</button>
-      </div>
-
-
-      </div>
-    </div>
-    <hr>
-
     <script src="https://cdn.auth0.com/js/lock-9.1.min.js"></script>
     <script type="text/javascript">
       
