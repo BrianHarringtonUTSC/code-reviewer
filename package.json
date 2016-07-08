@@ -14,6 +14,7 @@
     "express": "~4.13.1",
     "express-session": "^1.13.0",
     "line-reader": "latest",
+    "moment": "^2.14.1",
     "mongodb": "latest",
     "mongoose": "^4.4.20",
     "morgan": "~1.6.1",

@@ -5,6 +5,10 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var router = express.Router();
 
+var moment = require('moment');
+
+
+
 var code_schema = require("./models/submission_schema.js");
 var review_schema = require("./models/review_schema.js");
 
@@ -14,19 +18,41 @@ var rule_model = require("./models/rule_model.js");
 
 var loading_code_collection_name = '';
 var distributing_code_collection_name = '';
+var error_message = '';
+var passed_deadline = "cannot set a deadline which is already passed";
 
 // GET this page
 router.get('/', function(req, res, next) {
 	res.render('create_new_work', {
 		title : 'create new work',
 		init_loading_work_name: loading_code_collection_name,
-		init_distributing_work_name: distributing_code_collection_name
+		init_distributing_work_name: distributing_code_collection_name,
+		error_message: error_message
 	});
 });
 
 /*-------------create------------------------*/
 router.post('/create', function(req, res, next) {
 	var rule_model = require('./models/rule_model.js');
+	// if student submission deadline is specified
+	if (req.body.student_submission_deadline_date != '') {
+		// set student submission deadline
+		var student_submission_deadline = req.body.student_submission_deadline_date + ' ' + req.body.student_submission_deadline_time;
+		var student_submission_deadline = moment(student_submission_deadline, "YYYY-MM-DD HH:mm");
+		//console.log("student submission deadline is " + moment(student_submission_deadline).format('LLLL'));
+		console.log("student submission deadline is " + moment(student_submission_deadline));
+		// error checking
+		if (student_submission_deadline.isBefore(moment())) {
+			error_message = passed_deadline;
+			res.redirect('/create_new_work');
+			return;
+		}
+	} else {
+		console.log("no student submission deadline specified");
+	}
+
+	// TODO: check all input time
+
 	// create a new rule
 	var new_rule = new rule_model({
 		work_name : req.body.work_name,
@@ -34,7 +60,7 @@ router.post('/create', function(req, res, next) {
 		num_peers : req.body.num_peers,
 		required_files : req.body.required_files.split(','),
 		repo_path : req.body.code_path,
-    student_submission_deadline : new Date(), // TODO convert date object using moment.js
+    student_submission_deadline : student_submission_deadline , // TODO convert date object using moment.js
     release_to_peers : new Date(),
     peer_review_deadline : new Date(),
     release_to_tas : new Date(),
@@ -46,6 +72,7 @@ router.post('/create', function(req, res, next) {
 	new_rule.save( function(err) {
 		if (err) return console.log(err);
 		// refresh this page
+		console.log("retrieved time is " + moment(new_rule.student_submission_deadline).format("DD MMM YYYY hh:mm a"));
 		res.redirect('/create_new_work');
 	});
 });
@@ -56,6 +83,7 @@ router.post('/load_assignment', function(req, res, next) {
 	var file_report_name = '';
 	var directory_path = '';
 	rule_model.findOne({ work_name: req.body.loading_work_name }, function(err, rule) {
+		if (err) return err;
   	file_name = rule.required_files[0];
   	//file_report_name = rule
   	directory_path = rule.repo_path;
@@ -124,6 +152,7 @@ function read_file(file_name, file_report_name, directory_path, res) {
 	});
 	res.redirect('/create_new_work');
 }
+
 function distribute(code_array, res) {
 	var len = code_array.length;
 	for (var i = 0; i < len; i ++) {
@@ -159,7 +188,7 @@ function distribute(code_array, res) {
 		    	if (err) console.log(err);
 			});
 	}
-	res.redirect('/create_new_work')
+	res.redirect('/create_new_work');
 }
 
 

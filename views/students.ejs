@@ -14,7 +14,10 @@
     </form>
 
     <form action="students/unload_all_students" method="post">
-      <button type="submit" name="unload_all_students">Unload All Students(for development)</button>
+      <button type="submit" name="unload_all_students" onclick="myFunction();">Unload All Students(for development)</button>
+      <script>
+        var result = window.comfirm("do you want to dorp all students");
+      </script>
     </form>
 
     <p> All students </p>
@@ -26,3 +29,5 @@
     </section>
   </body>
 </html>
+
+

@@ -10,7 +10,7 @@ var rule_schema = new mongoose.Schema({
     },
     required_files : [String],
     repo_path : String,
-    student_submission_deadline : Date,
+    student_submission_deadline : mongoose.Schema.Types.Mixed,
     release_to_peers : Date,
     peer_review_deadline : Date,
     release_to_tas : Date,

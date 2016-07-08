@@ -13,7 +13,7 @@ router.use(bodyParser.urlencoded( {extended: true} ));
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
-	console.log('Aaaand here we go...');
+	console.log('\nAaaand here we go...');
 	next();
 });
 
@@ -39,20 +39,12 @@ function verify_student(req, res) {
 }
 
 function verify_ta(req, res) {
-	if (req.user.emails[0].value == "vincent.tse@mail.utoronto.ca") {
+	if ((req.user.emails[0].value == "vincent.tse@mail.utoronto.ca") ||
+		(req.user.emails[0].value == "bo.zhao@mail.utoronto.ca")) {
   	return res.redirect('/instructor');
   }
 }
-router.post('/go_to_home', function(req, res, next) {
-	console.log("bbb");
-	res.redirect('/home');
-});
 
-router.post('/go_to_instructor', function(req, res, next) {
-	res.redirect('/instructor');
-});
-
-console.log("Connection opened.");
 
 module.exports = router;
 
