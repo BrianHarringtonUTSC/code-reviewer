@@ -10,6 +10,11 @@ var rule_schema = new mongoose.Schema({
     },
     required_files : [String],
     repo_path : String,
+    num_feedbacks : {
+        type: Number,
+        max: 20
+    },
+    feedback_questions: [String],
     student_submission_deadline : mongoose.Schema.Types.Mixed,
     release_to_peers : Date,
     peer_review_deadline : Date,

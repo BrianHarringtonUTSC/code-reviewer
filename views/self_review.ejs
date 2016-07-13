@@ -84,12 +84,11 @@
 
       
       <div style="text-align: left; font-family: monospace; margin-top:1%;">
-
-        <h1 style="font-size: 30px;">Overall Comments</h1>
-        <p style="margin-top:1%;">1. Give at least one positive comment about your peers assignment.</p>
-        <input type="text" class="tb1" name="feedback1" value="<%= feedback[0] %>" disabled></input>
-        <p style="margin-top:1%;">2. Give at least one constructive comment to help your peer improve the assignment.</p>
-        <input type="text" class="tb1" name="feedback2" value="<%= feedback[1] %>" disabled></input>
+      <% for(var i = 0; i < feedback_questions.length; i++) { 
+          var fb_name = "feedback_" + String(i) %>
+        <p style="margin-top:1%;"><%= i + 1;%>. <%= feedback_questions[i]; %></p>
+        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>"></input>
+      <% } %>
       </div>
 
     </div> <!-- end of div tab_content-->
