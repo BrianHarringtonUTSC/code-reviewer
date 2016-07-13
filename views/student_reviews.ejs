@@ -16,7 +16,7 @@
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
     <nav>
       <ul>
-      <li><a href="/home">Home</a></li>
+      <li><a href="/instructor">Home</a></li>
       <li class="drop">
         <a href="#">You</a>
         
@@ -36,21 +36,32 @@
     </ul>
   </nav>
 
-    <div class="breadcrumb">
-      <a>Instruction &#38; Tips</a>
-      <a class="active">Give Feedback</a>
-      <a>Self Assess</a>
+  <form enctype="application/json" action="student_reviews/go_to_student_reviews" method="post">
+    <div style=" text-align: left; margin-left: 2%;">
+      <input type="text" class="tb3" name="student_utorid" value="<%= utorid %>"></input>
+      <input class="button" type="submit" value="peer" name="peer_btn"></input>
+      <input class="button" type="submit" value="self" name="self_btn"></input>
+    
+      <% if (s_or_p == 1) { %>
+        <label>You are now in Peer Review</label>
+      <% } 
+        if (s_or_p == 0) { %>
+        <label>You are now in Self Review</label>
+      <% } %>
     </div>
-    <form enctype="application/json" action="peer_review/go_to_peer_review" method="post">
+    <% if (is_empty) { %>
+      <br></br>
+      <label>Utorid is not given or not correct. <br></br> Please Enter Utorid.</label>
+    <% } else { %>
     <ul class="tab">
       <% var i = 1;%>
       <% entries.forEach(function(item) { %>
         <% var btn_name = "peer_" + String(i); %>
         <% var btn_value = "Peer " + String(i); %>
         <% if (i == peer_num) { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks active"></input></li>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= item %>" class="tablinks active"></input></li>
         <% } else { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks"></input></li>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= item %>" class="tablinks"></input></li>
         <% } %>
         <% i = i + 1;%>
       <% }); %>
@@ -112,16 +123,10 @@
       <input class="button" type="submit" name="save_btn" value="save"></input>
 
     </div> <!-- end of div tab_content-->
+    <% } %>
     </form>
 
 
-    <form enctype="application/json" action="peer_review/go_to_self_assesment" method="post">
-      <input class="button" type="submit" value="save and go to self assesment"></input>
-    </form>
-
-  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-    <i class="material-icons right">send</i>
-  </button>
 
     <script type="text/javascript" src="javascripts/test.js"></script>
     <script type="text/javascript" src="javascripts/highlight.js"></script>

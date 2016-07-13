@@ -9,13 +9,15 @@ var fs = require('fs');
 var code_schema = require("./models/submission_schema.js");
 var review_schema = require("./models/review_schema.js");
 
-var code_model = mongoose.model('a2', code_schema);
+var work_name = 'a2';
+var rule_model = require("./models/rule_model.js");
+var code_model = mongoose.model(work_name, code_schema);
 var review_model = mongoose.model('a2_reviews', review_schema);
 var student_model = require('./models/student_model.js');
 
 var num_of_peers = 10;
 var peer_number = 1;
-var is_saved = 0;
+var first_time = 1;
 /* GET users listing. */
 
 router.get('/', function(req, res, next) {
@@ -29,7 +31,12 @@ router.get('/', function(req, res, next) {
 	  if (student == null) {
 	  	res.redirect('/instructor')
 	  } else {
-	  	get_student_utorid(req, res, 'peer_review');
+	  	if (first_time) {
+	  		first_time = 0;
+	  		get_feedback_questions(req, res, 'peer_review');
+	  	} else {
+	  		get_student_utorid(req, res, 'peer_review');
+	  	}
 	  }
 	});
 
@@ -48,8 +55,17 @@ var num_of_stars = 0;
 var review_array = [];
 var self_utorid = '';
 var code_path = '';
-var feedbacks_array = [];
+var feedbacks = [];
 var highlight_str = '';
+var feedback_questions = [];
+
+function get_feedback_questions(req, res, site) {
+	rule_model.findOne({ work_name: work_name }, function (err, rule) {
+	  if (err) return err;
+	  feedback_questions = rule.feedback_questions;
+	  get_student_utorid(req, res, site);
+	 });
+}
 
 function get_student_utorid(req, res, site) {
 	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
@@ -75,11 +91,15 @@ function find_to_review_code_path(res, site) {
 
 function find_feedbacks(res, site) {
   review_model.findOne({ author: review_array[peer_number-1], review_by: self_utorid }, function(err, review) {
-  	feedbacks_array = review.feedbacks;
+  	feedbacks = review.feedbacks;
+  	// init the feedbacks list
+  	if (feedbacks.length == 0) {
+		for (var i=0; i < feedback_questions.length; i++) {
+			feedbacks.push("");
+		}
+  	}
   	num_of_stars = review.num_stars;
   	highlight_str = review.highlights;
-  	console.log("---------");
-  	console.log(review);
   	read_file(res, site);
   });
 }
@@ -102,9 +122,10 @@ function read_file(res, site) {
 			entries: review_array,
 			peer_num: peer_number,
 			code: str,
-			feedback: feedbacks_array,
+			feedbacks: feedbacks,
 			number_of_stars: num_of_stars,
-			init_highligts: highlight_str
+			init_highligts: highlight_str,
+			feedback_questions: feedback_questions
 		});
 	});
 }
@@ -113,7 +134,7 @@ function save() {
 	review_model.findOneAndUpdate(
 		{ author: review_array[peer_number-1],
 		  review_by: self_utorid},
-		{ $set: {feedbacks: feedbacks_array,
+		{ $set: {feedbacks: feedbacks,
 		num_stars: num_of_stars,
 		highlights: highlight_str } },
 		{ new: true},
@@ -126,10 +147,13 @@ function save() {
 
 router.post('/go_to_peer_review', function(req, res, next) {
 	var temp_feedback_array = [];
-	temp_feedback_array.push(req.body.feedback1);
-	temp_feedback_array.push(req.body.feedback2);
+	for (var key in req.body) {
+		if (key.indexOf("feedback") > -1) {
+			temp_feedback_array.push(req.body[key]);
+		}
+	}
 	console.log(req.body.highlight_storage);
-	feedbacks_array = temp_feedback_array;
+	feedbacks = temp_feedback_array;
 	highlight_str = req.body.highlight_storage;
 	num_of_stars = req.body.star_num;
 

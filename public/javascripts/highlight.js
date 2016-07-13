@@ -9,7 +9,7 @@ function set_up_highlight(init_highlights) {
 		temp.push(temp_highlight_array[i-1]);
 		if (i % 3 == 0) {
 			highlight_array.push(temp);
-			temp = [];
+			temp = []
 		}
 	}
 
@@ -68,11 +68,13 @@ function addCommentFromSelection() {
 }
 
 function store_comments(startLine, endLine, comment) {
+	comment = comment.replace(new RegExp(',', 'g'), '@');
 	highlight_array.push([startLine, endLine, comment]);
 	document.getElementById('storage').value = highlight_array;
 }
 
 function highlight(startLine, endLine, comment) {
+	comment = comment.replace(new RegExp('@', 'g'), ',');
 	for (var i = startLine; i <= endLine; i++) {
 		nextElement = document.getElementById('line-' + String(i));
 		if (nextElement.className === "highlight-1") {

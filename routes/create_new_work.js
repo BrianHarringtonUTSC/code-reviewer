@@ -21,23 +21,82 @@ var distributing_code_collection_name = '';
 var error_message = '';
 var passed_deadline = "cannot set a deadline which is already passed";
 
+var work_name = "";
+var late_penalty = "";
+var num_peers = 0;
+var required_files = [];
+var repo_path = "";
+var student_submission_deadline_date = "";
+var student_submission_deadline_time = "";
+var num_feedbacks = 0;
+var feedback_questions = [];
+
+var student_no_submit = [];
+var num_submission = 0;
+
 // GET this page
 router.get('/', function(req, res, next) {
 	res.render('create_new_work', {
 		title : 'create new work',
+		work_name: work_name,
+		late_penalty: late_penalty,
+		num_peers: num_peers,
+		required_files: required_files,
+		repo_path: repo_path,
+		num_feedbacks: num_feedbacks,
+		feedback_questions: feedback_questions,
+		student_no_submit: student_no_submit,
+		num_submission: num_submission,
 		init_loading_work_name: loading_code_collection_name,
 		init_distributing_work_name: distributing_code_collection_name,
 		error_message: error_message
 	});
 });
 
+
 /*-------------create------------------------*/
 router.post('/create', function(req, res, next) {
+	work_name = req.body.work_name;
+	late_penalty = req.body.late_penalty;
+	num_peers = req.body.num_peers;
+	required_files = req.body.required_files.split(',');
+	repo_path = req.body.repo_path;
+	student_submission_deadline_date = req.body.student_submission_deadline_date;
+	student_submission_deadline_time = req.body.student_submission_deadline_time;
+
+	num_feedbacks = req.body.num_feedbacks;
+	// if the button clicked is set_feedback, refreash the page
+	if ("set_feedbacks" in req.body) { // initialize the list
+		if (num_feedbacks < feedback_questions.length) {
+			var dif = feedback_questions.length - num_feedbacks;
+			for (var i=0; i < dif; i++) {
+				feedback_questions.pop();
+			}
+		} else {
+			for (var i=0; i < num_feedbacks; i++) {
+				if (i >= feedback_questions.length) {
+					feedback_questions.push("");
+				}
+			}
+		}
+		res.redirect('/create_new_work');
+		return;
+	}
+	// append the feedback questions into array
+	var question = 0;
+	for (var key in req.body) {
+		if (key.indexOf("question") > -1) {
+			feedback_questions[question] = req.body[key];
+			question ++;
+		}
+	}
+
 	var rule_model = require('./models/rule_model.js');
+
 	// if student submission deadline is specified
 	if (req.body.student_submission_deadline_date != '') {
 		// set student submission deadline
-		var student_submission_deadline = req.body.student_submission_deadline_date + ' ' + req.body.student_submission_deadline_time;
+		var student_submission_deadline = student_submission_deadline_date + ' ' + student_submission_deadline_time;
 		var student_submission_deadline = moment(student_submission_deadline, "YYYY-MM-DD HH:mm");
 		//console.log("student submission deadline is " + moment(student_submission_deadline).format('LLLL'));
 		console.log("student submission deadline is " + moment(student_submission_deadline));
@@ -55,11 +114,13 @@ router.post('/create', function(req, res, next) {
 
 	// create a new rule
 	var new_rule = new rule_model({
-		work_name : req.body.work_name,
-		late_penalty : "",
-		num_peers : req.body.num_peers,
-		required_files : req.body.required_files.split(','),
-		repo_path : req.body.code_path,
+		work_name : work_name,
+		late_penalty : late_penalty,
+		num_peers : num_peers,
+		required_files : required_files,
+		repo_path : repo_path,
+		num_feedbacks: num_feedbacks,
+		feedback_questions: feedback_questions,
     student_submission_deadline : student_submission_deadline , // TODO convert date object using moment.js
     release_to_peers : new Date(),
     peer_review_deadline : new Date(),
@@ -110,18 +171,15 @@ router.post('/distribute', function(req, res, next) {
 		distribute(code_array, res);
 	});
 });
-
+var count = 0;
 function read_file(file_name, file_report_name, directory_path, res) {
-	console.log("------------");
-	console.log(file_name);
-	console.log(file_report_name);
-	console.log(directory_path);
 // Loop through all the files in the directory
 	fs.readdir( directory_path, function( err, files ) {
 	  if( err ) {
 	    console.error( "Could not list the directory.", err );
 	  } else {
 	    files.forEach( function (studentUtorid, index) {
+	    	count ++;
 	      // update students collection
 	      var newCodePath = directory_path + '/' + studentUtorid + '/' + 'a2' + '/' + file_name;
 	      var newReportPath = directory_path + '/' + studentUtorid + '/' + 'a2' + '/' + 'a2-report.txt';
@@ -138,10 +196,12 @@ function read_file(file_name, file_report_name, directory_path, res) {
               failed_test_cases: []
 	          });
 	          code.save( function(err) {
+	          	num_submission ++;
 	            console.log("added ", code.utorid);
 	            if (err) console.log(err);
 	          });
 	        } else if (err.code == 'ENOENT') {
+	          student_no_submit.push(studentUtorid);
 	          console.log("file doesn't exist. the utorid is ", studentUtorid);
 	        } else {
 	          console.log('some other error', err.code);
@@ -177,6 +237,7 @@ function distribute(code_array, res) {
 			code_array[(i + j) % len].to_review.push(code_array[i].utorid);
 		}
 	}
+	console.log(code_array[5]);
 	// update the actual collection
 	for (var i = 0; i < len; i ++) {
 		code_model.findOneAndUpdate( 
