@@ -30,6 +30,17 @@
       <li><a href="#">Help</a></li>
     </ul>
   </nav>
+    <form action="home/go_to_submission" method="post">
+      <% rules.forEach( function(item) { %>
+        <p>
+          <%= item.work_name + ' ' + item.required_files %>
+          <input class="button" type="submit" value="go to a submission"></input>
+        </p>
+      <% }); %>
+    </form>
+
+
+
     <form enctype="application/json" action="home/go_to_instruction" method="post">
       <input class="button" type="submit" value="start review"></input>
     </form>

@@ -19,13 +19,31 @@ router.get('/', function(req, res, next) {
     return res.redirect('/');
   }
 	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
+		// error checking
 	  if (err) return err;
+	  // this student is not registered in this class
 	  if (student == null) {
-	  	res.redirect('/instructor')
+	  	console.log("this student is not registered in this class");
+	  	res.redirect('/');
 	  } else {
-	  	  res.render('home');
+	  	// loop through collection rules
+  		var rule_model = require('./models/rule_model.js');
+	  	// find all documents in collection rules
+	  	rule_model.find({}, function(err, rules) {
+	  		if (err) return err;
+	  		res.render('home', {
+	  			title : 'home',
+	  			rules : rules
+	  		});
+	  	});
 	  }
 	 });
+});
+
+// go to corresponding submission page
+router.post('/go_to_submission', function(req, res, next) {
+	req.flash('submission_name', "blhaaaaaa");
+	res.redirect('/submission');
 });
 
 router.post('/go_to_instruction', function(req, res, next) {
