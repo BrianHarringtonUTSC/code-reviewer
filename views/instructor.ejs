@@ -6,8 +6,19 @@
   </head>
 
   <body>
+    <form enctype="application/json" action="instructor/go_to_create_new_work" method="post">
+      <input class="button" type="submit" value="Create New Work"></input>
+    </form>
+    <form enctype="application/json" action="instructor/go_to_students" method="post">
+      <input class="button" type="submit" value="create student and ta"></input>
+    </form>
+    <form enctype="application/json" action="instructor/go_to_student_reviews" method="post">
+      <input class="button" type="submit" value="check student reviews"></input>
+    </form>
     <li><a href="/create_new_work">Create New Work</a></li>
     <li><a href="/students">Show all students</a></li>
+    <li><a href="/student_reviews">check student reviews</a></li>
+    <li><a href="/tas">create ta</a></li>
     <section class="ac-container">
       <% rules.forEach( function(item) { %>
       <p><%= item.work_name + ' ' + item.num_peers + ' ' + item.required_files %></p>
