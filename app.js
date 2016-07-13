@@ -32,7 +32,8 @@ var students = require('./routes/students');
 var instructor = require('./routes/instructor');
 var create_new_work = require('./routes/create_new_work');
 var home = require('./routes/home');
-var tas = require('./routes/');
+var tas = require('./routes/tas');
+var student_review = require('./routes/student_review');
 
 
 var app = express();
@@ -64,6 +65,8 @@ app.use('/students', students);
 app.use('/instructor', instructor);
 app.use('/create_new_work', create_new_work);
 app.use('/home', home);
+app.use('/tas', tas);
+app.use('/student_review', student_review);
 
 // Auth0 callback handler
 app.get('/callback', 
