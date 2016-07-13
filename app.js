@@ -16,9 +16,9 @@ dotenv.load();
 
 // connect to the database
 // localhost
-//mongoose.connect('mongodb://localhost/csca08');
-// mlab
-mongoose.connect('mongodb://csca08admin:csca08admin@ds037185.mlab.com:37185/csca08');
+mongoose.connect('mongodb://localhost/csca08');
+// mlab                       // username & password changed
+//mongoose.connect('mongodb://csca08admin:csca08admin@ds037185.mlab.com:37185/csca08');
 
 
 var routes = require('./routes/index');
