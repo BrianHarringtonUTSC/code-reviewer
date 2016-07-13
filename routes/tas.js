@@ -51,6 +51,8 @@ router.post('/load', function(req, res, next) {
             utorid : values[utorid_index],
             student_number : values[student_number_index],
             email : values[email_index],
+            to_review : [],
+            to_grade : [],
             is_active : true
         });
         // write a new ta into database

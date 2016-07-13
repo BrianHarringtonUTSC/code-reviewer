@@ -36,21 +36,31 @@ var num_submission = 0;
 
 // GET this page
 router.get('/', function(req, res, next) {
-	res.render('create_new_work', {
-		title : 'create new work',
-		work_name: work_name,
-		late_penalty: late_penalty,
-		num_peers: num_peers,
-		required_files: required_files,
-		repo_path: repo_path,
-		num_feedbacks: num_feedbacks,
-		feedback_questions: feedback_questions,
-		student_no_submit: student_no_submit,
-		num_submission: num_submission,
-		init_loading_work_name: loading_code_collection_name,
-		init_distributing_work_name: distributing_code_collection_name,
-		error_message: error_message
+  var ta_model = require('./models/ta_model.js');
+  // find all documents in collection tas
+	ta_model.find({}, function (err, tas) {
+	  if (err) {
+	  	console.log(err);
+	  }
+		res.render('create_new_work', {
+			title : 'create new work',
+			work_name: work_name,
+			late_penalty: late_penalty,
+			num_peers: num_peers,
+			required_files: required_files,
+			repo_path: repo_path,
+			num_feedbacks: num_feedbacks,
+			feedback_questions: feedback_questions,
+			student_no_submit: student_no_submit,
+			num_submission: num_submission,
+			init_loading_work_name: loading_code_collection_name,
+			init_distributing_work_name: distributing_code_collection_name,
+			error_message: error_message,
+			tas: tas
+		});
 	});
+
+
 });
 
 
