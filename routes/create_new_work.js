@@ -60,7 +60,7 @@ router.post('/create', function(req, res, next) {
 		num_peers : req.body.num_peers,
 		required_files : req.body.required_files.split(','),
 		repo_path : req.body.code_path,
-    student_submission_deadline : student_submission_deadline , // TODO convert date object using moment.js
+    student_submission_deadline : student_submission_deadline,
     release_to_peers : new Date(),
     peer_review_deadline : new Date(),
     release_to_tas : new Date(),

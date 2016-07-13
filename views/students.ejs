@@ -13,10 +13,15 @@
       <input type="submit" value ="Load new students">
     </form>
 
-    <form action="students/unload_all_students" method="post">
-      <button type="submit" name="unload_all_students" onclick="myFunction();">Unload All Students(for development)</button>
+    <form id="drop-all">
+      <button type="submit" name="unload_all_students" onclick="clicked()">Unload All Students(for development)</button>
       <script>
-        var result = window.comfirm("do you want to dorp all students");
+        function clicked() {
+          if (window.confirm('Do you want to drop all students?')) {
+            document.getElementById("drop-all").setAttribute("action", "students/unload_all_students");
+            document.getElementById("drop-all").setAttribute("method", "post");
+          }
+        }
       </script>
     </form>
 

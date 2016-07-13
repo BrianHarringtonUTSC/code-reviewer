@@ -38,9 +38,6 @@ router.post('/go_to_self_review', function(req, res, next) {
 	res.redirect('/self_review');
 });
 
-
-
-console.log("Connection opened.");
 /*
 io.sockets.on('connection', function (socket) {
   socket.emit('news', { hello: 'world' }); // Send data to client
