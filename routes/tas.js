@@ -31,7 +31,7 @@ router.post('/load', function(req, res, next) {
   var rosters_file = req.body.rosters;
 	var counter = 0; // count the number of lines
 	var num_new_tas = 0; // count the number of newly added tas
-  var fields, first_name_index, last_name_index, utorid_index, student_number_index, email_index;
+  var fields, first_name_index, last_name_index, utorid_index, student_number_index, email_index, weight_index;
   var ta_model = require('./models/ta_model.js');
   lineReader.eachLine(rosters_file, function(line, last) {
     if (counter == 0) {
@@ -42,6 +42,7 @@ router.post('/load', function(req, res, next) {
         utorid_index = fields.indexOf("UTORiD");
         student_number_index = fields.indexOf("Student Number");
         email_index = fields.indexOf("Email");
+        weight_index = fields.indexOf("Weight");
     } else {
         var values = line.split(',');
         // create a new ta
@@ -53,6 +54,7 @@ router.post('/load', function(req, res, next) {
             email : values[email_index],
             to_review : [],
             to_grade : [],
+            weight : values[weight_index],
             is_active : true
         });
         // write a new ta into database

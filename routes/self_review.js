@@ -26,6 +26,7 @@ router.get('/', function(req, res, next) {
 	  	res.redirect('/instructor')
 	  } else {
 	  	if (req.session.self_utorid == null) {
+	  		console.log("heeeerrrrrrrrreeeeeeeeeee");
 	  		init_all(req, res, 'self_review');
 	  	} else {
 	  		get_student_utorid(req, res, 'self_review');
@@ -57,6 +58,7 @@ function init_all(req, res, site) {
   	get_feedback_questions(req, res, site);
 
 }
+
 function get_feedback_questions(req, res, site) {
 	rule_model.findOne({ work_name: work_name }, function (err, rule) {
 	  if (err) return err;

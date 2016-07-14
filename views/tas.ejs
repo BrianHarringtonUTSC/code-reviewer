@@ -17,7 +17,7 @@
     <p> number of TA's is <%= num_tas %> </p>
     <section class="ac-container">
       <% tas.forEach( function(item) { %>
-      <p><%= item.utorid + ' ' + item.email + ' ' + item.student_number %></p>
+      <p><%= item.utorid + ' ' + item.email + ' ' + item.student_number + '---------' + item.weight %></p>
       <% }); %>
     </section>
   </body>

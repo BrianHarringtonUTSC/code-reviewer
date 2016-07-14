@@ -7,6 +7,7 @@ var fs = require('fs');
 
 
 var student_model = require('./models/student_model.js');
+var ta_model = require('./models/ta_model.js');
 
 //Here we are configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded( {extended: true} ));
@@ -39,10 +40,21 @@ function verify_student(req, res) {
 }
 
 function verify_ta(req, res) {
-	if ((req.user.emails[0].value == "vincent.tse@mail.utoronto.ca") ||
-		(req.user.emails[0].value == "bo.zhao@mail.utoronto.ca")) {
+	ta_model.findOne({ email: req.user.emails[0].value }, function (err, ta) {
+	  if (err) return err;
+	  if (ta == null) {
+	  	verify_instructor(req, res);
+	  } else {
+	  	return res.redirect('/ta');
+	  }
+	 });
+
+}
+
+function verify_instructor(req, res) {
+	if (req.user.emails[0].value == "vincent.tse@mail.utoronto.ca"){
   	return res.redirect('/instructor');
-  }
+  	}
 }
 
 

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/tab.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/textbox.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
+
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+  </head>
+  <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
+    <nav>
+      <ul>
+      <li><a href="/home">Home</a></li>
+      <li class="drop">
+        <a href="#">You</a>
+        
+        <div class="dropdownContain">
+          <div class="dropOut">
+            <div class="triangle"></div>
+            <ul>
+              <li>Plan</li>
+              <li>Account Settings</li>
+              <li>Switch Account</li>
+              <li>Sign Out</li>
+            </ul>
+          </div>
+        </div>
+
+      <li><a href="#">Help</a></li>
+    </ul>
+  </nav>
+
+    <div class="breadcrumb">
+      <a>Instruction &#38; Tips</a>
+      <a class="active">Give Feedback</a>
+      <a>Self Assess</a>
+    </div>
+    <form enctype="application/json" action="ta_review/go_to_ta_review" method="post">
+    <ul class="tab">
+      <% var i = 1;%>
+      <% entries.forEach(function(item) { %>
+        <% var btn_name = "peer_" + String(i); %>
+        <% var btn_value = "Peer " + String(i); %>
+        <% if (i == peer_num) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks active"></input></li>
+        <% } else { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks"></input></li>
+        <% } %>
+        <% i = i + 1;%>
+      <% }); %>
+    </ul>
+
+    <div class="tabcontent">
+      <div class="stars">
+        <% for(var i = 5; i >= 1; i --){
+            var class_name = "star star-" + String(i);
+            var id_name = "star-" + String(i);
+            var func_name = "get_star(" + String(i) + ")";
+            if (i == number_of_stars) { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked"></input>
+         <% } else { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>"></input>
+         <% } %>
+            <label class="<%= class_name %>" for="<%= id_name %>"></label>
+        <% } %>
+      </div>
+
+      <input id="star_number" value="<%= number_of_stars%>" name="star_num" style="display:none;"></input>
+      <input id="storage" name="highlight_storage" type="text" style="display:none;"></input>
+
+      <div>
+        <input type="button" onclick="addCommentFromSelection()" value="Add Comment!"></input>
+      </div>
+
+      <div class="border" style="text-align: left;">
+        <ol class="code">
+          <%
+          var lines = code.split("\n");
+          var count = 1;
+          lines.forEach(function(next_line){
+            var line = "line-" + String(count); 
+            if (next_line.length <= 1) {
+              next_line = next_line + String.fromCharCode(160);
+            }
+            next_line = next_line.replace(new RegExp(' ', 'g'), String.fromCharCode(160)); %>
+            <li id="<%= line %>" class="row">
+              <span><%= next_line %></span>
+            </li>
+            <% count = count + 1; %>
+          <% }); %>
+        </ol>
+      </div>
+      
+      <div id="popup" class="annotation">comment text</div>
+
+      
+      <div style="text-align: left; font-family: monospace; margin-top:1%;">
+
+        <h1 style="font-size: 30px;">Overall Comments</h1>
+      <% for(var i = 0; i < feedback_questions.length; i++) { 
+          var fb_name = "feedback_" + String(i) %>
+        <p style="margin-top:1%;"><%= i + 1;%>. <%= feedback_questions[i]; %></p>
+        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>"></input>
+      <% } %>
+      </div>
+      
+      <input class="button" type="submit" name="prev_btn" value="previous" style="float:left;"></input>
+      <input class="button" type="submit" name="save_btn" value="save"></input>
+	  <input class="button" type="submit" name="next_btn" value="next" style="float:right;"></input>
+    </div> <!-- end of div tab_content-->
+    </form>
+
+
+
+    <script type="text/javascript" src="javascripts/test.js"></script>
+    <script type="text/javascript" src="javascripts/highlight.js"></script>
+  </body>
+</html>
+

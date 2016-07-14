@@ -67,8 +67,9 @@
 
     <form action="create_new_work/distribute_ta" method="post">
     <% tas.forEach(function(ta){ 
-        var cbox_name = "checkbox_" + ta.utorid; %>
-      <input type="checkbox" name="<%= cbox_name %>" value="aaa"><%= ta.utorid %></input><br />
+        var cbox_name = "checkbox_" + ta.utorid; 
+        var cbox_value = ta.utorid + "," + ta.weight; %>
+      <input type="checkbox" name="<%= cbox_name %>" value="<%= cbox_value %>"><%= ta.utorid %></input><br />
     <% }); %>
     <input type="submit" name="" value="distribute"></input><br />
     </form>

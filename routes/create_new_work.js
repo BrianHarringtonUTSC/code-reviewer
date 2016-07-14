@@ -15,6 +15,7 @@ var review_schema = require("./models/review_schema.js");
 var code_model = mongoose.model('a2', code_schema);
 var review_model = mongoose.model('a2_reviews', review_schema);
 var rule_model = require("./models/rule_model.js");
+var ta_model = require('./models/ta_model.js');
 
 var loading_code_collection_name = '';
 var distributing_code_collection_name = '';
@@ -30,6 +31,7 @@ var student_submission_deadline_date = "";
 var student_submission_deadline_time = "";
 var num_feedbacks = 0;
 var feedback_questions = [];
+var tas_need_to_review = [];
 
 var student_no_submit = [];
 var num_submission = 0;
@@ -173,14 +175,120 @@ router.post('/distribute', function(req, res, next) {
   });
 
 	var cStream = code_model.find().stream( /*{ transform: JSON.stringify } */);
+	code_array = [];
  	cStream.on('data', function(doc) {
 		code_array.push(doc);
 	});
 
 	cStream.on('end', function(doc) {
-		distribute(code_array, res);
+		distribute(res);
 	});
 });
+var ta_dict = new Array();
+/*--------------distribution--TA------------------*/
+router.post('/distribute_ta', function(req, res, next) {
+	for (var key in req.body) {
+		if (key.indexOf("checkbox_") > -1) {
+			var ta = req.body[key].split(",");
+			for (var i = 0; i < ta[1]; i++) {
+				ta_dict[ta[0]] = [];
+				tas_need_to_review.push(ta[0]);
+			}
+		}
+	}
+	console.log(ta_dict);
+	console.log(tas_need_to_review);
+	
+	var cStream = code_model.find().stream();
+	code_array = [];
+ 	cStream.on('data', function(doc) {
+		code_array.push(doc);
+	});
+
+	cStream.on('end', function(doc) {
+		distribute_ta(res);
+	});
+
+});
+
+function distribute_ta(res) {
+	var reviews_per_weight = Math.floor(code_array.length / tas_need_to_review.length);
+	var code = 0;
+	for (var i = 0; i < tas_need_to_review.length; i ++) {
+		for (var j = 0; j < reviews_per_weight; j ++) {
+			// create reviews
+  		var new_review = new review_model({
+  			author: code_array[code].utorid,
+  			review_by: tas_need_to_review[i],
+  			feedbacks: [],
+  			high_light: [],
+  			num_stars: 0
+
+  		});
+      // avoid duplicates
+  		new_review.save(function (err) {
+  			if (err) {
+  				console.log("duplicates");
+  			}
+  		});
+			ta_dict[tas_need_to_review[i]].push(code_array[code].utorid);
+			code_array[code].review_by.push(tas_need_to_review[i]);
+			code ++;
+		}
+	}
+	console.log(ta_dict);
+	console.log(code_array[code-1]);
+	// distribute remainders
+	var j = 0;
+	while (code < code_array.length) {
+		var ta_utorid = tas_need_to_review[j];
+		// create reviews
+		var new_review = new review_model({
+			author: code_array[code].utorid,
+			review_by: ta_utorid,
+			feedbacks: [],
+			high_light: [],
+			num_stars: 0
+
+		});
+    // avoid duplicates
+		new_review.save(function (err) {
+			if (err) {
+				console.log("duplicates");
+			}
+		});
+
+		ta_dict[ta_utorid].push(code_array[code].utorid);
+		code_array[code].review_by.push(ta_utorid);
+		code ++;
+		j ++;
+	}
+	// update both ta and code collection
+	for (var i = 0; i < code_array.length; i ++) {
+		code_model.findOneAndUpdate( 
+			{ _id: code_array[i]._id}, 
+			{ $set: { review_by: code_array[i].review_by} }, 
+			{ new: true},
+			function(err, doc) {
+		    	if (err) console.log(err);
+			});
+	}
+
+	for (var ta_utorid in ta_dict) {
+		ta_model.findOneAndUpdate( 
+			{ utorid: ta_utorid}, 
+			{ $set: { to_review: ta_dict[ta_utorid]} }, 
+			{ new: true},
+			function(err, doc) {
+		    	if (err) console.log(err);
+			});
+	}
+	for (ta in ta_dict) {
+		console.log(ta_dict[ta].length);
+	}
+	res.redirect('/create_new_work');
+}
+
 var count = 0;
 function read_file(file_name, file_report_name, directory_path, res) {
 // Loop through all the files in the directory
@@ -223,14 +331,14 @@ function read_file(file_name, file_report_name, directory_path, res) {
 	res.redirect('/create_new_work');
 }
 
-function distribute(code_array, res) {
+function distribute(res) {
 	var len = code_array.length;
 	for (var i = 0; i < len; i ++) {
 		for (var j = 1; j <= num; j ++) {
     		var new_review = new review_model({
     			author: code_array[i].utorid,
     			review_by: code_array[(i + j) % len].utorid,
-    			feedback: [],
+    			feedbacks: [],
     			high_light: [],
     			num_stars: 0
 
