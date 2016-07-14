@@ -122,47 +122,6 @@ Edit on
 
 
 
-/* Style the list */
-ul.tab {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    margin-left: 2%;
-    width: 96%;
-}
-
-
-ul.tab li {float: left;}
-
-
-ul.tab li input {
-    display: inline-block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    transition: 0.3s;
-    font-size: 17px;
-}
-
-
-ul.tab li input:hover {background-color: #ddd;}
-
-
-ul.tab li input:focus, .active {
-    background-color: #ccc;
-}
-
-
-.tabcontent {
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-    background-color: white;
-    width: 95%;
-    margin-left: 2%;
-}
 
 
 

@@ -20,3 +20,14 @@
 	width:70%; 
 } 
 
+.tb3 { 
+	background: white; 
+	border: 1px solid #DDD; 
+	border-radius: 5px; 
+	box-shadow: 0 0 5px #DDD inset; 
+	color: #666; 
+	outline: none; 
+	height:50px; 
+	width:200px; 
+} 
+
