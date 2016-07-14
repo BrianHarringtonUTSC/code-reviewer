@@ -1,7 +1,13 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var lineReader = require('line-reader');
+var multer = require('multer');
+var fs = require('fs');
 var router = express.Router();
+
+// temp destination for multer
+var temp_folder = './temp/';
+var upload = multer({ dest: temp_folder });
 
 // GET this page.
 router.get('/', function(req, res, next) {
@@ -26,15 +32,18 @@ router.get('/', function(req, res, next) {
 
 
 // load tas info via a csv file
-router.post('/load', function(req, res, next) {
+router.post('/load', upload.single('rosters'), function(req, res, next) {
   // check if an instructor uploaded rosters file
-  var rosters_file = req.body.rosters;
+  console.log(req.file);
+  var rosters_file = temp_folder + req.file.filename;
 	var counter = 0; // count the number of lines
 	var num_new_tas = 0; // count the number of newly added tas
   var fields, first_name_index, last_name_index, utorid_index, student_number_index, email_index, weight_index;
   var ta_model = require('./models/ta_model.js');
+  console.log(rosters_file);
   lineReader.eachLine(rosters_file, function(line, last) {
     if (counter == 0) {
+
         // find index of each filed
         fields = line.split(',');
         first_name_index = fields.indexOf("First Name");
@@ -70,6 +79,7 @@ router.post('/load', function(req, res, next) {
     // reach EOF
     if (last) {
       console.log(num_new_tas + ' new tas are added');
+      fs.unlinkSync(rosters_file);
       res.redirect('/tas');
     }
   });
