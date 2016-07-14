@@ -1,11 +1,10 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var http = require('http');
 var router = express.Router();
-var fs = require('fs');
 
-//var io = require('socket.io').listen(80); // initiate socket.io server
+
+
 
 var student_model = require('./models/student_model.js');
 //Here we are configuring express to use body-parser as middle-ware.
@@ -18,6 +17,7 @@ router.get('/', function(req, res, next) {
 		console.log("Please log in");
     return res.redirect('/');
   }
+  // find user by email
 	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
 		// error checking
 	  if (err) return err;
@@ -42,33 +42,15 @@ router.get('/', function(req, res, next) {
 
 // go to corresponding submission page
 router.post('/go_to_submission', function(req, res, next) {
-	req.flash('submission_name', "blhaaaaaa");
+	// write the name of clicked button into into flash message
+	// req.flash('submission_name', req.body['redirect_to_submission']);
+	req.session.submission_name = req.body['redirect_to_submission'];
 	res.redirect('/submission');
 });
 
-router.post('/go_to_instruction', function(req, res, next) {
-	console.log("-------33333333333------");
-	res.redirect('/instruction');
-});
-
-
-router.post('/go_to_self_review', function(req, res, next) {
-	res.redirect('/self_review');
-});
-
-
 
 console.log("Connection opened.");
-/*
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' }); // Send data to client
 
-  // wait for the event raised by the client
-  socket.on('my other event', function (data) {  
-    console.log(data);
-  });
-});
-*/
 module.exports = router;
 
 

@@ -34,7 +34,7 @@
       <% rules.forEach( function(item) { %>
         <p>
           <%= item.work_name + ' ' + item.required_files %>
-          <input class="button" type="submit" value="go to a submission"></input>
+          <input class="button" type="submit" value="<%= item.work_name %>" name="redirect_to_submission"></input>
         </p>
       <% }); %>
     </form>
