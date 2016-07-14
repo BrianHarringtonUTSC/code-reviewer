@@ -2,12 +2,14 @@
 <html>
   <head>
     <title><%= title %></title>
-    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
-    <link rel='stylesheet' href='/stylesheets/normalize.css' />
     <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/tab.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/textbox.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
     <nav>
@@ -53,7 +55,7 @@
             var class_name = "star star-" + String(i);
             var id_name = "star-" + String(i);
             var func_name = "get_star(" + String(i) + ")";
-            if (i == number_of_stars) { %>
+            if (i == num_stars) { %>
               <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" checked="checked" value="N" disabled></input>
          <% } else { %>
               <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" value="N" disabled></input>
