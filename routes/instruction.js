@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var PeerEditing = express();
+
 
 
 var student_model = require('./models/student_model.js');

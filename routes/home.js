@@ -4,11 +4,8 @@ var mongoose = require('mongoose');
 var router = express.Router();
 
 
-
-
 var student_model = require('./models/student_model.js');
-//Here we are configuring express to use body-parser as middle-ware.
-router.use(bodyParser.urlencoded( {extended: true} ));
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
