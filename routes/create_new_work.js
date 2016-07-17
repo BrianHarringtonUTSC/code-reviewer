@@ -7,18 +7,20 @@ var router = express.Router();
 
 var moment = require('moment');
 
+var work_name = "";
 
 
 var code_schema = require("./models/submission_schema.js");
 var review_schema = require("./models/review_schema.js");
 
-var code_model = mongoose.model('a2', code_schema);
-var review_model = mongoose.model('a2_reviews', review_schema);
+var code_model = mongoose.model(work_name, code_schema);
+var review_model = mongoose.model(work_name + "_reviews", review_schema);
 var rule_model = require("./models/rule_model.js");
 var ta_model = require('./models/ta_model.js');
 
 var loading_code_collection_name = '';
 var distributing_code_collection_name = '';
+var distributing_ta_code_collection_name = '';
 var error_message = '';
 var passed_deadline = "cannot set a deadline which is already passed";
 
@@ -27,6 +29,7 @@ var late_penalty = "";
 var num_peers = 0;
 var required_files = [];
 var repo_path = "";
+var folder_name = "";
 var student_submission_deadline_date = "";
 var student_submission_deadline_time = "";
 var num_feedbacks = 0;
@@ -51,12 +54,14 @@ router.get('/', function(req, res, next) {
 			num_peers: num_peers,
 			required_files: required_files,
 			repo_path: repo_path,
+			folder_name: folder_name,
 			num_feedbacks: num_feedbacks,
 			feedback_questions: feedback_questions,
 			student_no_submit: student_no_submit,
 			num_submission: num_submission,
 			init_loading_work_name: loading_code_collection_name,
 			init_distributing_work_name: distributing_code_collection_name,
+			init_distributing_ta_work_name: distributing_ta_code_collection_name,
 			error_message: error_message,
 			tas: tas
 		});
@@ -73,6 +78,7 @@ router.post('/create', function(req, res, next) {
 	num_peers = req.body.num_peers;
 	required_files = req.body.required_files.split(',');
 	repo_path = req.body.repo_path;
+	folder_name = req.body.folder_name;
 	student_submission_deadline_date = req.body.student_submission_deadline_date;
 	student_submission_deadline_time = req.body.student_submission_deadline_time;
 
@@ -103,8 +109,6 @@ router.post('/create', function(req, res, next) {
 		}
 	}
 
-	var rule_model = require('./models/rule_model.js');
-
 	// if student submission deadline is specified
 	if (req.body.student_submission_deadline_date != '') {
 		// set student submission deadline
@@ -131,6 +135,7 @@ router.post('/create', function(req, res, next) {
 		num_peers : num_peers,
 		required_files : required_files,
 		repo_path : repo_path,
+		folder_name : folder_name,
 		num_feedbacks: num_feedbacks,
 		feedback_questions: feedback_questions,
     student_submission_deadline : student_submission_deadline , // TODO convert date object using moment.js
@@ -157,12 +162,14 @@ router.post('/load_assignment', function(req, res, next) {
 	var directory_path = '';
 	rule_model.findOne({ work_name: req.body.loading_work_name }, function(err, rule) {
 		if (err) return err;
+		work_name = rule.work_name;
   	file_name = rule.required_files[0];
   	//file_report_name = rule
   	directory_path = rule.repo_path;
-  	read_file(file_name, file_report_name, directory_path, res);
+  	read_file(file_name, file_report_name, directory_path, rule.folder_name, res);
   });
 	distributing_code_collection_name = req.body.loading_work_name;
+	distributing_ta_code_collection_name = req.body.loading_work_name;
 });
 
 
@@ -172,8 +179,9 @@ var num = 3;
 router.post('/distribute', function(req, res, next) {
 	rule_model.findOne({ work_name: req.body.distributing_work_name }, function(err, rule) {
   	num = rule.num_peers;
+  	work_name = rule.work_name;
   });
-
+	var code_model = mongoose.model(work_name, code_schema);
 	var cStream = code_model.find().stream( /*{ transform: JSON.stringify } */);
 	code_array = [];
  	cStream.on('data', function(doc) {
@@ -187,6 +195,9 @@ router.post('/distribute', function(req, res, next) {
 var ta_dict = new Array();
 /*--------------distribution--TA------------------*/
 router.post('/distribute_ta', function(req, res, next) {
+	rule_model.findOne({ work_name: req.body.distributing_ta_work_name }, function(err, rule) {
+  	work_name = rule.work_name;
+  });
 	for (var key in req.body) {
 		if (key.indexOf("checkbox_") > -1) {
 			var ta = req.body[key].split(",");
@@ -196,9 +207,10 @@ router.post('/distribute_ta', function(req, res, next) {
 			}
 		}
 	}
-	console.log(ta_dict);
+	console.log("-------");
+	console.log(work_name);
 	console.log(tas_need_to_review);
-	
+	var code_model = mongoose.model(work_name, code_schema);
 	var cStream = code_model.find().stream();
 	code_array = [];
  	cStream.on('data', function(doc) {
@@ -212,8 +224,10 @@ router.post('/distribute_ta', function(req, res, next) {
 });
 
 function distribute_ta(res) {
+	var code_model = mongoose.model(work_name, code_schema);
 	var reviews_per_weight = Math.floor(code_array.length / tas_need_to_review.length);
 	var code = 0;
+	var review_model = mongoose.model(work_name + "_reviews", review_schema);
 	for (var i = 0; i < tas_need_to_review.length; i ++) {
 		for (var j = 0; j < reviews_per_weight; j ++) {
 			// create reviews
@@ -231,13 +245,12 @@ function distribute_ta(res) {
   				console.log("duplicates");
   			}
   		});
-			ta_dict[tas_need_to_review[i]].push(code_array[code].utorid);
+			//ta_dict[tas_need_to_review[i]].push(code_array[code].utorid);
 			code_array[code].review_by.push(tas_need_to_review[i]);
+			code_array[code].ta = tas_need_to_review[i];
 			code ++;
 		}
 	}
-	console.log(ta_dict);
-	console.log(code_array[code-1]);
 	// distribute remainders
 	var j = 0;
 	while (code < code_array.length) {
@@ -258,8 +271,9 @@ function distribute_ta(res) {
 			}
 		});
 
-		ta_dict[ta_utorid].push(code_array[code].utorid);
+		//ta_dict[ta_utorid].push(code_array[code].utorid);
 		code_array[code].review_by.push(ta_utorid);
+		code_array[code].ta = tas_need_to_review[i];
 		code ++;
 		j ++;
 	}
@@ -267,13 +281,14 @@ function distribute_ta(res) {
 	for (var i = 0; i < code_array.length; i ++) {
 		code_model.findOneAndUpdate( 
 			{ _id: code_array[i]._id}, 
-			{ $set: { review_by: code_array[i].review_by} }, 
+			{ $set: { review_by: code_array[i].review_by,
+			          ta : code_array[i].ta } }, 
 			{ new: true},
 			function(err, doc) {
 		    	if (err) console.log(err);
 			});
 	}
-
+	/*
 	for (var ta_utorid in ta_dict) {
 		ta_model.findOneAndUpdate( 
 			{ utorid: ta_utorid}, 
@@ -286,11 +301,13 @@ function distribute_ta(res) {
 	for (ta in ta_dict) {
 		console.log(ta_dict[ta].length);
 	}
+	*/
 	res.redirect('/create_new_work');
 }
 
 var count = 0;
-function read_file(file_name, file_report_name, directory_path, res) {
+function read_file(file_name, file_report_name, directory_path, folder_name, res) {
+	var code_model = mongoose.model(work_name, code_schema);
 // Loop through all the files in the directory
 	fs.readdir( directory_path, function( err, files ) {
 	  if( err ) {
@@ -299,8 +316,8 @@ function read_file(file_name, file_report_name, directory_path, res) {
 	    files.forEach( function (studentUtorid, index) {
 	    	count ++;
 	      // update students collection
-	      var newCodePath = directory_path + '/' + studentUtorid + '/' + 'a2' + '/' + file_name;
-	      var newReportPath = directory_path + '/' + studentUtorid + '/' + 'a2' + '/' + 'a2-report.txt';
+	      var newCodePath = directory_path + '/' + studentUtorid + '/' + folder_name + '/' + file_name;
+	      var newReportPath = '';
 	      fs.stat(newCodePath, function(err, stat) {
 	        if (err == null) {
 	          var code = new code_model({
@@ -332,6 +349,8 @@ function read_file(file_name, file_report_name, directory_path, res) {
 }
 
 function distribute(res) {
+	var code_model = mongoose.model(work_name, code_schema);
+	var review_model = mongoose.model(work_name + "_reviews", review_schema);
 	var len = code_array.length;
 	for (var i = 0; i < len; i ++) {
 		for (var j = 1; j <= num; j ++) {

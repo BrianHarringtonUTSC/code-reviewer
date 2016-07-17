@@ -15,6 +15,7 @@
       <label>Number of peers: </label><input type="text" name="num_peers" value="<%= num_peers %>"></input><br></br>
       <label>Required_files: </label><input type="text" name="required_files" value="<%= required_files[0] %>"></input><br></br>
       <label>Repo path: </label><input type="text" name="repo_path" value="<%= repo_path %>"></input><br></br>
+      <label>folder name: </label><input type="text" name="folder_name" value="<%= folder_name %>"></input><br></br>
       <label>Number of feedbacks:</label><input type="text" name="num_feedbacks" value="<%= num_feedbacks %>"></input>
       <input type="submit" name="set_feedbacks" value ="Set Feedback Questions"></input><br></br>
       <% for(var i=1; i <= num_feedbacks; i++) { 
@@ -66,6 +67,7 @@
     <a href="/instructor">Go back to instructor</a>
 
     <form action="create_new_work/distribute_ta" method="post">
+      <input type="text" name="distributing_ta_work_name" value="<%= init_distributing_ta_work_name %>"></input>
     <% tas.forEach(function(ta){ 
         var cbox_name = "checkbox_" + ta.utorid; 
         var cbox_value = ta.utorid + "," + ta.weight; %>
