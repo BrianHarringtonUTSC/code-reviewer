@@ -22,7 +22,7 @@ var loading_code_collection_name = '';
 var distributing_code_collection_name = '';
 var distributing_ta_code_collection_name = '';
 var error_message = '';
-var passed_deadline = "cannot set a deadline which is already passed";
+var passed_deadline = "cannot set a deadline which is already passed ";
 
 var work_name = "";
 var late_penalty = "";
@@ -109,26 +109,51 @@ router.post('/create', function(req, res, next) {
 		}
 	}
 
-	// if student submission deadline is specified
+	// if student submission deadline is specified 0
 	if (req.body.student_submission_deadline_date != '') {
-		// set student submission deadline
-		var student_submission_deadline = student_submission_deadline_date + ' ' + student_submission_deadline_time;
-		var student_submission_deadline = moment(student_submission_deadline, "YYYY-MM-DD HH:mm");
-		//console.log("student submission deadline is " + moment(student_submission_deadline).format('LLLL'));
-		console.log("student submission deadline is " + moment(student_submission_deadline));
-		// error checking
-		if (student_submission_deadline.isBefore(moment())) {
-			error_message = passed_deadline;
-			res.redirect('/create_new_work');
-			return;
-		}
-	} else {
-		console.log("no student submission deadline specified");
+		var student_submission_deadline = req.body.student_submission_deadline_date + ' ' + req.body.student_submission_deadline_time;
 	}
-
-	// TODO: check all input time
-
+	// if release students code to their peers date is specified 1
+	if (req.body.release_students_code_to_peers_date != '') {
+		var release_students_code_to_peers = req.body.release_students_code_to_peers_date + ' ' + req.body.release_students_code_to_peers_time;
+	}
+	// if peer review deadline is specified 2
+	if (req.body.peer_review_deadline_date != '') {
+		var peer_review_deadline = req.body.peer_review_deadline_date + ' ' + req.body.peer_review_deadline_time;
+	}
+	// if release students reviews to tas date is specified 3
+	if (req.body.release_students_reviews_to_tas_date != '') {
+		var release_students_reviews_to_tas = req.body.release_students_reviews_to_tas_date + ' ' + req.body.release_students_reviews_to_tas_time;
+	}
+	// if TA review daedline is specified 4
+	if (req.body.ta_review_deadline_date != '') {
+		var ta_review_deadline = req.body.ta_review_deadline_date + ' ' + req.body.ta_review_deadline_time;
+	}
+	// if release tas reviews to student is specified 5
+	if (req.body.release_tas_reviews_to_students_date != '') {
+		var release_tas_reviews_to_students = req.body.release_tas_reviews_to_students_date + ' ' + req.body.release_tas_reviews_to_students_time;
+	}
+	var deadline_array = [student_submission_deadline, release_students_code_to_peers, peer_review_deadline, release_students_reviews_to_tas, ta_review_deadline, release_tas_reviews_to_students];
+	// get local datetime
+	var temp_datetime = moment();
+	// check all deadlines
+	for (var i = 0; i < deadline_array.length; i++) {
+		if (deadline_array[i]) {
+			// cast to moment object
+			deadline_array[i] = moment(deadline_array[i], "YYYY-MM-DD HH:mm");
+			// error checking, no deadline should be after temp/current date time
+			if (deadline_array[i].isBefore(temp_datetime)) {
+				// tell user which deadline is passed
+				error_message = passed_deadline + deadline_array[i].format('LLLL');
+				res.redirect('/create_new_work');
+				return;
+			}
+			// replace temp datetime by latest deadline
+			temp_datetime = deadline_array[i];
+		}
+	}
 	// create a new rule
+	// unspecified deadlines are empty strings
 	var new_rule = new rule_model({
 		work_name : work_name,
 		late_penalty : late_penalty,
@@ -138,12 +163,12 @@ router.post('/create', function(req, res, next) {
 		folder_name : folder_name,
 		num_feedbacks: num_feedbacks,
 		feedback_questions: feedback_questions,
-    student_submission_deadline : student_submission_deadline , // TODO convert date object using moment.js
-    release_to_peers : new Date(),
-    peer_review_deadline : new Date(),
-    release_to_tas : new Date(),
-    ta_review_deadline : new Date(),
-    release_to_students : new Date(),
+    student_submission_deadline : student_submission_deadline,
+    release_to_peers : release_students_code_to_peers,
+    peer_review_deadline : peer_review_deadline,
+    release_to_tas : release_students_reviews_to_tas,
+    ta_review_deadline : ta_review_deadline,
+    release_to_students : release_tas_reviews_to_students,
 	});
 	loading_code_collection_name = req.body.work_name;
 	// write a new document into database
