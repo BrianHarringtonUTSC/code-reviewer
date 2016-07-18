@@ -10,6 +10,7 @@ var rule_schema = new mongoose.Schema({
     },
     required_files : [String],
     repo_path : String,
+    folder_name: String,
     num_feedbacks : {
         type: Number,
         max: 20

@@ -116,3 +116,7 @@ function hidePopup(e) {
 function get_star(num) {
 	document.getElementById('star_number').value = num;
 }
+
+function get_mark(num) {
+	document.getElementById('mark_number').value = num;
+}

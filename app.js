@@ -7,17 +7,15 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var session = require('express-session');
-var dotenv = require('dotenv');
-var flash = require('connect-flash');
+var dotenv  = require('dotenv');
 
 var strategy = require('./setup-passport');
 // load environment variables
 dotenv.load();
 
+
 // connect to the database
 mongoose.connect('mongodb://localhost/csca08');
-// mlab                       // username & password
-//mongoose.connect('mongodb://username:password@ds037185.mlab.com:37185/csca08');
 
 
 var routes = require('./routes/index');
@@ -31,9 +29,11 @@ var students = require('./routes/students');
 var instructor = require('./routes/instructor');
 var create_new_work = require('./routes/create_new_work');
 var home = require('./routes/home');
-var tas = require('./routes/tas');
 var student_reviews = require('./routes/student_reviews');
-var submission = require('./routes/submission');
+var tas = require('./routes/tas');
+var ta = require('./routes/ta');
+var ta_review = require('./routes/ta_review');
+var ta_grade = require('./routes/ta_grade');
 
 
 var app = express();
@@ -51,10 +51,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/static', express.static('/public'));
-app.use(session({ secret: process.env.AUTH0_CLIENT_SECRET, resave: true, saveUninitialized: false }));
+app.use(session({ secret: process.env.AUTH0_CLIENT_SECRET, resave: true,  saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
 
 
 app.use('/', routes);
@@ -65,10 +64,12 @@ app.use('/self_assesment', self_assesment);
 app.use('/students', students);
 app.use('/instructor', instructor);
 app.use('/create_new_work', create_new_work);
+app.use('/student_reviews', student_reviews);
 app.use('/home', home);
 app.use('/tas', tas);
-app.use('/student_reviews', student_reviews);
-app.use('/submission', submission);
+app.use('/ta', ta);
+app.use('/ta_review', ta_review);
+app.use('/ta_grade', ta_grade);
 
 // Auth0 callback handler
 app.get('/callback', 

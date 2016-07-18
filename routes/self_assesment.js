@@ -11,9 +11,10 @@ router.get('/', function(req, res, next) {
 	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
 	  if (err) return err;
 	  if (student == null) {
-	  	res.redirect('/instructor')
+	  	res.redirect('/' + req.session.current_site);
 	  } else {
-	  	  res.render('self_assesment');
+	  	req.session.current_site = "self_assesment";
+	  	res.render('self_assesment');
 	  }
 	 });
 });
@@ -21,6 +22,4 @@ router.get('/', function(req, res, next) {
 router.post('/go_to_home', function(req, res, next) {
   res.redirect('/home');
 });
-
-console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 module.exports = router;

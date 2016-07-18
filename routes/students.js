@@ -36,7 +36,6 @@ router.get('/', function(req, res, next) {
 // load students info via a csv file
 router.post('/load', upload.single('rosters'), function(req, res, next) {
   // check if an instructor uploaded rosters file
-  console.log(req.file);
   var rosters_file = temp_folder + req.file.filename;
 	var counter = 0; // count the number of lines
 	var num_new_students = 0; // count the number of newly added students
