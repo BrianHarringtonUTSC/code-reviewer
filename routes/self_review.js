@@ -7,10 +7,7 @@ var fs = require('fs');
 var code_schema = require("./models/submission_schema.js");
 var review_schema = require("./models/review_schema.js");
 
-var work_name = 'a2';
 var rule_model = require("./models/rule_model.js");
-var code_model = mongoose.model(work_name, code_schema);
-var review_model = mongoose.model('a2_reviews', review_schema);
 var student_model = require('./models/student_model.js');
 
 /* GET users listing. */
@@ -23,10 +20,9 @@ router.get('/', function(req, res, next) {
 	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
 	  if (err) return err;
 	  if (student == null) {
-	  	res.redirect('/instructor')
+	  	res.redirect('/' + req.session.current_site);
 	  } else {
-	  	if (req.session.self_utorid == null) {
-	  		console.log("heeeerrrrrrrrreeeeeeeeeee");
+	  	if (req.session.current_site != "self_review") {
 	  		init_all(req, res, 'self_review');
 	  	} else {
 	  		get_student_utorid(req, res, 'self_review');
@@ -47,6 +43,7 @@ router.post('/go_to_self_review', function(req, res, next) {
 });
 
 function init_all(req, res, site) {
+	req.session.current_site = site;
 	req.session.self_utorid = '';
 	req.session.review_array = [];
 	req.session.feedbacks = [];
@@ -60,7 +57,7 @@ function init_all(req, res, site) {
 }
 
 function get_feedback_questions(req, res, site) {
-	rule_model.findOne({ work_name: work_name }, function (err, rule) {
+	rule_model.findOne({ work_name: req.session.work_name }, function (err, rule) {
 	  if (err) return err;
 	  req.session.feedback_questions = rule.feedback_questions;
 	  get_student_utorid(req, res, site);
@@ -76,6 +73,7 @@ function get_student_utorid(req, res, site) {
 }
 
 function find_student_code(req, res, site) {
+	var code_model = mongoose.model(req.session.work_name, code_schema);
   code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
   	req.session.review_array = code.review_by;
   	req.session.code_path = code.code_path;
@@ -84,6 +82,7 @@ function find_student_code(req, res, site) {
 }
 
 function find_feedback(req, res, site) {
+  var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
   review_model.findOne({ author: req.session.self_utorid, review_by: req.session.review_array[req.session.peer_number-1] }, function(err, review) {
 	  req.session.feedbacks= review.feedbacks;
 	  req.session.num_stars = review.num_stars;

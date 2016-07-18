@@ -10,6 +10,7 @@ var review_schema = new mongoose.Schema({
         type: Number,
         max: 5
     },
+    mark : Number
 });
 
 module.exports = review_schema;

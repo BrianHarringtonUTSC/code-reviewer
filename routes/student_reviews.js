@@ -213,8 +213,10 @@ router.post('/go_to_student_reviews', function(req, res, next) {
   	}
 	}
 	if ("peer_btn" in req.body) {
+		peer_number = 1;
 		self_or_peer = 1;
 	} else if ("self_btn" in req.body) {
+		peer_number = 1;
 		self_or_peer = 0;
 	}
 

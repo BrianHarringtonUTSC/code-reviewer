@@ -89,7 +89,7 @@
       <% for(var i = 0; i < feedback_questions.length; i++) { 
           var fb_name = "feedback_" + String(i) %>
         <p style="margin-top:1%;"><%= i + 1;%>. <%= feedback_questions[i]; %></p>
-        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>"></input>
+        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>" value="N" disabled></input>
       <% } %>
       </div>
 

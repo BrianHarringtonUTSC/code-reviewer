@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+var PeerEditing = express();
 
 
 var student_model = require('./models/student_model.js');
@@ -14,9 +14,10 @@ router.get('/', function(req, res, next) {
 	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
 	  if (err) return err;
 	  if (student == null) {
-	  	res.redirect('/instructor')
+	  	res.redirect('/' + req.session.current_site);
 	  } else {
-	  	  res.render('instruction');
+	  	req.session.current_site = "instruction";
+	  	res.render('instruction');
 	  }
 	 });
 });

@@ -30,16 +30,17 @@
       <li><a href="#">Sign Out</a></li>
     </ul>
   </nav>
-    <form action="home/go_to_submission" method="post">
-      <% rules.forEach( function(item) { %>
-        <p>
-          <%= item.work_name + ' ' + item.required_files %>
-          <input class="button" type="submit" value="<%= item.work_name %>" name="redirect_to_submission"></input>
-        </p>
-      <% }); %>
+
+    <form enctype="application/json" action="home/go_to_self_review" method="post">
+      <% for (var i = 0; i < work_list.length; i ++) { 
+          var review_btn = "review_" + work_list[i]; 
+          var grade_btn = "grade_" + work_list[i]; %>
+      <label><%= work_list[i] %></label>
+      <input type="submit" name="<%= work_list[i] %>" value="self"></input>
+      <input type="submit" name="<%= work_list[i] %>" value="peer"></input><br></br>
+      <% } %>
     </form>
 
-    
 
     <script type="text/javascript" src="javascripts/test.js"></script>
 

@@ -36,7 +36,7 @@
     </ul>
   </nav>
 
-    <form enctype="application/json" action="ta_review/go_to_ta_review" method="post">
+    <form enctype="application/json" action="ta_grade/go_to_ta_grade" method="post">
     <ul class="tab">
       <% var i = 0; var index = display_index + i;
        while((index < reviews.length) && (i < 10)) {
@@ -53,15 +53,26 @@
     </ul>
 
     <div class="tabcontent">
+      <ul class="tab">
+      <% for (var i = 0; i < review_by.length; i ++) {
+        var btn_name = "peer_sub_" + String(i+1);
+         if (i + 1 == peer_sub_num) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= review_by[i] %>" class="tablinks active"></input></li>
+        <% } else { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= review_by[i] %>" class="tablinks"></input></li>
+        <% } %>
+
+      <% } %>
+    </ul>
       <div class="stars">
         <% for(var i = 5; i >= 1; i --){
             var class_name = "star star-" + String(i);
             var id_name = "star-" + String(i);
             var func_name = "get_star(" + String(i) + ")";
             if (i == num_stars) { %>
-              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked"></input>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked" value="N" disabled></input>
          <% } else { %>
-              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>"></input>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" value="N" disabled></input>
          <% } %>
             <label class="<%= class_name %>" for="<%= id_name %>"></label>
         <% } %>
@@ -71,7 +82,6 @@
       <input id="storage" name="highlight_storage" type="text" style="display:none;"></input>
 
       <div>
-        <input type="button" onclick="addCommentFromSelection()" value="Add Comment!"></input>
       </div>
 
       <div class="border" style="text-align: left;">
@@ -102,16 +112,31 @@
       <% for(var i = 0; i < feedback_questions.length; i++) { 
           var fb_name = "feedback_" + String(i) %>
         <p style="margin-top:1%;"><%= i + 1;%>. <%= feedback_questions[i]; %></p>
-        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>"></input>
+        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>" value="N" disabled></input>
       <% } %>
       </div>
       
-
+      <input class="button" type="submit" name="prev_sub_btn" value="previous" style="float:left;"></input>
       <input class="button" type="submit" name="save_btn" value="save"></input>
-
+      <input class="button" type="submit" name="next_sub_btn" value="next" style="float:right;"></input>
     </div> <!-- end of div tab_content-->
       <input class="button" type="submit" name="prev_btn" value="previous" style="float:left;"></input>
       <input class="button" type="submit" name="prev_10_btn" value="prev 10" style="float:left;"></input>
+      <div class="stars">
+        <% for(var i = 2; i >= 1; i --){
+            var class_name = "star1 star1-" + String(i);
+            var id_name = "star1-" + String(i);
+            var func_name = "get_mark(" + String(i) + ")";
+            if (i == mark_num) { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked"></input>
+         <% } else { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>"></input>
+         <% } %>
+            <label class="<%= class_name %>" for="<%= id_name %>"></label>
+        <% } %>
+      </div>
+      <input id="mark_number" value="<%= mark_num %>" name="mark_num" style="display:none;"></input>
+
       <input class="button" type="submit" name="next_btn" value="next" style="float:right;"></input>
       <input class="button" type="submit" name="next_10_btn" value="next 10" style="float:right;"></input>
     </form>
