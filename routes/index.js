@@ -48,7 +48,6 @@ function verify_ta(req, res) {
 	  	return res.redirect('/ta');
 	  }
 	 });
-
 }
 
 function verify_instructor(req, res) {
@@ -56,6 +55,13 @@ function verify_instructor(req, res) {
   	return res.redirect('/instructor');
   	}
 }
+
+router.post('/logout', function(req, res, next) {
+  req.session.destroy( function(err) {
+    if (err) return err;
+    res.redirect('/');
+  });
+});
 
 
 module.exports = router;

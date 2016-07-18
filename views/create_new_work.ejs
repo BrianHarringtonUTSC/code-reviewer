@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html >
+<html>
   <head>
     <meta charset="UTF-8">
     <title><%= title %></title>
@@ -8,6 +8,9 @@
   </head>
 
   <body>
+    <form action="/logout" method="post">
+      <input type="submit" name="logout_button" value ="LOGOUT"></input>
+    </form>
     <div style="width: 55%; float: left;">
     <form action="create_new_work/create" method="post">
       <p><font size="3" color="red"><%= error_message %></font></p>

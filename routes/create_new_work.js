@@ -66,8 +66,6 @@ router.get('/', function(req, res, next) {
 			tas: tas
 		});
 	});
-
-
 });
 
 
@@ -144,7 +142,7 @@ router.post('/create', function(req, res, next) {
 			// error checking, no deadline should be after temp/current date time
 			if (deadline_array[i].isBefore(temp_datetime)) {
 				// tell user which deadline is passed
-				error_message = passed_deadline + deadline_array[i].format('LLLL');
+				error_message = passed_deadline + deadline_array[i].format('LLLL'); // long format
 				res.redirect('/create_new_work');
 				return;
 			}
