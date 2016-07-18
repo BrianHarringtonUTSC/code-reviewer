@@ -7,19 +7,17 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var session = require('express-session');
-var dotenv  = require('dotenv');
+var dotenv = require('dotenv');
 var flash = require('connect-flash');
 
 var strategy = require('./setup-passport');
 // load environment variables
 dotenv.load();
 
-
 // connect to the database
-// localhost
 mongoose.connect('mongodb://localhost/csca08');
-// mlab                       // username & password changed
-//mongoose.connect('mongodb://csca08admin:csca08admin@ds037185.mlab.com:37185/csca08');
+// mlab                       // username & password
+//mongoose.connect('mongodb://username:password@ds037185.mlab.com:37185/csca08');
 
 
 var routes = require('./routes/index');
@@ -53,7 +51,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/static', express.static('/public'));
-app.use(session({ secret: process.env.AUTH0_CLIENT_SECRET, resave: true,  saveUninitialized: false }));
+app.use(session({ secret: process.env.AUTH0_CLIENT_SECRET, resave: true, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
