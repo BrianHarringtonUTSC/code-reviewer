@@ -9,27 +9,9 @@
   </head>
 
   <body class="login_body">
-    <nav>
-      <ul>
-      <li><a href="/home">Home</a></li>
-      <li class="drop">
-        <a href="#">You</a>
-        
-        <div class="dropdownContain">
-          <div class="dropOut">
-            <div class="triangle"></div>
-            <ul>
-              <li>no use</li>
-              <li>no use</li>
-              <li>no use</li>
-              <li>no use</li>
-            </ul>
-          </div>
-        </div>
 
-      <li><a href="#">Sign Out</a></li>
-    </ul>
-  </nav>
+    <% include templates/header.ejs %>
+
 
     <form enctype="application/json" action="home/go_to_self_review" method="post">
       <% for (var i = 0; i < work_list.length; i ++) { 
