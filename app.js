@@ -25,12 +25,13 @@ var self_review = require('./routes/self_review');
 var instruction = require('./routes/instruction');
 var peer_review = require('./routes/peer_review');
 var self_assesment = require('./routes/self_assesment');
-var students = require('./routes/students');
+
 var instructor = require('./routes/instructor');
 var create_new_work = require('./routes/create_new_work');
 var home = require('./routes/home');
 var student_reviews = require('./routes/student_reviews');
-var tas = require('./routes/tas');
+var create_tas = require('./routes/create_tas');
+var create_students = require('./routes/create_students');
 var ta = require('./routes/ta');
 var ta_review = require('./routes/ta_review');
 var ta_grade = require('./routes/ta_grade');
@@ -38,13 +39,16 @@ var ta_grade = require('./routes/ta_grade');
 
 var app = express();
 
+
+
+
 //--------------------------------------------------------------------------------------------------------------
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'favicon.jpg')));
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -61,12 +65,13 @@ app.use('/self_review', self_review);
 app.use('/instruction', instruction);
 app.use('/peer_review', peer_review);
 app.use('/self_assesment', self_assesment);
-app.use('/students', students);
+
 app.use('/instructor', instructor);
 app.use('/create_new_work', create_new_work);
 app.use('/student_reviews', student_reviews);
 app.use('/home', home);
-app.use('/tas', tas);
+app.use('/create_students', create_students);
+app.use('/create_tas', create_tas);
 app.use('/ta', ta);
 app.use('/ta_review', ta_review);
 app.use('/ta_grade', ta_grade);
