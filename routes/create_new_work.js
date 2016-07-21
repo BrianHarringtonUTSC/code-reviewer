@@ -7,81 +7,139 @@ var router = express.Router();
 
 var moment = require('moment');
 
-var work_name = "";
 
 
 var code_schema = require("./models/submission_schema.js");
 var review_schema = require("./models/review_schema.js");
 
-var code_model = mongoose.model(work_name, code_schema);
-var review_model = mongoose.model(work_name + "_reviews", review_schema);
 var rule_model = require("./models/rule_model.js");
+var instructor_model = require("./models/instructor_model.js");
 var ta_model = require('./models/ta_model.js');
 
-var loading_code_collection_name = '';
-var distributing_code_collection_name = '';
-var distributing_ta_code_collection_name = '';
 var error_message = '';
 var passed_deadline = "cannot set a deadline which is already passed ";
 
-var work_name = "";
-var late_penalty = "";
-var num_peers = 0;
-var required_files = [];
-var repo_path = "";
-var folder_name = "";
-var student_submission_deadline_date = "";
-var student_submission_deadline_time = "";
-var num_feedbacks = 0;
-var feedback_questions = [];
-var tas_need_to_review = [];
-
-var student_no_submit = [];
-var num_submission = 0;
 
 // GET this page
 router.get('/', function(req, res, next) {
-  var ta_model = require('./models/ta_model.js');
-  // find all documents in collection tas
-	ta_model.find({}, function (err, tas) {
-	  if (err) {
-	  	console.log(err);
+	// user authentication
+	if (!req.isAuthenticated()) {
+		console.log("Please log in");
+    return res.redirect('/');
+	}
+	instructor_model.findOne({ email: req.user.emails[0].value }, function (err, instructor) {
+	  if (err) return err;
+	  if (instructor == null) {
+	  	res.redirect('/' + req.session.current_site);
+	  } else {
+	  	if (req.session.current_site != "create_new_work") {
+	  		req.session.current_site = "create_new_work";
+	  		find_work(req, res, 'create_new_work');
+	  	} else {
+	  		find_work(req, res, 'create_new_work');
+	  	}
 	  }
-		res.render('create_new_work', {
-			title : 'create new work',
-			work_name: work_name,
-			late_penalty: late_penalty,
-			num_peers: num_peers,
-			required_files: required_files,
-			repo_path: repo_path,
-			folder_name: folder_name,
-			num_feedbacks: num_feedbacks,
-			feedback_questions: feedback_questions,
-			student_no_submit: student_no_submit,
-			num_submission: num_submission,
-			init_loading_work_name: loading_code_collection_name,
-			init_distributing_work_name: distributing_code_collection_name,
-			init_distributing_ta_work_name: distributing_ta_code_collection_name,
-			error_message: error_message,
-			tas: tas
-		});
-	});
+	 });
 });
+// find work and all its info
+function find_work(req, res, site) {
+  	rule_model.findOne({ work_name : req.session.work_name }, function(err, rule) {
+  	find_tas(req, res, site, rule);
+  });
+}
+// find all of the tas
+function find_tas(req, res, site, rule, tas) {
+  	ta_model.find({}, function(err, tas) {
+  	find_num_of_submission(req, res, site, rule, tas);
+  });
+}
+
+function find_num_of_submission(req, res, site, rule, tas) {
+	mongoose.connection.db.listCollections({name: req.session.work_name})
+    .next(function(err, collinfo) {
+        if (collinfo) {
+            var code_model = mongoose.model(req.session.work_name, code_schema);
+            code_model.find({}, function(err, code) {
+			    check_student_distributed(req, res, site, rule, tas, code.length);
+			});
+        } else {
+        	check_student_distributed(req, res, site, rule, tas, 0);
+        }
+    });
+}
+
+function check_student_distributed(req, res, site, rule, tas, num_submission) {
+	var student_distributed = 0;
+	var ta_distributed = 0;
+	mongoose.connection.db.listCollections({name: (req.session.work_name + '_reviews')})
+    .next(function(err, collinfo) {
+        if (collinfo) {
+        	var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
+            review_model.find({}, function(err, review) {
+	        	student_distributed = 1;
+	        	if (review.length != (num_submission * rule.num_peers)) {
+	            	ta_distributed = 1;
+	        	}
+				render(req, res, site, rule, tas, num_submission, student_distributed, ta_distributed);
+			});
+        } else {
+        	render(req, res, site, rule, tas, num_submission, student_distributed, ta_distributed);
+        }
+    });
+}
+
+// render
+function render(req, res, site, rule, tas, num_submission, student_distributed, ta_distributed) {
+	res.render(site, {
+	title: site,
+	num_of_submission_loaded : num_submission,
+	student_distributed : student_distributed,
+	ta_distributed : ta_distributed,
+	tas : tas,
+	work_name: rule.work_name,
+	late_penalty: rule.late_penalty,
+	num_peers: rule.num_peers,
+	required_files: rule.required_files,
+	repo_path: rule.repo_path,
+	folder_name: rule.folder_name,
+	num_feedbacks: rule.num_feedbacks,
+	feedback_questions: rule.feedback_questions,
+	error_message: rule.error_message
+	});
+}
 
 
+function save(req, feedback_questions) {
+	rule_model.findOneAndUpdate(
+		{ work_name: req.body.work_name },
+		{ $set: { work_name : req.body.work_name,
+		late_penalty : req.body.late_penalty,
+		num_peers : req.body.num_peers,
+		required_files : req.body.required_files.split(','),
+		repo_path : req.body.repo_path,
+		folder_name : req.body.folder_name,
+		num_feedbacks :req.body.num_feedbacks,
+		feedback_questions : feedback_questions } },
+		{ new: true},
+		function(err, doc) {
+			if (err) console.log(err);
+		}
+	);
+}
 /*-------------create------------------------*/
-router.post('/create', function(req, res, next) {
-	work_name = req.body.work_name;
-	late_penalty = req.body.late_penalty;
-	num_peers = req.body.num_peers;
-	required_files = req.body.required_files.split(',');
-	repo_path = req.body.repo_path;
-	folder_name = req.body.folder_name;
+router.post('/edit', function(req, res, next) {
 	student_submission_deadline_date = req.body.student_submission_deadline_date;
 	student_submission_deadline_time = req.body.student_submission_deadline_time;
 
-	num_feedbacks = req.body.num_feedbacks;
+	var feedback_questions = [];
+	for (var key in req.body) {
+		if (key.indexOf("question") > -1) {
+			feedback_questions.push(req.body[key]);
+		}
+	}
+
 	// if the button clicked is set_feedback, refreash the page
+	var num_feedbacks = req.body.num_feedbacks;
 	if ("set_feedbacks" in req.body) { // initialize the list
 		if (num_feedbacks < feedback_questions.length) {
 			var dif = feedback_questions.length - num_feedbacks;
@@ -95,17 +153,11 @@ router.post('/create', function(req, res, next) {
 				}
 			}
 		}
+		save(req, feedback_questions);
 		res.redirect('/create_new_work');
 		return;
 	}
-	// append the feedback questions into array
-	var question = 0;
-	for (var key in req.body) {
-		if (key.indexOf("question") > -1) {
-			feedback_questions[question] = req.body[key];
-			question ++;
-		}
-	}
+
 
 	// if student submission deadline is specified 0
 	if (req.body.student_submission_deadline_date != '') {
@@ -150,103 +202,70 @@ router.post('/create', function(req, res, next) {
 			temp_datetime = deadline_array[i];
 		}
 	}
-	// create a new rule
-	// unspecified deadlines are empty strings
-	var new_rule = new rule_model({
-		work_name : work_name,
-		late_penalty : late_penalty,
-		num_peers : num_peers,
-		required_files : required_files,
-		repo_path : repo_path,
-		folder_name : folder_name,
-		num_feedbacks: num_feedbacks,
-		feedback_questions: feedback_questions,
-    student_submission_deadline : student_submission_deadline,
-    release_to_peers : release_students_code_to_peers,
-    peer_review_deadline : peer_review_deadline,
-    release_to_tas : release_students_reviews_to_tas,
-    ta_review_deadline : ta_review_deadline,
-    release_to_students : release_tas_reviews_to_students,
-	});
-	loading_code_collection_name = req.body.work_name;
-	// write a new document into database
-	new_rule.save( function(err) {
-		if (err) return console.log(err);
-		// refresh this page
-		console.log("retrieved time is " + moment(new_rule.student_submission_deadline).format("DD MMM YYYY hh:mm a"));
-		res.redirect('/create_new_work');
-	});
+	save(req, feedback_questions);
+	res.redirect('/create_new_work');
+	//console.log("retrieved time is " + moment(new_rule.student_submission_deadline).format("DD MMM YYYY hh:mm a"));
 });
 
 /*--------------load_assignment------------------------*/
 router.post('/load_assignment', function(req, res, next) {
-	var file_name = '';
-	var file_report_name = '';
-	var directory_path = '';
-	rule_model.findOne({ work_name: req.body.loading_work_name }, function(err, rule) {
+	rule_model.findOne({ work_name: req.session.work_name }, function(err, rule) {
 		if (err) return err;
-		work_name = rule.work_name;
-  	file_name = rule.required_files[0];
-  	//file_report_name = rule
-  	directory_path = rule.repo_path;
-  	read_file(file_name, file_report_name, directory_path, rule.folder_name, res);
+		var work_name = req.session.work_name;
+  		read_file(rule.required_files[0], '', rule.repo_path, rule.folder_name, res, work_name);
   });
-	distributing_code_collection_name = req.body.loading_work_name;
-	distributing_ta_code_collection_name = req.body.loading_work_name;
 });
 
 
-var code_array = [];
-var num = 3;
 /*--------------distribution----------------------*/
 router.post('/distribute', function(req, res, next) {
-	rule_model.findOne({ work_name: req.body.distributing_work_name }, function(err, rule) {
-  	num = rule.num_peers;
-  	work_name = rule.work_name;
-  });
-	var code_model = mongoose.model(work_name, code_schema);
+	console.log(req.session.work_name);
+	var num = 0; 
+	rule_model.findOne({ work_name: req.session.work_name }, function(err, rule) {
+  		num = rule.num_peers;
+  	});
+	var code_model = mongoose.model(req.session.work_name, code_schema);
 	var cStream = code_model.find().stream( /*{ transform: JSON.stringify } */);
-	code_array = [];
+	var code_array = [];
  	cStream.on('data', function(doc) {
 		code_array.push(doc);
 	});
 
 	cStream.on('end', function(doc) {
-		distribute(res);
+		mongoose.connection.db.dropCollection(req.session.work_name + "_reviews", function(err, result) {
+			console.log(result);
+			distribute(res, code_array, num, req.session.work_name);
+		});
+		
 	});
 });
-var ta_dict = new Array();
+
 /*--------------distribution--TA------------------*/
 router.post('/distribute_ta', function(req, res, next) {
-	rule_model.findOne({ work_name: req.body.distributing_ta_work_name }, function(err, rule) {
-  	work_name = rule.work_name;
-  });
+	var tas_need_to_review = [];
 	for (var key in req.body) {
 		if (key.indexOf("checkbox_") > -1) {
 			var ta = req.body[key].split(",");
 			for (var i = 0; i < ta[1]; i++) {
-				ta_dict[ta[0]] = [];
 				tas_need_to_review.push(ta[0]);
 			}
 		}
 	}
-	console.log("-------");
-	console.log(work_name);
-	console.log(tas_need_to_review);
-	var code_model = mongoose.model(work_name, code_schema);
+	var code_model = mongoose.model(req.session.work_name, code_schema);
 	var cStream = code_model.find().stream();
-	code_array = [];
+	var code_array = [];
  	cStream.on('data', function(doc) {
 		code_array.push(doc);
 	});
 
 	cStream.on('end', function(doc) {
-		distribute_ta(res);
+		distribute_ta(res, code_array, tas_need_to_review, req.session.work_name);
 	});
 
 });
 
-function distribute_ta(res) {
+function distribute_ta(res, code_array, tas_need_to_review, work_name) {
+	console.log(tas_need_to_review);
 	var code_model = mongoose.model(work_name, code_schema);
 	var reviews_per_weight = Math.floor(code_array.length / tas_need_to_review.length);
 	var code = 0;
@@ -268,7 +287,6 @@ function distribute_ta(res) {
   				console.log("duplicates");
   			}
   		});
-			//ta_dict[tas_need_to_review[i]].push(code_array[code].utorid);
 			code_array[code].review_by.push(tas_need_to_review[i]);
 			code_array[code].ta = tas_need_to_review[i];
 			code ++;
@@ -294,7 +312,6 @@ function distribute_ta(res) {
 			}
 		});
 
-		//ta_dict[ta_utorid].push(code_array[code].utorid);
 		code_array[code].review_by.push(ta_utorid);
 		code_array[code].ta = tas_need_to_review[i];
 		code ++;
@@ -311,25 +328,11 @@ function distribute_ta(res) {
 		    	if (err) console.log(err);
 			});
 	}
-	/*
-	for (var ta_utorid in ta_dict) {
-		ta_model.findOneAndUpdate( 
-			{ utorid: ta_utorid}, 
-			{ $set: { to_review: ta_dict[ta_utorid]} }, 
-			{ new: true},
-			function(err, doc) {
-		    	if (err) console.log(err);
-			});
-	}
-	for (ta in ta_dict) {
-		console.log(ta_dict[ta].length);
-	}
-	*/
 	res.redirect('/create_new_work');
 }
 
-var count = 0;
-function read_file(file_name, file_report_name, directory_path, folder_name, res) {
+
+function read_file(file_name, file_report_name, directory_path, folder_name, res, work_name) {
 	var code_model = mongoose.model(work_name, code_schema);
 // Loop through all the files in the directory
 	fs.readdir( directory_path, function( err, files ) {
@@ -337,7 +340,6 @@ function read_file(file_name, file_report_name, directory_path, folder_name, res
 	    console.error( "Could not list the directory.", err );
 	  } else {
 	    files.forEach( function (studentUtorid, index) {
-	    	count ++;
 	      // update students collection
 	      var newCodePath = directory_path + '/' + studentUtorid + '/' + folder_name + '/' + file_name;
 	      var newReportPath = '';
@@ -354,12 +356,10 @@ function read_file(file_name, file_report_name, directory_path, folder_name, res
               failed_test_cases: []
 	          });
 	          code.save( function(err) {
-	          	num_submission ++;
 	            console.log("added ", code.utorid);
 	            if (err) console.log(err);
 	          });
 	        } else if (err.code == 'ENOENT') {
-	          student_no_submit.push(studentUtorid);
 	          console.log("file doesn't exist. the utorid is ", studentUtorid);
 	        } else {
 	          console.log('some other error', err.code);
@@ -371,7 +371,10 @@ function read_file(file_name, file_report_name, directory_path, folder_name, res
 	res.redirect('/create_new_work');
 }
 
-function distribute(res) {
+function distribute(res, code_array, num, work_name) {
+	console.log("-----------------------");
+	console.log(num);
+	console.log(code_array.length);
 	var code_model = mongoose.model(work_name, code_schema);
 	var review_model = mongoose.model(work_name + "_reviews", review_schema);
 	var len = code_array.length;
@@ -397,7 +400,6 @@ function distribute(res) {
 			code_array[(i + j) % len].to_review.push(code_array[i].utorid);
 		}
 	}
-	console.log(code_array[5]);
 	// update the actual collection
 	for (var i = 0; i < len; i ++) {
 		code_model.findOneAndUpdate( 

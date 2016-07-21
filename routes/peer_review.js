@@ -79,8 +79,14 @@ function get_student_utorid(req, res, site) {
 function find_student_code(req, res, site){
 	var code_model = mongoose.model(req.session.work_name, code_schema);
   code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
-  	req.session.review_array = code.to_review;
-  	find_to_review_code_path(req, res, site);
+  	if (code == null) {
+  		req.submitted = 0;
+  		res.redirect('/home');
+  	} else {
+  		req.session.review_array = code.to_review;
+  		find_to_review_code_path(req, res, site);  		
+  	}
+
   });
 }
 

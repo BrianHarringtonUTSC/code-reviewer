@@ -12,7 +12,7 @@
       <input type="submit" name="logout_button" value ="LOGOUT"></input>
     </form>
     <div style="width: 55%; float: left;">
-    <form action="create_new_work/create" method="post">
+    <form action="create_new_work/edit" method="post">
       <p><font size="3" color="red"><%= error_message %></font></p>
       <label>New work name: </label><input type="text" name="work_name" value="<%= work_name %>"></input><br></br>
       <label>Number of peers: </label><input type="text" name="num_peers" value="<%= num_peers %>"></input><br></br>
@@ -56,27 +56,34 @@
     </div>
   <div style="margin-left: 3%; width: 42%; float: left;">
     <form action="create_new_work/load_assignment" method="post">
-      <input type="text" name="loading_work_name" value="<%= init_loading_work_name %>"></input>
       <input type="submit" value="load_assignment" class="button"></input><br />
-      <label>Number of submission: <%= num_submission %>,  Number of incomplete submission: <%= student_no_submit.length%></label>
+      <label><%= num_of_submission_loaded %> submissions is loaded.</label>
     </form>
     <br></br>
     <form action="create_new_work/distribute" method="post">
-      <input type="text" name="distributing_work_name" value="<%= init_distributing_work_name %>"></input>
-      <input type="submit" value="distribute for peer review" class="button"></input>
+      <input type="submit" value="distribute / re-distribute for peer review" class="button"></input><br />
+      <% if (student_distributed) {%>
+        <label><%= work_name %> has been distributed.</label>
+      <% } else { %>
+        <label><%= work_name %> has NOT distribted.</label>
+      <% } %>
     </form>
   </div>
   <div style="width: 100%; float: left;">
     <a href="/instructor">Go back to instructor</a>
 
     <form action="create_new_work/distribute_ta" method="post">
-      <input type="text" name="distributing_ta_work_name" value="<%= init_distributing_ta_work_name %>"></input>
     <% tas.forEach(function(ta){ 
         var cbox_name = "checkbox_" + ta.utorid; 
         var cbox_value = ta.utorid + "," + ta.weight; %>
       <input type="checkbox" name="<%= cbox_name %>" value="<%= cbox_value %>"><%= ta.utorid %></input><br />
     <% }); %>
-    <input type="submit" name="" value="distribute"></input><br />
+    <input type="submit" name="" value="distribute" class="button"></input><br />
+    <% if (ta_distributed) {%>
+      <label>TAs have been distributed.</label>
+    <% } else { %>
+      <label>TAs have NOT distribted.</label>
+    <% } %>
     </form>
   </div>
   </body>

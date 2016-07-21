@@ -68,6 +68,23 @@ ul li a:hover {
     color: #eee;
 }
 
+nav ul li input {
+    border: none;
+    background: #222;
+    line-height: 80px;
+    padding: 0 20px;
+    height: 78px;
+    color: #777;
+    -webkit-transition: all .1s ease-out;
+    -moz-transition: all .1s ease-out;
+    -ms-transition: all .1s ease-out;
+    -o-transition: all .1s ease-out;
+    transition: all .1s ease-out;
+}
+nav ul li input:hover {
+    color: #eee;
+}
+
 .dropOut .triangle {
     width: 0;
     height: 0;

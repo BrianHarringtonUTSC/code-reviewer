@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="UTF-8">
+    <title>students</title>
+  </head>
+
+  <body>
+    <li><a href="/instructor">Go back to instructor</a></li>
+
+    <form action="students/load" method="post" enctype="multipart/form-data">
+      <input type="file" value ="Upload rosters file" name="rosters" required><br>
+      <input type="submit" value ="Load new students">
+    </form>
+
+    <form id="drop-all">
+      <button type="submit" name="unload_all_students" onclick="clicked()">Unload All Students(for development)</button>
+      <script>
+        function clicked() {
+          if (window.confirm('Do you want to drop all students?')) {
+            document.getElementById("drop-all").setAttribute("action", "students/unload_all_students");
+            document.getElementById("drop-all").setAttribute("method", "post");
+          }
+        }
+      </script>
+    </form>
+
+    <p> All students </p>
+    <p> number of students is <%= num_students %> </p>
+    <section class="ac-container">
+      <% students.forEach( function(item) { %>
+      <p><%= item.utorid + ' ' + item.email + ' ' + item.student_number %></p>
+      <% }); %>
+    </section>
+  </body>
+</html>
+
+

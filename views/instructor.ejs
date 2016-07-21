@@ -6,23 +6,60 @@
   </head>
 
   <body>
+    <form action="instructor/create_new_work" method="post">
+      <p><font size="3" color="red"><%= error_message %></font></p>
+      <label>New work name: </label><input type="text" name="work_name" value="<%= work_name %>"></input><br></br>
+      <label>Number of peers: </label><input type="text" name="num_peers" value="<%= num_peers %>"></input><br></br>
+      <label>Required_files: </label><input type="text" name="required_files" value="<%= required_files[0] %>"></input><br></br>
+      <label>Repo path: </label><input type="text" name="repo_path" value="<%= repo_path %>"></input><br></br>
+      <label>folder name: </label><input type="text" name="folder_name" value="<%= folder_name %>"></input><br></br>
+      <label>Number of feedbacks:</label><input type="text" name="num_feedbacks" value="<%= num_feedbacks %>"></input>
+      <input type="submit" name="set_feedbacks" value ="Set Feedback Questions"></input><br></br>
+      <% for(var i=1; i <= num_feedbacks; i++) { 
+          var q_name = "question_" + String(i) %>
+        <label>question <%= i %>:</label><input type="text" name="<%= q_name %>" value="<%= feedback_questions[i-1] %>"></input><br></br>
+      <% } %>
+      <label>Student submission deadline:</label>
+        <input type="date" name="student_submission_deadline_date"></input>
+        <input type="time" name="student_submission_deadline_time" value="23:55"></input>
+        <br />
+      <label>Release students' code to their peers:</label>
+        <input type="date" name="release_students_code_to_peers_date"></input>
+        <input type="time" name="release_students_code_to_peers_time" value="23:55"></input>
+        <br />
+      <label>Peer review deadline:</label>
+        <input type="date" name="peer_review_deadline_date"></input>
+        <input type="time" name="peer_review_deadline_time" value="23:55"></input>
+        <br />
+      <label>Release students' reviews to TA's:</label>
+        <input type="date" name="release_students_reviews_to_tas_date"></input>
+        <input type="time" name="release_students_reviews_to_tas_time" value="23:55"></input>
+        <br />
+      <label>TA review deadline: </label>
+        <input type="date" name="ta_review_deadline_date"></input>
+        <input type="time" name="ta_review_deadline_time" value="23:55"></input>
+        <br />
+      <label>Release TA's reviews to students: </label>
+        <input type="date" name="release_tas_reviews_to_students_date"></input>
+        <input type="time" name="release_tas_reviews_to_students_time" value="23:55"></input>
+        <br />
+      <input type="submit" value ="Submit"></input>
+    </form>
+
     <form enctype="application/json" action="instructor/go_to_create_new_work" method="post">
-      <input class="button" type="submit" value="Create New Work"></input>
+      <% for (var i = 0; i < work_names.length; i ++) { 
+          var check_review = "check_" + work_names[i]; %>
+      <label><%= work_names[i] %></label>
+      <input type="submit" name="<%= work_names[i] %>" value="Edit, load, or distribute"></input>
+      <input type="submit" name="<%= check_review %>" value="Check student reviews">
+      <br></br>
+      <% } %>
     </form>
-    <form enctype="application/json" action="instructor/go_to_students" method="post">
-      <input class="button" type="submit" value="create student and ta"></input>
-    </form>
-    <form enctype="application/json" action="instructor/go_to_student_reviews" method="post">
-      <input class="button" type="submit" value="check student reviews"></input>
-    </form>
-    <li><a href="/create_new_work">Create New Work</a></li>
-    <li><a href="/students">Show all students</a></li>
-    <li><a href="/student_reviews">check student reviews</a></li>
-    <li><a href="/tas">create ta</a></li>
-    <section class="ac-container">
-      <% rules.forEach( function(item) { %>
-      <p><%= item.work_name + ' ' + item.num_peers + ' ' + item.required_files %></p>
-      <% }); %>
-    </section>
+
+    <li><a href="/create_new_work">Edit, load, or distribute</a></li>
+    <li><a href="/create_students">Create students / Show all students</a></li>
+    <li><a href="/student_reviews">Check student reviews</a></li>
+    <li><a href="/create_tas">Create tas / Show all tas</a></li>
+
   </body>
 </html>
