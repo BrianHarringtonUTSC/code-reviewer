@@ -6,7 +6,7 @@ var router = express.Router();
 var fs = require('fs');
 
 //var io = require('socket.io').listen(80); // initiate socket.io server
-
+var code_schema = require("./models/submission_schema.js");
 var student_model = require('./models/student_model.js');
 var rule_model = require("./models/rule_model.js");
 //Here we are configuring express to use body-parser as middle-ware.
@@ -24,47 +24,83 @@ router.get('/', function(req, res, next) {
 	  if (student == null) {
 	  	res.redirect('/' + req.session.current_site);
 	  } else {
-	  	req.session.current_site = "home";
-	  	find_submission(req, res, 'home');
+	  	if (req.session.current_site != "home") {
+	  		req.session.current_site = "home";
+	  		get_student_utorid(req, res, 'home');
+	  	} else {
+	  		find_submission(req, res, 'home');
+	  	}
 	  }
 	 });
 });
+
+function get_student_utorid(req, res, site) {
+	student_model.findOne({ email: req.user.emails[0].value }, function (err, student) {
+	  if (err) return err;
+	  req.session.self_utorid = student.utorid;
+	  req.session.submitted = 1;
+	  find_submission(req, res, site);
+	 });
+}
 
 function find_submission(req, res, site) {
 	rule_model.find({}, function (err, rule) {
 	  if (err) return err;
-	  var rules = rule; work_list = [];
-	  for (var i = 0; i < rules.length; i ++) {
-	  	work_list.push(rules[i].work_name);
+	  var work_list = [];
+	  for (var i = 0; i < rule.length; i ++) {
+	  	work_list.push(rule[i].work_name);
 	  }
-	  res.render(site, {
-			title: site,
-			work_list: work_list
-		});
-	 });
+	  check_loaded(req, res, site, work_list);
+	});
 
 }
 
-router.post('/go_to_instruction', function(req, res, next) {
-	console.log("-------33333333333------");
-	res.redirect('/instruction');
-});
+function check_loaded(req, res, site, work_list) {
+	var loaded_work = []; var counter = 0;
+	for (var i = 0; i < work_list.length; i ++) {
+		mongoose.connection.db.listCollections({name: work_list[i]})
+		.next(function(err, collinfo) {
+			counter ++;
+		    if (collinfo) {
+		        loaded_work.push(work_list[counter-1]);
+		    } 
+		    if (counter == work_list.length) {
+				res.render(site, {
+					title: site,
+					work_list: loaded_work,
+					submitted : req.session.submitted
+				});
+		    }
+		});
+	}
+}
 
 
-router.post('/go_to_self_review', function(req, res, next) {
+router.post('/go_to_review', function(req, res, next) {
+	console.log(req.session.self_utorid);
 	for (var key in req.body) {
 		req.session.work_name = key;	
 		if (req.body[key] == "self") {
-			console.log("=============================");
-			console.log(req.session);
-			res.redirect('/self_review');
+			check_submitted(req, res, '/self_review');
 		} else {
-			res.redirect('/instruction');
+			check_submitted(req, res, '/instruction');
 		}
 	}
 });
 
 
+function check_submitted(req, res, site) {
+	var code_model = mongoose.model(req.session.work_name, code_schema);
+  	code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
+  	if (code == null) {
+  		req.session.submitted = 0;
+  		res.redirect('/home');
+  	} else {
+  		res.redirect(site);
+  	}
+
+  });
+}
 
 console.log("Connection opened.");
 /*

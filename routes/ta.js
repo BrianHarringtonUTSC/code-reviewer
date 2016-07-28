@@ -39,12 +39,27 @@ function find_submission(req, res, site) {
 	  for (var i = 0; i < rules.length; i ++) {
 	  	work_list.push(rules[i].work_name);
 	  }
-	  res.render(site, {
-			title: site,
-			work_list: work_list
-		});
+	  check_loaded(req, res, site, work_list);
 	 });
 
+}
+function check_loaded(req, res, site, work_list) {
+	var loaded_work = []; var counter = 0;
+	for (var i = 0; i < work_list.length; i ++) {
+		mongoose.connection.db.listCollections({name: work_list[i]})
+		.next(function(err, collinfo) {
+			counter ++;
+		    if (collinfo) {
+		        loaded_work.push(work_list[counter-1]);
+		    } 
+		    if (counter == work_list.length) {
+				res.render(site, {
+					title: site,
+					work_list: loaded_work,
+				});
+		    }
+		});
+	}
 }
 router.post('/go_to_ta_review_or_grade', function(req, res, next) {
 	for (var key in req.body) {

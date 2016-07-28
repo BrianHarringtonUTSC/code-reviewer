@@ -73,6 +73,7 @@ function get_student_utorid(req, res, site) {
 }
 
 function find_student_code(req, res, site) {
+	console.log(req.session.self_utorid);
 	var code_model = mongoose.model(req.session.work_name, code_schema);
   code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
   	req.session.review_array = code.review_by;
@@ -82,6 +83,7 @@ function find_student_code(req, res, site) {
 }
 
 function find_feedback(req, res, site) {
+	console.log(req.session.self_utorid);
   var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
   review_model.findOne({ author: req.session.self_utorid, review_by: req.session.review_array[req.session.peer_number-1] }, function(err, review) {
 	  req.session.feedbacks= review.feedbacks;

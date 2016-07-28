@@ -46,13 +46,14 @@ function init_all(req, res, site) {
 	req.session.create_folder_name = "";
 	req.session.create_num_feedbacks = 0;
 	req.session.create_feedback_questions = [];
-    req.session.create_student_submission_deadline = "";
+  req.session.create_student_submission_deadline = "";
 	req.session.create_release_students_code_to_peers = "";
 	req.session.create_peer_review_deadline = "";
 	req.session.create_release_students_reviews_to_tas = "";
 	req.session.create_ta_review_deadline = "";
 	req.session.create_release_tas_reviews_to_students = "";
 	req.session.create_error_message = "";
+	req.session.instruction = "";
 	find_work_names(req, res, site);
 }
 
@@ -77,7 +78,8 @@ function render(req, res, site, work_names) {
 	num_feedbacks: req.session.create_num_feedbacks,
 	feedback_questions: req.session.create_feedback_questions,
 	error_message: req.session.create_error_message,
-	work_names : work_names
+	work_names : work_names,
+	instruction : req.session.instruction
 	});
 }
 
@@ -90,6 +92,7 @@ router.post('/create_new_work', function(req, res, next) {
 	req.session.create_repo_path = req.body.repo_path;
 	req.session.create_folder_name = req.body.folder_name;
 	req.session.create_num_feedbacks = req.body.num_feedbacks;
+	req.session.instruction = req.body.instruction;
 
 	// if the button clicked is set_feedback, refreash the page
 	if ("set_feedbacks" in req.body) { // initialize the list
@@ -177,12 +180,13 @@ router.post('/create_new_work', function(req, res, next) {
 		folder_name : req.session.create_folder_name,
 		num_feedbacks: req.session.create_num_feedbacks,
 		feedback_questions: req.session.create_feedback_questions,
+		instruction : req.session.instruction,
     	student_submission_deadline : req.session.create_student_submission_deadline,
     	release_to_peers : req.session.create_release_students_code_to_peers,
     	peer_review_deadline : req.session.create_peer_review_deadline,
     	release_to_tas : req.session.create_release_students_reviews_to_tas,
     	ta_review_deadline : req.session.create_ta_review_deadline,
-    	release_to_students : req.session.create_release_tas_reviews_to_students,
+    	release_to_students : req.session.create_release_tas_reviews_to_students
 	});
 	loading_code_collection_name = req.body.work_name;
 	// write a new document into database

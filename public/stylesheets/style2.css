@@ -19,6 +19,7 @@ blockquote, q {quotes: none;}blockquote:before, blockquote:after,q:before, q:aft
 body {
     background: #e0e0e0;
     padding-bottom: 200px;
+    padding-top: 20px;
     text-align: center;
 }
 

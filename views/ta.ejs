@@ -9,27 +9,7 @@
   </head>
 
   <body class="login_body">
-    <nav>
-      <ul>
-      <li><a href="/ta">Home</a></li>
-      <li class="drop">
-        <a href="#">You</a>
-        
-        <div class="dropdownContain">
-          <div class="dropOut">
-            <div class="triangle"></div>
-            <ul>
-              <li>Plan</li>
-              <li>Account Settings</li>
-              <li>Switch Account</li>
-              <li>Sign Out</li>
-            </ul>
-          </div>
-        </div>
-
-      <li><a href="#">Help</a></li>
-    </ul>
-  </nav>
+    <% include templates/ta_header.ejs %>
     <form enctype="application/json" action="ta/go_to_ta_review_or_grade" method="post">
       <% for (var i = 0; i < work_list.length; i ++) { 
           var review_btn = "review_" + work_list[i]; 

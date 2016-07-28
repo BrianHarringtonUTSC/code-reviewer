@@ -36,6 +36,7 @@ router.get('/', function(req, res, next) {
 });
 
 function init_all(req, res, site) {
+	req.session.reviewed = {};
 	req.session.ta_review_display_starting_index = 0;
 	req.session.current_site = site;
 	req.session.self_utorid = '';
@@ -77,7 +78,6 @@ function get_to_reviews(req, res, site) {
   		review_array.push(reviews[i].utorid);
   	}
   	req.session.review_array = review_array;
-  	console.log(req.session.review_array);
   	find_to_review_code_path(req, res, site);
   });
 }
@@ -102,8 +102,30 @@ function find_feedbacks(req, res, site) {
   	}
   	req.session.num_stars = review.num_stars;
   	req.session.highlight_str = review.highlights;
-  	read_file(req, res, site);
+  	if (review.author in req.session.reviewed) {
+   		console.log("-----------do nothing");
+  		read_file(req, res, site);
+  	} else {
+  		console.log("--------------init reviewed");
+  		get_num_stars_for_all_peers(req, res, site);
+  	}
+  	
   });
+}
+
+function get_num_stars_for_all_peers(req, res, site) {
+  var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
+  var count = 0;
+  for (var i = 0; i < req.session.review_array.length; i ++) {
+	  review_model.findOne({ author: req.session.review_array[i], review_by: req.session.self_utorid }, function(err, review) {
+	  	req.session.reviewed[review.author] = review.num_stars;
+	  	count ++;
+	  	if (count == req.session.review_array.length) {
+	  		read_file(req, res, site);
+	  	}
+	  });	
+  }
+  
 }
 
 var readline = require('readline');
@@ -128,7 +150,8 @@ function read_file(req, res, site) {
 			num_stars: req.session.num_stars,
 			init_highligts: req.session.highlight_str,
 			feedback_questions: req.session.feedback_questions,
-			display_index : req.session.ta_review_display_starting_index
+			display_index : req.session.ta_review_display_starting_index,
+			reviewed : req.session.reviewed
 		});
 	});
 }
@@ -148,8 +171,9 @@ function save(req) {
 	);
 }
 
+
 router.post('/go_to_ta_review', function(req, res, next) {
-	var temp_feedback_array = [];
+	var temp_feedback_array = []; 
 	for (var key in req.body) {
 		if (key.indexOf("feedback") > -1) {
 			temp_feedback_array.push(req.body[key]);
@@ -158,6 +182,7 @@ router.post('/go_to_ta_review', function(req, res, next) {
 	req.session.feedbacks = temp_feedback_array;
 	req.session.highlight_str = req.body.highlight_storage;
 	req.session.num_stars = req.body.star_num;
+	req.session.reviewed[req.session.review_array[req.session.peer_number-1]] = req.session.num_stars;
 
 	save(req);
 	var i = 1; var found = 0;
@@ -185,14 +210,22 @@ router.post('/go_to_ta_review', function(req, res, next) {
 		}
 	} else if (next_10 in req.body) {
 		req.session.peer_number += 10;
-		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
-		if (req.session.peer_number > req.session.review_array.length) {
+		
+		if (req.session.peer_number >= req.session.review_array.length) {
 			req.session.peer_number = 1;
 		}
+		if ((req.session.peer_number >= 10) && (req.session.peer_number % 10 == 0)) {
+			req.session.peer_number -= 10;
+		}
+
+		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
 	} else if (prev_10 in req.body) {
 		req.session.peer_number -= 10;
-		if (req.session.peer_number < 0) {
-			req.session.peer_number = req.session.review_array.length - ((req.session.review_array.length % 10) - 1);
+		if (req.session.peer_number <= 0) {
+			req.session.peer_number = req.session.review_array.length;
+		}
+		if ((req.session.peer_number >= 10) && (req.session.peer_number % 10 == 0)) {
+			req.session.peer_number -= 10;
 		}
 		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
 	}
@@ -202,7 +235,6 @@ router.post('/go_to_ta_review', function(req, res, next) {
 	} else {
 		req.session.ta_review_display_starting_index = (Math.floor(req.session.peer_number / 10) * 10);
 	}
-	
 	res.redirect('/ta_review');
 });
 

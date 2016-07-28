@@ -3,16 +3,36 @@
   <head>
     <meta charset="UTF-8">
     <title><%= title %></title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
-
+    <link rel="stylesheet" type="text/css" href="stylesheets/form.css">
+    
+    <script>
+      function redistribute(student_distributed) {
+        if (student_distributed) {
+          if (window.confirm('Redistributing will earase all the highlights, comments, and feedbacks!')) {
+            document.getElementById("distribute").setAttribute("action", "create_new_work/distribute");
+            document.getElementById("distribute").setAttribute("method", "post");
+          }
+        } else {
+          document.getElementById("distribute").setAttribute("action", "create_new_work/distribute");
+          document.getElementById("distribute").setAttribute("method", "post");
+        }
+      }
+    </script>
   </head>
 
   <body>
-    <form action="/logout" method="post">
-      <input type="submit" name="logout_button" value ="LOGOUT"></input>
-    </form>
-    <div style="width: 55%; float: left;">
-    <form action="create_new_work/edit" method="post">
+    <% include templates/instructor_header.ejs %>
+    <div class="edit_form">
+    <form action="create_new_work/edit" method="post" id="signup">
+      <div class="header">
+        <h3>Create New Work</h3>
+        <p>You want to fill out this form</p>
+     </div>
+     <div class="sep"></div>
+     <div class="inputs">
       <p><font size="3" color="red"><%= error_message %></font></p>
       <label>New work name: </label><input type="text" name="work_name" value="<%= work_name %>"></input><br></br>
       <label>Number of peers: </label><input type="text" name="num_peers" value="<%= num_peers %>"></input><br></br>
@@ -25,7 +45,7 @@
           var q_name = "question_" + String(i) %>
         <label>question <%= i %>:</label><input type="text" name="<%= q_name %>" value="<%= feedback_questions[i-1] %>"></input><br></br>
       <% } %>
-
+      <label>Instruction and Tips:</label><input type="text" name="instruction" value="<%= instruction %>"></input>
 
       <label>Student submission deadline:</label>
         <input type="date" name="student_submission_deadline_date"></input>
@@ -51,27 +71,30 @@
         <input type="date" name="release_tas_reviews_to_students_date"></input>
         <input type="time" name="release_tas_reviews_to_students_time" value="23:55"></input>
         <br />
-      <input type="submit" value ="Submit"></input>
+      <input type="submit" value ="Submit" id="submit"></input>
+      </div>
     </form>
     </div>
+
   <div style="margin-left: 3%; width: 42%; float: left;">
     <form action="create_new_work/load_assignment" method="post">
       <input type="submit" value="load_assignment" class="button"></input><br />
       <label><%= num_of_submission_loaded %> submissions is loaded.</label>
     </form>
     <br></br>
-    <form action="create_new_work/distribute" method="post">
-      <input type="submit" value="distribute / re-distribute for peer review" class="button"></input><br />
+    <form id="distribute" >
+      <% if (num_of_submission_loaded == 0) { %>
+      <label><%= work_name %> is NOT loaded. Please load before distributing.</label>
+      <% } %>
+      <input type="submit" value="distribute / re-distribute for peer review" class="button" onclick="redistribute(<%= student_distributed %>)"></input><br />
+
       <% if (student_distributed) {%>
         <label><%= work_name %> has been distributed.</label>
       <% } else { %>
         <label><%= work_name %> has NOT distribted.</label>
       <% } %>
     </form>
-  </div>
-  <div style="width: 100%; float: left;">
-    <a href="/instructor">Go back to instructor</a>
-
+    <br /><br /><br />
     <form action="create_new_work/distribute_ta" method="post">
     <% tas.forEach(function(ta){ 
         var cbox_name = "checkbox_" + ta.utorid; 

@@ -13,21 +13,42 @@ ul.tab li {float: left;}
 
 
 ul.tab li input {
-    display: inline-block;
+    /*display: inline-block;
     color: black;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     transition: 0.3s;
-    font-size: 17px;
+    font-size: 17px;*/
+    background: url(../images/user-silhouette.png) 15px 11px no-repeat #f3f3f3;
+    display: inline-block;
+    position: relative;
+    padding:  10px 15px 10px 35px;;
+    text-align: center;
+    font-size: 16px;
 }
 
 
-ul.tab li input:hover {background-color: #ddd;}
+ul.tab li input:hover {
+    background-color: yellow;}
 
 
-ul.tab li input:focus, .active {
-    background-color: #ccc;
+ul.tab li input.both {
+    
+    background: url(http://cssdeck.com/uploads/media/items/5/5Fm069k.png) 15px 11px no-repeat #f3f3f3;
+    font-size: 16px;
+    padding: 10px 15px 10px 35px;
+    background-color: #D3FFC7;
+}
+
+ul.tab li input.active {
+    background-color: #D3FFC7;
+}
+
+ul.tab li input.reviewed {
+    background: url(http://cssdeck.com/uploads/media/items/5/5Fm069k.png) 15px 11px no-repeat #f3f3f3;
+    font-size: 16px;
+    padding: 10px 15px 10px 35px;
 }
 
 
@@ -39,3 +60,4 @@ ul.tab li input:focus, .active {
     width: 95%;
     margin-left: 2%;
 }
+

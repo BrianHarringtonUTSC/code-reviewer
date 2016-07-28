@@ -7,32 +7,14 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/tab.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   </head>
 
   <body class="login_body">
-    <nav>
-      <ul>
-      <li><a href="/home">Home</a></li>
-      <li class="drop">
-        <a href="#">You</a>
-        
-        <div class="dropdownContain">
-          <div class="dropOut">
-            <div class="triangle"></div>
-            <ul>
-              <li>Plan</li>
-              <li>Account Settings</li>
-              <li>Switch Account</li>
-              <li>Sign Out</li>
-            </ul>
-          </div>
-        </div>
-
-      <li><a href="#">Help</a></li>
-    </ul>
-  </nav>
+    <% include templates/student_header.ejs %>
   
     <div class="breadcrumb">
       <a>Instruction &#38; Tips</a>
@@ -40,27 +22,51 @@
       <a class="active">Self Assess</a>
     </div>
     <br></br>
-    <div class="stars">
-      <form action="">
-        <input class="star star-5" id="star-5" type="radio" name="star"/>
-        <label class="star star-5" for="star-5"></label>
-        <input class="star star-4" id="star-4" type="radio" name="star"/>
-        <label class="star star-4" for="star-4"></label>
-        <input class="star star-3" id="star-3" type="radio" name="star"/>
-        <label class="star star-3" for="star-3"></label>
-        <input class="star star-2" id="star-2" type="radio" name="star"/>
-        <label class="star star-2" for="star-2"></label>
-        <input class="star star-1" id="star-1" type="radio" name="star"/>
-        <label class="star star-1" for="star-1"></label>
+
+    <div class="tabcontent">
+      <form enctype="application/json" action="self_assesment/go_to_home" method="post">
+      <div class="stars">
+        <% for(var i = 5; i >= 1; i --){
+            var class_name = "star star-" + String(i);
+            var id_name = "star-" + String(i);
+            var func_name = "get_star(" + String(i) + ")";
+            if (i == number_of_stars) { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked"></input>
+         <% } else { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>"></input>
+         <% } %>
+            <label class="<%= class_name %>" for="<%= id_name %>"></label>
+        <% } %>
+      </div>
+
+      <input id="star_number" value="<%= number_of_stars%>" name="star_num" style="display:none;"></input>
+
+      <div class="border" style="text-align: left;">
+        <ol class="code">
+        <%var lines = code.split("\n");
+          var count = 1;
+          lines.forEach(function(next_line){
+            var line = "line-" + String(count); 
+            if (next_line.length <= 1) {
+              next_line = next_line + String.fromCharCode(160);
+            }
+            next_line = next_line.replace(" ", String.fromCharCode(160)); %>
+            <li id="<%= line %>" class="row">
+              <span><%= next_line %></span>
+            </li>
+            <% count = count + 1; %>
+          <% }); %>
+        </ol>
+      </div>
+        
+        <input class="button" type="submit" value="finish"></input>
       </form>
     </div>
 
 
-    <form enctype="application/json" action="self_assesment/go_to_home" method="post">
-      <input class="button" type="submit" value="finish"></input>
-    </form>
 
 
+    <script type="text/javascript" src="javascripts/highlight.js"></script>
     <script type="text/javascript" src="javascripts/test.js"></script>
 
   </body>

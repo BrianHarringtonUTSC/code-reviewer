@@ -49,6 +49,7 @@ function init_all(req, res, site) {
   	req.session.code_path = '';
   	req.session.feedback_questions = [];
   	req.session.student_review_by = [];
+  	req.session.reviewed = {};
   	get_feedback_questions(req, res, site);
 }
 
@@ -119,10 +120,53 @@ function find_feedbacks(req, res, site) {
   	req.session.num_stars = review.num_stars;
   	req.session.highlight_str = review.highlights;
   	req.session.mark = review.mark;
-  	read_file(req, res, site);
+
+  	if ("init" in req.session.reviewed) {
+   		console.log("-----------do nothing");
+  		read_file(req, res, site);
+  	} else {
+  		console.log("--------------init reviewed");
+  		req.session.reviewed["init"] = "added";
+  		get_review_by_for_all_peers(req, res, site);
+  	}
+  	
   });
 }
 
+function get_review_by_for_all_peers(req, res, site) {
+  var code_model = mongoose.model(req.session.work_name, code_schema);
+  var count = 1;
+  for (var i = 0; i < req.session.review_array.length; i ++) {
+  	req.session.reviewed[req.session.review_array[i]] = 0;
+  	code_model.findOne({ utorid: req.session.review_array[i] }, function(err, code) {
+  		var review_by = code.review_by;
+  		if (review_by.indexOf(req.session.self_utorid) > -1) {
+  			review_by.splice(review_by.indexOf(req.session.self_utorid), 1);
+  		}
+  		get_all_marks(req, res, site, code.utorid, review_by, count);
+  		count++;
+  	});
+  }
+}
+
+function get_all_marks(req, res, site, author, review_by, count) {
+	var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
+	var count2 = 1;
+	for (var i = 0; i < review_by.length; i ++) {
+		review_model.findOne({ author: author, review_by: review_by[i] }, function(err, review) {
+			req.session.reviewed[review.author + ',' + review.review_by] = review.mark;
+			if (review.mark > 0) {
+				req.session.reviewed[review.author] ++;
+			}
+			if (count == req.session.review_array.length && count2 == review_by.length) {
+				console.log("aaaaaaaaaaaa");
+				read_file(req, res, site);
+			}
+			count2 ++;
+  		});
+	}
+
+}
 var readline = require('readline');
 var stream = require('stream');
 
@@ -148,7 +192,8 @@ function read_file(req, res, site) {
 			init_highligts: req.session.highlight_str,
 			feedback_questions: req.session.feedback_questions,
 			display_index : req.session.ta_review_display_starting_index,
-			review_by : req.session.student_review_by
+			review_by : req.session.student_review_by,
+			reviewed : req.session.reviewed
 		});
 	});
 }
@@ -173,9 +218,13 @@ router.post('/go_to_ta_grade', function(req, res, next) {
 			temp_feedback_array.push(req.body[key]);
 		}
 	}
-	console.log(req.session.mark);
 	req.session.mark = req.body.mark_num;
-	console.log(req.session.mark);
+	req.session.reviewed[req.session.review_array[req.session.peer_number-1] + 
+	',' + req.session.student_review_by[req.session.peer_sub_number-1]] = req.session.mark;
+	if (req.session.mark > 0 && 
+		req.session.reviewed[req.session.review_array[req.session.peer_number-1]] != req.session.student_review_by.length) {
+		req.session.reviewed[req.session.review_array[req.session.peer_number-1]] ++;
+	}
 	save(req);
 	// find peer num
 	var i = 1; var found = 0;
@@ -183,6 +232,7 @@ router.post('/go_to_ta_grade', function(req, res, next) {
 		var key = "peer_" + String(i);
 		if (key in req.body) {
 			req.session.peer_number = req.session.ta_review_display_starting_index + i;
+			req.session.peer_sub_number = 1;
 			found = 1;
 		} 
 		i ++;
@@ -228,15 +278,21 @@ router.post('/go_to_ta_grade', function(req, res, next) {
 	} else if (next_10 in req.body) {
 		req.session.peer_number += 10;
 		req.session.peer_sub_number = 1;
-		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
-		if (req.session.peer_number > req.session.review_array.length) {
+		if (req.session.peer_number >= req.session.review_array.length) {
 			req.session.peer_number = 1;
 		}
+		if ((req.session.peer_number >= 10) && (req.session.peer_number % 10 == 0)) {
+			req.session.peer_number -= 10;
+		}
+		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
 	} else if (prev_10 in req.body) {
 		req.session.peer_number -= 10;
 		req.session.peer_sub_number = 1;
-		if (req.session.peer_number < 0) {
-			req.session.peer_number = req.session.review_array.length - ((req.session.review_array.length % 10) - 1);
+		if (req.session.peer_number <= 0) {
+			req.session.peer_number = req.session.review_array.length;
+		}
+		if ((req.session.peer_number >= 10) && (req.session.peer_number % 10 == 0)) {
+			req.session.peer_number -= 10;
 		}
 		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
 	}

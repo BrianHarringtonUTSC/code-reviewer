@@ -9,31 +9,12 @@
   </head>
 
   <body class="login_body">
-    <nav>
-      <ul>
-      <li><a href="/home">Home</a></li>
-      <li class="drop">
-        <a href="#">You</a>
-        
-        <div class="dropdownContain">
-          <div class="dropOut">
-            <div class="triangle"></div>
-            <ul>
-              <li>no use</li>
-              <li>no use</li>
-              <li>no use</li>
-              <li>no use</li>
-            </ul>
-          </div>
-        </div>
-
-      <li><form action="/logout" method="post">
-      <input type="submit" name="logout_button" value ="LOGOUT"></input>
-    </form></li>
-    </ul>
-  </nav>
-
-    <form enctype="application/json" action="home/go_to_self_review" method="post">
+    <% include templates/student_header.ejs %>
+    
+    <% if (submitted == 0) { %>
+      <label>Sorry! You did not submit this assignment.</label>
+    <% } %>
+    <form enctype="application/json" action="home/go_to_review" method="post">
       <% for (var i = 0; i < work_list.length; i ++) { 
           var review_btn = "review_" + work_list[i]; 
           var grade_btn = "grade_" + work_list[i]; %>

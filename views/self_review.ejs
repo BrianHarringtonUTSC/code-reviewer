@@ -12,27 +12,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
-    <nav>
-      <ul>
-      <li><a href="/home">Home</a></li>
-      <li class="drop">
-        <a href="#">You</a>
-        
-        <div class="dropdownContain">
-          <div class="dropOut">
-            <div class="triangle"></div>
-            <ul>
-              <li>Plan</li>
-              <li>Account Settings</li>
-              <li>Switch Account</li>
-              <li>Sign Out</li>
-            </ul>
-          </div>
-        </div>
-
-      <li><a href="#">Help</a></li>
-    </ul>
-  </nav>
+    <% include templates/student_header.ejs %>
 
     <form enctype="application/json" action="self_review/go_to_self_review" method="post">
     <ul class="tab">

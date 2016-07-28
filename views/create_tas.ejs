@@ -3,12 +3,14 @@
   <head>
     <meta charset="UTF-8">
     <title>TA's</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
 
   <body>
-    <li><a href="/instructor">Go back to instructor</a></li>
+    <% include templates/instructor_header.ejs %>
 
-    <form action="tas/load" method="post" enctype="multipart/form-data">
+    <form action="create_tas/load" method="post" enctype="multipart/form-data">
       <input type="file" value ="Upload tas file" name="rosters" required><br>
       <input type="submit" value ="Load new tas">
     </form>

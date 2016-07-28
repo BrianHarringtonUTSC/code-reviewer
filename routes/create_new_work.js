@@ -104,7 +104,9 @@ function render(req, res, site, rule, tas, num_submission, student_distributed, 
 	folder_name: rule.folder_name,
 	num_feedbacks: rule.num_feedbacks,
 	feedback_questions: rule.feedback_questions,
-	error_message: rule.error_message
+	instruction : rule.instruction,
+	error_message: rule.error_message,
+	loaded : req.session.loaded
 	});
 }
 
@@ -119,7 +121,8 @@ function save(req, feedback_questions) {
 		repo_path : req.body.repo_path,
 		folder_name : req.body.folder_name,
 		num_feedbacks :req.body.num_feedbacks,
-		feedback_questions : feedback_questions } },
+		feedback_questions : feedback_questions,
+		instruction : req.body.instruction } },
 		{ new: true},
 		function(err, doc) {
 			if (err) console.log(err);
@@ -219,7 +222,6 @@ router.post('/load_assignment', function(req, res, next) {
 
 /*--------------distribution----------------------*/
 router.post('/distribute', function(req, res, next) {
-	console.log(req.session.work_name);
 	var num = 0; 
 	rule_model.findOne({ work_name: req.session.work_name }, function(err, rule) {
   		num = rule.num_peers;
@@ -232,10 +234,7 @@ router.post('/distribute', function(req, res, next) {
 	});
 
 	cStream.on('end', function(doc) {
-		mongoose.connection.db.dropCollection(req.session.work_name + "_reviews", function(err, result) {
-			console.log(result);
-			distribute(res, code_array, num, req.session.work_name);
-		});
+		check_loaded(req, res, code_array, num, req.session.work_name);
 		
 	});
 });
@@ -265,7 +264,6 @@ router.post('/distribute_ta', function(req, res, next) {
 });
 
 function distribute_ta(res, code_array, tas_need_to_review, work_name) {
-	console.log(tas_need_to_review);
 	var code_model = mongoose.model(work_name, code_schema);
 	var reviews_per_weight = Math.floor(code_array.length / tas_need_to_review.length);
 	var code = 0;
@@ -353,7 +351,9 @@ function read_file(file_name, file_report_name, directory_path, folder_name, res
               ta: "",
               code_path: newCodePath,
               report_path: newReportPath,
-              failed_test_cases: []
+              failed_test_cases: [],
+              self_assess : 0,
+              mark : 0
 	          });
 	          code.save( function(err) {
 	            console.log("added ", code.utorid);
@@ -371,10 +371,26 @@ function read_file(file_name, file_report_name, directory_path, folder_name, res
 	res.redirect('/create_new_work');
 }
 
+function check_loaded(req, res, code_array, num, work_name) {
+	mongoose.connection.db.listCollections({name: work_name})
+	.next(function(err, collinfo) {
+	    if (collinfo) {
+	    	console.log("NOT found!");
+	    	pre_distribute(req, res, code_array, num, work_name);
+	    } else {
+	    	console.log("found!");
+	    	res.redirect('/create_new_work');
+	    }
+	});
+}
+
+function pre_distribute(req, res, code_array, num, work_name) {
+	mongoose.connection.db.dropCollection(req.session.work_name + "_reviews", function(err, result) {
+		distribute(res, code_array, num, work_name);
+	});
+}
+
 function distribute(res, code_array, num, work_name) {
-	console.log("-----------------------");
-	console.log(num);
-	console.log(code_array.length);
 	var code_model = mongoose.model(work_name, code_schema);
 	var review_model = mongoose.model(work_name + "_reviews", review_schema);
 	var len = code_array.length;
@@ -390,7 +406,6 @@ function distribute(res, code_array, num, work_name) {
     		});
             // avoid duplicates
     		new_review.save(function (err) {
-                //console.log('--------------',new_review);
     			if (err) {
     				console.log("duplicates");
     			}

@@ -14,27 +14,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
-    <nav>
-      <ul>
-      <li><a href="/home">Home</a></li>
-      <li class="drop">
-        <a href="#">You</a>
-        
-        <div class="dropdownContain">
-          <div class="dropOut">
-            <div class="triangle"></div>
-            <ul>
-              <li>Plan</li>
-              <li>Account Settings</li>
-              <li>Switch Account</li>
-              <li>Sign Out</li>
-            </ul>
-          </div>
-        </div>
-
-      <li><a href="#">Help</a></li>
-    </ul>
-  </nav>
+    <% include templates/student_header.ejs %>
 
     <div class="breadcrumb">
       <a>Instruction &#38; Tips</a>
@@ -42,15 +22,23 @@
       <a>Self Assess</a>
     </div>
     <form enctype="application/json" action="peer_review/go_to_peer_review" method="post">
+  <div>
+  </div>
     <ul class="tab">
       <% var i = 1;%>
       <% entries.forEach(function(item) { %>
         <% var btn_name = "peer_" + String(i); %>
         <% var btn_value = "Peer " + String(i); %>
-        <% if (i == peer_num) { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks active"></input></li>
+        <% if (i == peer_num) { 
+              if (reviewed[item] > 0) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab both"></input></li>
+          <% } else {%>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab active"></input></li>
+          <% } %>
+        <% } else if (reviewed[item] > 0) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab reviewed"></input></li>
         <% } else { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks"></input></li>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab"></input></li>
         <% } %>
         <% i = i + 1;%>
       <% }); %>

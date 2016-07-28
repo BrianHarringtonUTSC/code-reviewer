@@ -14,44 +14,32 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
-    <nav>
-      <ul>
-      <li><a href="/ta">Home</a></li>
-      <li class="drop">
-        <a href="#">You</a>
-        
-        <div class="dropdownContain">
-          <div class="dropOut">
-            <div class="triangle"></div>
-            <ul>
-              <li>Plan</li>
-              <li>Account Settings</li>
-              <li>Switch Account</li>
-              <li>Sign Out</li>
-            </ul>
-          </div>
-        </div>
-
-      <li><a href="#">Help</a></li>
-    </ul>
-  </nav>
+    <% include templates/ta_header.ejs %>
 
     <form enctype="application/json" action="ta_review/go_to_ta_review" method="post">
+      <input class="button" type="submit" name="prev_btn" value="previous" style="float:left;"></input>
+      <input class="button" type="submit" name="prev_10_btn" value="prev 10" style="float:left;"></input>
+      <input class="button" type="submit" name="next_btn" value="next" style="float:right;"></input>
+      <input class="button" type="submit" name="next_10_btn" value="next 10" style="float:right;"></input>
     <ul class="tab">
       <% var i = 0; var index = display_index + i;
        while((index < reviews.length) && (i < 10)) {
         var btn_name = "peer_" + String(i+1);
-         if (index+1 == peer_num) { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= reviews[index] %>" class="tablinks active"></input></li>
+         if (index+1 == peer_num) { 
+            if (reviewed[reviews[index]] > 0){ %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= reviews[index] %>" class="tab both"></input></li>
+          <% } else { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= reviews[index] %>" class="tab active"></input></li>          
+          <% } %>
+        <% } else if ((reviews[index] in reviewed) && reviewed[reviews[index]] > 0){ %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= reviews[index] %>" class="tab reviewed"></input></li>
         <% } else { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= reviews[index] %>" class="tablinks"></input></li>
-        <% } 
+          <li><input type="submit" name="<%= btn_name%>" value="<%= reviews[index] %>" class="tab"></input></li>
+        <% }
           i = i + 1;
-          index = display_index + i;%>
-
-      <% } %>
+          index = display_index + i;
+       } %>
     </ul>
-
     <div class="tabcontent">
       <div class="stars">
         <% for(var i = 5; i >= 1; i --){

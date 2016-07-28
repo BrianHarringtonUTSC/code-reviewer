@@ -46,6 +46,7 @@ router.post('/go_to_index', function(req, res, next) {
 
 
 function init_all(req, res, site) {
+	req.session.reviewed = {};
 	req.session.current_site = site;
 	req.session.self_utorid = '';
 	req.session.review_array = [];
@@ -79,14 +80,8 @@ function get_student_utorid(req, res, site) {
 function find_student_code(req, res, site){
 	var code_model = mongoose.model(req.session.work_name, code_schema);
   code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
-  	if (code == null) {
-  		req.submitted = 0;
-  		res.redirect('/home');
-  	} else {
-  		req.session.review_array = code.to_review;
-  		find_to_review_code_path(req, res, site);  		
-  	}
-
+	req.session.review_array = code.to_review;
+	find_to_review_code_path(req, res, site);  		
   });
 }
 
@@ -99,6 +94,7 @@ function find_to_review_code_path(req, res, site) {
 }
 
 function find_feedbacks(req, res, site) {
+	console.log("----------------------------1");
 	 var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
   review_model.findOne({ author: req.session.review_array[req.session.peer_number-1], review_by: req.session.self_utorid }, function(err, review) {
   	req.session.feedbacks = review.feedbacks;
@@ -108,11 +104,34 @@ function find_feedbacks(req, res, site) {
 			req.session.feedbacks.push("");
 		}
   	}
+
   	req.session.num_stars = review.num_stars;
   	req.session.highlight_str = review.highlights;
-  	read_file(req, res, site);
+  	if (review.author in req.session.reviewed) {
+   		console.log("-----------do nothing");
+  		read_file(req, res, site);
+  	} else {
+  		console.log("--------------init reviewed");
+  		get_num_stars_for_all_peers(req, res, site);
+  	}
   });
 }
+
+function get_num_stars_for_all_peers(req, res, site) {
+  var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
+  for (var i = 0; i < req.session.review_array.length; i ++) {
+  	var count = 0;
+	  review_model.findOne({ author: req.session.review_array[i], review_by: req.session.self_utorid }, function(err, review) {
+	  	req.session.reviewed[review.author] = review.num_stars;
+	  	count ++;
+	  	if (count == req.session.review_array.length) {
+	  		read_file(req, res, site);
+	  	}
+	  });	
+  }
+  
+}
+
 
 var readline = require('readline');
 var stream = require('stream');
@@ -135,7 +154,8 @@ function read_file(req, res, site) {
 			feedbacks: req.session.feedbacks,
 			number_of_stars: req.session.num_stars,
 			init_highligts: req.session.highlight_str,
-			feedback_questions: req.session.feedback_questions
+			feedback_questions: req.session.feedback_questions,
+			reviewed: req.session.reviewed
 		});
 	});
 }
@@ -151,6 +171,7 @@ function save(req) {
 		{ new: true},
 		function(err, doc) {
 			if (err) console.log(err);
+			console.log("saved");
 		}
 	);
 }
@@ -165,7 +186,7 @@ router.post('/go_to_peer_review', function(req, res, next) {
 	req.session.feedbacks = temp_feedback_array;
 	req.session.highlight_str = req.body.highlight_storage;
 	req.session.num_stars = req.body.star_num;
-
+	req.session.reviewed[req.session.review_array[req.session.peer_number-1]] = req.session.num_stars;
 	save(req);
 	for (var i = 1; i <= req.session.review_array.length; i++) {
   	var key = "peer_" + String(i);
