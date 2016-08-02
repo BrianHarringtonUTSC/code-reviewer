@@ -33,6 +33,7 @@ ol li:before {
 .code {
     font-family: monospace;
     margin: 1em 0;
+    padding-left: 0px;
 }
 
 .highlight-1 {

@@ -5,6 +5,9 @@ var moment = require('moment');
 var rule_model = require("./models/rule_model.js");
 var instructor_model = require("./models/instructor_model.js");
 
+var code_schema = require("./models/submission_schema.js");
+var review_schema = require("./models/review_schema.js");
+
 var passed_deadline = "cannot set a deadline which is already passed ";
 
 var feedback_questions = [];
@@ -46,7 +49,7 @@ function init_all(req, res, site) {
 	req.session.create_folder_name = "";
 	req.session.create_num_feedbacks = 0;
 	req.session.create_feedback_questions = [];
-  req.session.create_student_submission_deadline = "";
+  	req.session.create_student_submission_deadline = "";
 	req.session.create_release_students_code_to_peers = "";
 	req.session.create_peer_review_deadline = "";
 	req.session.create_release_students_reviews_to_tas = "";
@@ -60,13 +63,10 @@ function init_all(req, res, site) {
 function find_work_names(req, res, site) {
 	var work_names = [];
   	rule_model.find({}, function(err, rules) {
-  		for (var i = 0; i < rules.length; i ++) {
-  			work_names.push(rules[i].work_name);
-  		}
-  	render(req, res, site, work_names);
+  		render(req, res, site, rules);
   });
 }
-function render(req, res, site, work_names) {
+function render(req, res, site, rules) {
 	res.render(site, {
 	title: site,
 	work_name: req.session.create_work_name,
@@ -78,7 +78,7 @@ function render(req, res, site, work_names) {
 	num_feedbacks: req.session.create_num_feedbacks,
 	feedback_questions: req.session.create_feedback_questions,
 	error_message: req.session.create_error_message,
-	work_names : work_names,
+	rules : rules,
 	instruction : req.session.instruction
 	});
 }
@@ -186,7 +186,10 @@ router.post('/create_new_work', function(req, res, next) {
     	peer_review_deadline : req.session.create_peer_review_deadline,
     	release_to_tas : req.session.create_release_students_reviews_to_tas,
     	ta_review_deadline : req.session.create_ta_review_deadline,
-    	release_to_students : req.session.create_release_tas_reviews_to_students
+    	release_to_students : req.session.create_release_tas_reviews_to_students,
+    	release : 0,
+    	release_self_review : 0,
+    	release_mark : 0
 	});
 	loading_code_collection_name = req.body.work_name;
 	// write a new document into database
@@ -203,14 +206,104 @@ router.post('/go_to_create_new_work', function(req, res, next) {
 	for (var key in req.body) {
 		req.session.work_name = key;
 		if (key.indexOf("check_") > -1) {
-			req.session.work_name = key.slice(6, 8);
-			console.log(req.session.work_name);
+			req.session.work_name = key.slice(6, key.length);
 			res.redirect('/student_reviews');
-		} else {
+		} else if (key.indexOf("unrelease_self") > -1) {
+			req.session.work_name = key.slice(15, key.length);
+			release_or_unrelease_self(req, res, '/instructor', 0);
+		} else if (key.indexOf("release_self") > -1) {
+			req.session.work_name = key.slice(13, key.length);
+			release_or_unrelease_self(req, res, '/instructor', 1);
+		} else if (key.indexOf("unrelease_mark") > -1) {
+			req.session.work_name = key.slice(15, key.length);
+			release_or_unrelease_mark(req, res, '/instructor', 0);
+		} else if (key.indexOf("release_mark") > -1) {
+			req.session.work_name = key.slice(13, key.length);
+			release_or_unrelease_mark(req, res, '/instructor', 1);
+		} else if (key.indexOf("unrelease_") > -1) {
+			req.session.work_name = key.slice(10, key.length);
+			release_or_unrelease(req, res, '/instructor', 0);
+		} else if (key.indexOf("release_") > -1) {
+			req.session.work_name = key.slice(8, key.length);
+			release_or_unrelease(req, res, '/instructor', 1);
+	    } else {
+	    	console.log("-----------else");
 			res.redirect('/create_new_work');
+
 		}
 	}
 
 });
+
+function release_or_unrelease_self(req, res, site, bool) {
+	rule_model.findOneAndUpdate(
+		{ work_name: req.session.work_name },
+		{ $set: { release_self_review : bool } },
+		{ new: true},
+		function(err, doc) {
+			if (err) console.log(err);
+			res.redirect(site);
+		}
+	);
+}
+
+function release_or_unrelease_mark(req, res, site, bool) {
+	rule_model.findOneAndUpdate(
+		{ work_name: req.session.work_name },
+		{ $set: { release_mark : bool } },
+		{ new: true},
+		function(err, doc) {
+			if (err) console.log(err);
+			if (bool == 1) {
+				get_overall_mark(req, res, site);
+			} else {
+				res.redirect(site);
+			}
+		}
+	);
+}
+
+function release_or_unrelease(req, res, site, bool) {
+	rule_model.findOneAndUpdate(
+		{ work_name: req.session.work_name },
+		{ $set: { release : bool } },
+		{ new: true},
+		function(err, doc) {
+			if (err) console.log(err);
+			res.redirect(site);
+		}
+	);
+}
+
+
+function get_overall_mark(req, res, site) {
+  var marks = {};
+  var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
+  review_model.find({}, function(err, reviews) {
+  	for (var i = 0; i < reviews.length; i ++) {
+  		if (!(reviews[i].review_by in marks)) {
+  			marks[reviews[i].review_by] = 0;
+  		}
+		marks[reviews[i].review_by] += reviews[i].mark;
+  	}
+  	update_overall_mark(req, res, site, marks)
+  	
+  });
+}
+
+function update_overall_mark(req, res, site, marks) {
+  var code_model = mongoose.model(req.session.work_name, code_schema);
+  for (var utorid in marks) {
+  	code_model.findOneAndUpdate(
+		{ utorid: utorid },
+		{ $set: { mark: marks[utorid] } },
+		{ new: true},
+		function(err, doc) {
+			if (err) console.log(err);
+		}
+	);
+  }
+	res.redirect(site);
+}
 
 module.exports = router;

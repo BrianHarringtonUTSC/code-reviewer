@@ -4,20 +4,37 @@
     <meta charset="UTF-8">
     <title>Login Form</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/table.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   </head>
 
   <body class="login_body">
     <% include templates/ta_header.ejs %>
     <form enctype="application/json" action="ta/go_to_ta_review_or_grade" method="post">
-      <% for (var i = 0; i < work_list.length; i ++) { 
-          var review_btn = "review_" + work_list[i]; 
-          var grade_btn = "grade_" + work_list[i]; %>
-      <label><%= work_list[i] %></label>
-      <input type="submit" name="<%= work_list[i] %>" value="review"></input>
-      <input type="submit" name="<%= work_list[i] %>" value="grade"></input><br></br>
-      <% } %>
+      <table>
+        <thead>
+          <tr>
+            <th><i class="fa fa-file-text" aria-hidden="true"></i> Assignment</th>
+            <th><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Review</th>
+            <th><i class="fa fa-check-square-o" aria-hidden="true"></i> Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (var i = 0; i < rules.length; i ++) { 
+            var review_btn = rules[i].work_name + "_review"; 
+            var grade_btn = rules[i].work_name + "_grade"; 
+            if (rules[i].release) {%>
+          <tr>
+            <td><strong><%= rules[i].work_name %></strong></td>
+            <td><input type="submit" name="<%= review_btn %>" value="Start Reviewing" class="button_link"></input></td>
+            <td><input type="submit" name="<%= grade_btn %>" value="Start grading" class="button_link"></input></td>
+          </tr>
+          <% } %>
+        <% } %>
+        </tbody>
+      </table>
     </form>
 
 

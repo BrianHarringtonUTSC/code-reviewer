@@ -11,7 +11,7 @@ var student_schema = new mongoose.Schema({
     },
     student_number : String,
     email : String,
-    is_active : Boolean // true == active, false == inactive
+    is_active : Boolean// true == active, false == inactive
 });
 
 module.exports = mongoose.model('students', student_schema);

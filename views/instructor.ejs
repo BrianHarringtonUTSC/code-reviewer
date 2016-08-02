@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>students</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/form.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/table.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
   </head>
 
   <body>
@@ -27,10 +29,15 @@
       <label>Number of feedbacks:</label><input type="text" name="num_feedbacks" value="<%= num_feedbacks %>"></input>
       <input type="submit" name="set_feedbacks" value ="Set Feedback Questions"></input>
       <% for(var i=1; i <= num_feedbacks; i++) { 
-          var q_name = "question_" + String(i) %>
+          var q_name = "question_" + String(i); %>
         <label>question <%= i %>:</label><input type="text" name="<%= q_name %>" value="<%= feedback_questions[i-1] %>"></input>
       <% } %>
-      <label>Instruction and Tips:</label><input type="text" name="instruction" value="<%= instruction %>"></input>
+      <label>Instruction and Tips:</label>
+      <% if (instruction == "") {%>
+        <input type="text" name="instruction" value="TIPS"></input>
+      <% } else { %>
+        <input type="text" name="instruction" value="<%= instruction %>"></input>
+      <% } %>
       <label>Student submission deadline:</label>
         <input type="date" name="student_submission_deadline_date"></input>
         <input type="time" name="student_submission_deadline_time" value="23:55"></input>
@@ -61,19 +68,52 @@
   </div>
 
     <form enctype="application/json" action="instructor/go_to_create_new_work" method="post">
-      <% for (var i = 0; i < work_names.length; i ++) { 
-          var check_review = "check_" + work_names[i]; %>
-      <label><%= work_names[i] %></label>
-      <input type="submit" name="<%= work_names[i] %>" value="Edit, load, or distribute"></input>
-      <input type="submit" name="<%= check_review %>" value="Check student reviews">
-      <br></br>
-      <% } %>
+      <table style="width:65%;">
+        <thead>
+          <tr>
+            <th>Assignment</th>
+            <th>Management</th>
+            <th>Reviews</th>
+            <th>Release</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (var i = 0; i < rules.length; i ++) { 
+            var check_review = "check_" + rules[i].work_name;
+            var release = "release_" + rules[i].work_name;
+            var unrelease = "unrelease_" + rules[i].work_name;
+            var release_mark = "release_mark_" + rules[i].work_name;
+            var unrelease_mark = "unrelease_mark_" + rules[i].work_name;
+            var release_self_review = "release_self_" + rules[i].work_name;
+            var unrelease_self_review = "unrelease_self_" + rules[i].work_name; %>
+          <tr>
+            <td><strong><%= rules[i].work_name %></strong></td>
+            <td><input type="submit" name="<%= rules[i].work_name %>" value="Edit, load, or distribute" class="button_link"></input></td>
+            <td><input type="submit" name="<%= check_review %>" value="Check student reviews" class="button_link"></input></td>
+            <td>
+            <% if (rules[i].release) { %>
+              <input type="submit" name="<%= unrelease %>" value="un-release" class="button_link"></input>
+            <% } else { %>
+              <input type="submit" name="<%= release %>" value="release" class="button_link"></input>
+            <% } %>
+            <br />
+            <% if (rules[i].release_mark) { %>
+              <input type="submit" name="<%= unrelease_mark %>" value="un-release marks" class="button_link"></input>
+            <% } else { %>
+              <input type="submit" name="<%= release_mark %>" value="release marks" class="button_link"></input>
+            <% } %>
+            <br />
+            <% if (rules[i].release_self_review) { %>
+              <input type="submit" name="<%= unrelease_self_review %>" value="un-release self reviews" class="button_link"></input>
+            <% } else { %>
+              <input type="submit" name="<%= release_self_review %>" value="release self reviews" class="button_link"></input>
+            <% } %>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
     </form>
-
-    <li><a href="/create_new_work">Edit, load, or distribute</a></li>
-    <li><a href="/create_students">Create students / Show all students</a></li>
-    <li><a href="/student_reviews">Check student reviews</a></li>
-    <li><a href="/create_tas">Create tas / Show all tas</a></li>
 
   </body>
 </html>

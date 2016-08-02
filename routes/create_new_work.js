@@ -258,12 +258,31 @@ router.post('/distribute_ta', function(req, res, next) {
 	});
 
 	cStream.on('end', function(doc) {
-		distribute_ta(res, code_array, tas_need_to_review, req.session.work_name);
+		shuffle_array_for_ta(res, code_array, tas_need_to_review, req.session.work_name);
 	});
 
 });
 
+function shuffle_array_for_ta(res, code_array, tas_need_to_review, work_name) {
+  var currentIndex = code_array.length, temporaryValue, randomIndex;
+console.log(code_array[5]);
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = code_array[currentIndex];
+    code_array[currentIndex] = code_array[randomIndex];
+    code_array[randomIndex] = temporaryValue;
+  }
+  distribute_ta(res, code_array, tas_need_to_review, work_name);
+}
+
 function distribute_ta(res, code_array, tas_need_to_review, work_name) {
+	console.log(code_array[5]);
 	var code_model = mongoose.model(work_name, code_schema);
 	var reviews_per_weight = Math.floor(code_array.length / tas_need_to_review.length);
 	var code = 0;
@@ -276,7 +295,8 @@ function distribute_ta(res, code_array, tas_need_to_review, work_name) {
   			review_by: tas_need_to_review[i],
   			feedbacks: [],
   			high_light: [],
-  			num_stars: 0
+  			num_stars: 0,
+  			mark : 0
 
   		});
       // avoid duplicates
@@ -300,7 +320,8 @@ function distribute_ta(res, code_array, tas_need_to_review, work_name) {
 			review_by: ta_utorid,
 			feedbacks: [],
 			high_light: [],
-			num_stars: 0
+			num_stars: 0, 
+			mark : 0
 
 		});
     // avoid duplicates
@@ -386,8 +407,26 @@ function check_loaded(req, res, code_array, num, work_name) {
 
 function pre_distribute(req, res, code_array, num, work_name) {
 	mongoose.connection.db.dropCollection(req.session.work_name + "_reviews", function(err, result) {
-		distribute(res, code_array, num, work_name);
+		shuffle_array(res, code_array, num, work_name);
 	});
+}
+
+function shuffle_array(res, code_array, num, work_name) {
+  var currentIndex = code_array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = code_array[currentIndex];
+    code_array[currentIndex] = code_array[randomIndex];
+    code_array[randomIndex] = temporaryValue;
+  }
+  distribute(res, code_array, num, work_name);
 }
 
 function distribute(res, code_array, num, work_name) {
@@ -401,7 +440,8 @@ function distribute(res, code_array, num, work_name) {
     			review_by: code_array[(i + j) % len].utorid,
     			feedbacks: [],
     			high_light: [],
-    			num_stars: 0
+    			num_stars: 0, 
+    			mark : 0
 
     		});
             // avoid duplicates

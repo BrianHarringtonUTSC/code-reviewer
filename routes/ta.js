@@ -26,11 +26,22 @@ router.get('/', function(req, res, next) {
 	  	res.redirect('/' + req.session.current_site);
 	  } else {
 	  	req.session.current_site = "ta";
-	  	find_submission(req, res, 'ta');
+	  	check_release(req, res, 'ta');
 	  }
 	 });
 	// user authentication
 });
+
+function check_release(req, res, site) {
+	rule_model.find({}, function (err, rules) {
+	  if (err) return err;
+		res.render(site, {
+			title: site,
+			rules : rules
+		});
+	});
+}
+
 
 function find_submission(req, res, site) {
 	rule_model.find({}, function (err, rule) {
@@ -63,8 +74,8 @@ function check_loaded(req, res, site, work_list) {
 }
 router.post('/go_to_ta_review_or_grade', function(req, res, next) {
 	for (var key in req.body) {
-		req.session.work_name = key;	
-		if (req.body[key] == "review") {
+		req.session.work_name = String(key).substring(0, key.indexOf("_"));	
+		if (key.indexOf("review") > -1) {
 			res.redirect('/ta_review');
 		} else {
 			res.redirect('/ta_grade');

@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/textbox.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
     <% include templates/student_header.ejs %>
@@ -53,7 +53,7 @@
             if (next_line.length <= 1) {
               next_line = next_line + String.fromCharCode(160);
             }
-            next_line = next_line.replace(" ", String.fromCharCode(160)); %>
+            next_line = next_line.replace(new RegExp(' ', 'g'), String.fromCharCode(160)); %>
             <li id="<%= line %>" class="row">
               <span><%= next_line %></span>
             </li>

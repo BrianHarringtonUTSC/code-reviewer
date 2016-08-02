@@ -6,7 +6,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/tab.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
@@ -50,7 +50,7 @@
             if (next_line.length <= 1) {
               next_line = next_line + String.fromCharCode(160);
             }
-            next_line = next_line.replace(" ", String.fromCharCode(160)); %>
+            next_line = next_line.replace(new RegExp(' ', 'g'), String.fromCharCode(160)); %>
             <li id="<%= line %>" class="row">
               <span><%= next_line %></span>
             </li>

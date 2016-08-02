@@ -35,6 +35,7 @@ var create_students = require('./routes/create_students');
 var ta = require('./routes/ta');
 var ta_review = require('./routes/ta_review');
 var ta_grade = require('./routes/ta_grade');
+var review_result = require('./routes/review_result');
 
 
 var app = express();
@@ -72,6 +73,7 @@ app.use('/create_tas', create_tas);
 app.use('/ta', ta);
 app.use('/ta_review', ta_review);
 app.use('/ta_grade', ta_grade);
+app.use('/review_result', review_result);
 
 // Auth0 callback handler
 app.get('/callback', 

@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
 	  		req.session.current_site = "home";
 	  		get_student_utorid(req, res, 'home');
 	  	} else {
-	  		find_submission(req, res, 'home');
+	  		check_release(req, res, 'home');
 	  	}
 	  }
 	 });
@@ -39,8 +39,55 @@ function get_student_utorid(req, res, site) {
 	  if (err) return err;
 	  req.session.self_utorid = student.utorid;
 	  req.session.submitted = 1;
-	  find_submission(req, res, site);
+	  req.session.release_self = 1;
+	  find_all_work(req, res, site);
 	 });
+}
+
+function check_release(req, res, site) {
+	rule_model.find({}, function (err, rules) {
+	  if (err) return err;
+		res.render(site, {
+			title: site,
+			rules : rules,
+			marks : req.session.marks,
+			submitted : req.session.submitted,
+			release_self : req.session.release_self
+		});
+	});
+}
+
+function find_all_work(req, res, site) {
+	rule_model.find({}, function (err, rules) {
+	  if (err) return err;
+		get_marks(req, res, site, rules);
+	});
+}
+
+function get_marks(req, res, site, rules) {
+	req.session.marks = {};
+	var count = 0;
+	for (var i = 0; i < rules.length; i ++) {
+	  var code_model = mongoose.model(rules[i].work_name, code_schema);
+	  code_model.findOne({ utorid: req.session.self_utorid }, function (err, code) {
+		  if (err) return err;
+		  console.log(code);
+		  if (code != null) {
+		  	req.session.marks[rules[count].work_name] = code.mark;
+		  }
+		  count ++;
+		  if (count == rules.length) {
+		  	console.log(req.session.marks);
+			res.render(site, {
+				title: site,
+				rules : rules,
+				marks : req.session.marks,
+				submitted : req.session.submitted,
+				release_self : req.session.release_self
+			});
+		  }
+	 });
+	}
 }
 
 function find_submission(req, res, site) {
@@ -68,7 +115,8 @@ function check_loaded(req, res, site, work_list) {
 				res.render(site, {
 					title: site,
 					work_list: loaded_work,
-					submitted : req.session.submitted
+					submitted : req.session.submitted,
+					release_self : req.session.release_self
 				});
 		    }
 		});
@@ -79,11 +127,14 @@ function check_loaded(req, res, site, work_list) {
 router.post('/go_to_review', function(req, res, next) {
 	console.log(req.session.self_utorid);
 	for (var key in req.body) {
-		req.session.work_name = key;	
-		if (req.body[key] == "self") {
+		req.session.work_name = String(key).substring(0, key.indexOf("_"));
+		console.log(req.session.work_name);
+		if (key.indexOf("self") > -1) {
 			check_submitted(req, res, '/self_review');
-		} else {
+		} else if (key.indexOf("peer") > -1) {
 			check_submitted(req, res, '/instruction');
+		} else {
+			check_submitted(req, res, '/review_result');
 		}
 	}
 });
@@ -96,23 +147,29 @@ function check_submitted(req, res, site) {
   		req.session.submitted = 0;
   		res.redirect('/home');
   	} else {
-  		res.redirect(site);
+  		if (site.indexOf('self') > -1) {
+			check_release_self(req, res, site);
+  		} else {
+  			res.redirect(site);
+  		}
   	}
-
   });
 }
 
-console.log("Connection opened.");
-/*
-io.sockets.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' }); // Send data to client
+function check_release_self(req, res, site) {
+	rule_model.findOne({work_name : req.session.work_name}, function (err, rule) {
+		console.log(rule);
+	  if (err) return err;
+	  if (rule.release_self_review) {
+	  	req.session.release_self = 1;
+	  	res.redirect(site);
+	  } else {
+	  	req.session.release_self = 0;
+	  	res.redirect('/home');
+	  }
+	});
+}
 
-  // wait for the event raised by the client
-  socket.on('my other event', function (data) {  
-    console.log(data);
-  });
-});
-*/
 module.exports = router;
 
 

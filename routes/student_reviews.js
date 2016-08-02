@@ -41,6 +41,7 @@ router.post('/go_to_index', function(req, res, next) {
 
 
 function init_all(req, res, site) {
+	req.session.submitted = 1;
 	req.session.current_site = site;
 	req.session.self_or_peer = null; // 0 = self, 1 = peer
 	req.session.num_stars = 0;
@@ -55,6 +56,7 @@ function init_all(req, res, site) {
 	check_student_utorid(req, res, site);
 }
 
+
 function check_student_utorid(req, res, site) {
 	student_model.findOne({ utorid: req.session.self_utorid }, function (err, student) {
 	  if (err) return err;
@@ -67,16 +69,39 @@ function check_student_utorid(req, res, site) {
 				init_highligts: req.session.highlight_str,
 				utorid: req.session.self_utorid,
 				is_empty: req.session.empty,
-				s_or_p: req.session.self_or_peer 
+				s_or_p: req.session.self_or_peer,
+				submitted : req.session.submitted 
 			});
 	  } else {
 	  	req.session.empty = 0;
 	  	console.log("-----------2 utorid found");
 	  	console.log(req.session.self_utorid);
 	  	console.log(req.session.work_name);
-	  	get_feedback_questions(req, res, site);
+	  	check_submitted(req, res, site);
 	  }
 	 });
+}
+
+function check_submitted(req, res, site) {
+	var code_model = mongoose.model(req.session.work_name, code_schema);
+  	code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
+  	if (code == null) {
+  		req.session.submitted = 0;
+  		req.session.self_or_peer = null;
+		res.render(site, {
+			title: site,
+			init_highligts: req.session.highlight_str,
+			utorid: req.session.self_utorid,
+			is_empty: req.session.empty,
+			s_or_p: req.session.self_or_peer,
+			submitted : req.session.submitted 
+		});
+  	} else {
+  		req.session.submitted = 1;
+  		get_feedback_questions(req, res, site);
+  	}
+
+  });
 }
 
 function get_feedback_questions(req, res, site) {
@@ -166,7 +191,8 @@ function read_file(req, res, site) {
 			utorid: req.session.self_utorid,
 			s_or_p: req.session.self_or_peer ,
 			is_empty: req.session.empty,
-			feedback_questions: req.session.feedback_questions
+			feedback_questions: req.session.feedback_questions,
+			submitted : req.session.submitted
 		});
 	});
 }

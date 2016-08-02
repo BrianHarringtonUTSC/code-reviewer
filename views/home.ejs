@@ -4,27 +4,54 @@
     <meta charset="UTF-8">
     <title>Login Form</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/table.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   </head>
 
   <body class="login_body">
+    <div>
     <% include templates/student_header.ejs %>
-    
+  </div>
     <% if (submitted == 0) { %>
       <label>Sorry! You did not submit this assignment.</label>
+    <% } else if (release_self == 0) { %>
+      <label>Self Review has not started yet. Please try again later.</label>
     <% } %>
+
+    <div style="margin-top:50px;">
     <form enctype="application/json" action="home/go_to_review" method="post">
-      <% for (var i = 0; i < work_list.length; i ++) { 
-          var review_btn = "review_" + work_list[i]; 
-          var grade_btn = "grade_" + work_list[i]; %>
-      <label><%= work_list[i] %></label>
-      <input type="submit" name="<%= work_list[i] %>" value="self"></input>
-      <input type="submit" name="<%= work_list[i] %>" value="peer"></input><br></br>
-      <% } %>
+      <table>
+        <thead>
+          <tr>
+            <th><i class="fa fa-file-text" aria-hidden="true"></i> Assignment</th>
+            <th><i class="fa fa-user" aria-hidden="true"></i> Self Review</th>
+            <th><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Peer Review</th>
+            <th><i class="fa fa-check-square-o" aria-hidden="true"></i> Mark</th>
+            <th><i class="fa fa-eye" aria-hidden="true"></i> Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (var i = 0; i < rules.length; i ++) { 
+            if (rules[i].release) { %>
+          <tr>
+            <td><strong><%= rules[i].work_name %></strong></td>
+            <td><input type="submit" name="<%= rules[i].work_name + "_self"; %>" value="Check Review" class="button_link"></input></td>
+            <td><input type="submit" name="<%= rules[i].work_name + "_peer"; %>" value="Start Review" class="button_link"></input></td>
+            <% if (rules[i].release_mark) { %>
+            <td><%= marks[rules[i].work_name] %> / <%= rules[i].num_peers*2 %></td>
+            <td><input type="submit" name="<%= rules[i].work_name + "_result";%>" value="Check Result" class="button_link"></td>
+            <% } else { %>
+            <td>pending</td>
+            <td>pending</td>
+            <% } %>
+          </tr>
+          <% } %>
+        <% } %>
+        </tbody>
+      </table>
     </form>
-
-
+  </div>
     <script type="text/javascript" src="javascripts/test.js"></script>
 
   </body>

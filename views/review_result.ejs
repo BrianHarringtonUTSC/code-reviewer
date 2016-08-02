@@ -14,41 +14,45 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
-    <% include templates/instructor_header.ejs %>
+    <% include templates/student_header.ejs %>
 
-  <form enctype="application/json" action="student_reviews/go_to_student_reviews" method="post">
-    <div style=" text-align: left; margin-left: 2%;">
-      <input type="text" class="tb3" name="student_utorid" value="<%= utorid %>"></input>
-      <input class="button" type="submit" value="peer" name="peer_btn"></input>
-      <input class="button" type="submit" value="self" name="self_btn"></input>
-    
-      <% if (s_or_p == 1) { %>
-        <label>You are now in Peer Review</label>
-      <% } 
-        if (s_or_p == 0) { %>
-        <label>You are now in Self Review</label>
-      <% } %>
-    </div>
-    <% if (is_empty) { %>
-      <br></br>
-      <label>Utorid is not given or not correct. <br></br> Please Enter Utorid.</label>
-    <% } else if (submitted == 0) { %>
-      <br></br>
-      <label>This student did not submit.</label>
-    <% } else { %>
-    <ul class="tab">
+
+
+    <form enctype="application/json" action="review_result/go_to_review_result" method="post">
+  <div>
+    <ul class="tab" style="margin-top:3%; width:50%">
       <% var i = 1;%>
       <% entries.forEach(function(item) { %>
         <% var btn_name = "peer_" + String(i); %>
         <% var btn_value = "Peer " + String(i); %>
-        <% if (i == peer_num) { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= item %>" class="tablinks active"></input></li>
+        <% if (i == peer_num) { 
+              if (reviewed[item] > 0) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab both"></input></li>
+          <% } else {%>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab active"></input></li>
+          <% } %>
+        <% } else if (reviewed[item] > 0) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab reviewed"></input></li>
         <% } else { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= item %>" class="tablinks"></input></li>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab"></input></li>
         <% } %>
         <% i = i + 1;%>
       <% }); %>
     </ul>
+    <div class="stars" style=" float:right; margin-top: -70px; margin-right: 2%;">
+      <% for(var i = 2; i >= 1; i --){
+          var class_name = "star1 star1-" + String(i);
+          var id_name = "star1-" + String(i);
+          var func_name = "get_mark(" + String(i) + ")";
+          if (i == mark) { %>
+            <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked" value="N" disabled></input>
+       <% } else { %>
+            <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" value="N" disabled></input>
+       <% } %>
+          <label class="<%= class_name %>" for="<%= id_name %>"></label>
+      <% } %>
+    </div>
+  </div>
 
     <div class="tabcontent">
       <div class="stars">
@@ -57,19 +61,12 @@
             var id_name = "star-" + String(i);
             var func_name = "get_star(" + String(i) + ")";
             if (i == number_of_stars) { %>
-              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked"></input>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked" value="N" disabled></input>
          <% } else { %>
-              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>"></input>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" value="N" disabled></input>
          <% } %>
             <label class="<%= class_name %>" for="<%= id_name %>"></label>
         <% } %>
-      </div>
-
-      <input id="star_number" value="<%= number_of_stars%>" name="star_num" style="display:none;"></input>
-      <input id="storage" name="highlight_storage" type="text" style="display:none;"></input>
-
-      <div>
-        <input type="button" onclick="addCommentFromSelection()" value="Add Comment!"></input>
       </div>
 
       <div class="border" style="text-align: left;">
@@ -92,24 +89,17 @@
       </div>
       
       <div id="popup" class="annotation">comment text</div>
-
-      
       <div style="text-align: left; font-family: monospace; margin-top:1%;">
 
         <h1 style="font-size: 30px;">Overall Comments</h1>
       <% for(var i = 0; i < feedback_questions.length; i++) { 
           var fb_name = "feedback_" + String(i) %>
         <p style="margin-top:1%;"><%= i + 1;%>. <%= feedback_questions[i]; %></p>
-        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>"></input>
+        <input type="text" class="tb1" name="<%= fb_name %>" value="<%= feedbacks[i] %>" value="N" disabled></input>
       <% } %>
       </div>
-      <input class="button" type="submit" name="save_btn" value="save"></input>
-
     </div> <!-- end of div tab_content-->
-    <% } %>
     </form>
-
-
 
     <script type="text/javascript" src="javascripts/test.js"></script>
     <script type="text/javascript" src="javascripts/highlight.js"></script>

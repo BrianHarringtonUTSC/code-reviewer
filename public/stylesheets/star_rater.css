@@ -45,22 +45,22 @@ label.star1 {
 }
 
 input.star1:checked ~ label.star1:before {
-  content: '\f005';
-  color: #FD4;
+  content: '\f164';
+  color: #3B5998;
   transition: all .25s;
 }
 
 input.star1-5:checked ~ label.star1:before {
-  color: #FE7;
+  color: #3B5998;
   text-shadow: 0 0 20px #952;
 }
 
-input.star1-1:checked ~ label.star1:before { color: #F62; }
+input.star1-1:checked ~ label.star1:before { color: #3B5998; }
 
 label.star1:hover { transform: rotate(-15deg) scale(1.3); }
 
 label.star1:before {
-  content: '\f006';
+  content: '\f087';
   font-family: FontAwesome;
 }
 

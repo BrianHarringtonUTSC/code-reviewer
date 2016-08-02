@@ -76,10 +76,27 @@ function find_student_code(req, res, site) {
 	console.log(req.session.self_utorid);
 	var code_model = mongoose.model(req.session.work_name, code_schema);
   code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
-  	req.session.review_array = code.review_by;
+  	shuffle_array(req, res, code.review_by, site);
   	req.session.code_path = code.code_path;
-  	find_feedback(req, res, site);
   });
+}
+
+function shuffle_array(req, res, code_array, site) {
+  var currentIndex = code_array.length, temporaryValue, randomIndex;
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = code_array[currentIndex];
+    code_array[currentIndex] = code_array[randomIndex];
+    code_array[randomIndex] = temporaryValue;
+  }
+   req.session.review_array = code_array;
+  find_feedback(req, res, site);
 }
 
 function find_feedback(req, res, site) {

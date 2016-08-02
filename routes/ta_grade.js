@@ -211,6 +211,9 @@ function save(req) {
 	);
 }
 
+
+
+
 router.post('/go_to_ta_grade', function(req, res, next) {
 	var temp_feedback_array = [];
 	for (var key in req.body) {
@@ -218,13 +221,22 @@ router.post('/go_to_ta_grade', function(req, res, next) {
 			temp_feedback_array.push(req.body[key]);
 		}
 	}
-	req.session.mark = req.body.mark_num;
-	req.session.reviewed[req.session.review_array[req.session.peer_number-1] + 
-	',' + req.session.student_review_by[req.session.peer_sub_number-1]] = req.session.mark;
-	if (req.session.mark > 0 && 
+	if (req.body.mark_num == "") {
+		req.session.mark = 0;
+	} else {
+		req.session.mark = parseInt(req.body.mark_num);
+	}
+	if ((req.session.mark > 0 && 
+		req.session.reviewed[req.session.review_array[req.session.peer_number-1] + 
+		',' + req.session.student_review_by[req.session.peer_sub_number-1]] == 0) &&
 		req.session.reviewed[req.session.review_array[req.session.peer_number-1]] != req.session.student_review_by.length) {
 		req.session.reviewed[req.session.review_array[req.session.peer_number-1]] ++;
+		console.log("insideeeee");
 	}
+	req.session.reviewed[req.session.review_array[req.session.peer_number-1] + 
+	',' + req.session.student_review_by[req.session.peer_sub_number-1]] = req.session.mark;
+
+
 	save(req);
 	// find peer num
 	var i = 1; var found = 0;

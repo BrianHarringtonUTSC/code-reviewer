@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/highlight.css">
 
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="stylesheets/style2.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
     <% include templates/ta_header.ejs %>
@@ -41,6 +41,7 @@
        } %>
     </ul>
     <div class="tabcontent">
+      <label style="float:right;"><%= peer_num %> / <%= reviews.length%></label>
       <div class="stars">
         <% for(var i = 5; i >= 1; i --){
             var class_name = "star star-" + String(i);

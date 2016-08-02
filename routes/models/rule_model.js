@@ -22,7 +22,10 @@ var rule_schema = new mongoose.Schema({
     peer_review_deadline : Date,
     release_to_tas : Date,
     ta_review_deadline : Date,
-    release_to_students : Date
+    release_to_students : Date,
+    release : Number,
+    release_self_review : Number,
+    release_mark : Number
 });
 
 module.exports = mongoose.model('rules', rule_schema);
