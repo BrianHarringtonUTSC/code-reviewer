@@ -2,10 +2,15 @@ var mongoose = require('mongoose');
 
 // define rule schema
 var rule_schema = new mongoose.Schema({
-    work_name : String,
+    work_name : {
+        type: String,
+        required: true,
+        unique: true
+    },
     late_penalty : String,
     num_peers : {
         type: Number,
+        min: 0,
         max: 7
     },
     required_files : [String],
@@ -17,12 +22,12 @@ var rule_schema = new mongoose.Schema({
         max: 20
     },
     feedback_questions: [String],
-    student_submission_deadline : mongoose.Schema.Types.Mixed,
-    release_to_peers : Date,
-    peer_review_deadline : Date,
-    release_to_tas : Date,
-    ta_review_deadline : Date,
-    release_to_students : Date,
+    student_submission_deadline : String,
+    release_to_peers : String,
+    peer_review_deadline : String,
+    release_to_tas : String,
+    ta_review_deadline : String,
+    release_to_students : String,
     release : Number,
     release_self_review : Number,
     release_mark : Number

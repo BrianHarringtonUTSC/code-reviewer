@@ -5,6 +5,9 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var router = express.Router();
 
+
+
+
 var moment = require('moment');
 
 
@@ -105,6 +108,7 @@ function render(req, res, site, rule, tas, num_submission, student_distributed, 
 	num_feedbacks: rule.num_feedbacks,
 	feedback_questions: rule.feedback_questions,
 	instruction : rule.instruction,
+	peer_review_deadline : rule.peer_review_deadline,
 	error_message: rule.error_message,
 	loaded : req.session.loaded
 	});
@@ -122,7 +126,8 @@ function save(req, feedback_questions) {
 		folder_name : req.body.folder_name,
 		num_feedbacks :req.body.num_feedbacks,
 		feedback_questions : feedback_questions,
-		instruction : req.body.instruction } },
+		instruction : req.body.instruction,
+		peer_review_deadline : moment(req.body.peer_review_deadline_date + ' ' + req.body.peer_review_deadline_time, "YYYY-MM-DD HH:mm") } },
 		{ new: true},
 		function(err, doc) {
 			if (err) console.log(err);
@@ -161,28 +166,27 @@ router.post('/edit', function(req, res, next) {
 		return;
 	}
 
-
-	// if student submission deadline is specified 0
+	// if student submission deadline is specified, indexed 0
 	if (req.body.student_submission_deadline_date != '') {
 		var student_submission_deadline = req.body.student_submission_deadline_date + ' ' + req.body.student_submission_deadline_time;
 	}
-	// if release students code to their peers date is specified 1
+	// if release students code to their peers date is specified, indexed 1
 	if (req.body.release_students_code_to_peers_date != '') {
 		var release_students_code_to_peers = req.body.release_students_code_to_peers_date + ' ' + req.body.release_students_code_to_peers_time;
 	}
-	// if peer review deadline is specified 2
+	// if peer review deadline is specified, indexed 2
 	if (req.body.peer_review_deadline_date != '') {
 		var peer_review_deadline = req.body.peer_review_deadline_date + ' ' + req.body.peer_review_deadline_time;
 	}
-	// if release students reviews to tas date is specified 3
+	// if release students reviews to tas date is specified, indexed 3
 	if (req.body.release_students_reviews_to_tas_date != '') {
 		var release_students_reviews_to_tas = req.body.release_students_reviews_to_tas_date + ' ' + req.body.release_students_reviews_to_tas_time;
 	}
-	// if TA review daedline is specified 4
+	// if TA review daedline is specified, indexed 4
 	if (req.body.ta_review_deadline_date != '') {
 		var ta_review_deadline = req.body.ta_review_deadline_date + ' ' + req.body.ta_review_deadline_time;
 	}
-	// if release tas reviews to student is specified 5
+	// if release tas reviews to student is specified, indexed 5
 	if (req.body.release_tas_reviews_to_students_date != '') {
 		var release_tas_reviews_to_students = req.body.release_tas_reviews_to_students_date + ' ' + req.body.release_tas_reviews_to_students_time;
 	}

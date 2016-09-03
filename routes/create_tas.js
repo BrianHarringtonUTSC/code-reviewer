@@ -8,26 +8,41 @@ var router = express.Router();
 // temp destination for multer
 var temp_folder = './temp/';
 var upload = multer({ dest: temp_folder });
+var instructor_model = require("./models/instructor_model.js");
 
 // GET this page.
 router.get('/', function(req, res, next) {
-  // loop through tas collection
-  var ta_model = require('./models/ta_model.js');
-  // find all documents in collection tas
-	ta_model.find({}, function (err, tas) {
-	  if (err) {
-	  	console.log(err);
-	  }
-	  var num_tas = ta_model.count({});
-	  ta_model.count({}, function(err, num_tas) {
-	  	// TODO: remove nesetd if
-		  if (err) {
-		  	console.log(err);
-		  }
-	  	console.log("the number of tas is " + num_tas);
-	  	res.render('create_tas', {tas : tas, num_tas : num_tas});
-	  });
-	});
+  // user authentication
+  if (!req.isAuthenticated()) {
+    console.log("Please log in");
+    return res.redirect('/');
+  }
+  instructor_model.findOne({ email: req.user.emails[0].value }, function (err, instructor) {
+  if (err) return err;
+  // instructor is not found
+  if (instructor == null) {
+    res.redirect('/' + req.session.current_site);
+  } else { // if it is found
+    // loop through tas collection
+    var ta_model = require('./models/ta_model.js');
+    // find all documents in collection tas
+  	ta_model.find({}, function (err, tas) {
+  	  if (err) {
+  	  	console.log(err);
+  	  }
+  	  var num_tas = ta_model.count({});
+  	  ta_model.count({}, function(err, num_tas) {
+  	  	// TODO: remove nesetd if
+  		  if (err) {
+  		  	console.log(err);
+  		  }
+  	  	console.log("the number of tas is " + num_tas);
+  	  	res.render('create_tas', {tas : tas, num_tas : num_tas});
+  	  });
+  	});
+    }
+  });
+
 });
 
 

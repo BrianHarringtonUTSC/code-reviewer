@@ -9,28 +9,46 @@ var router = express.Router();
 // temp destination for multer
 var temp_folder = './temp/';
 var upload = multer({ dest: temp_folder });
-
+var instructor_model = require("./models/instructor_model.js");
 
 // GET this page.
 router.get('/', function(req, res, next) {
-  // loop through students collection
-  var student_model = require('./models/student_model.js');
-  // find all documents in collection students
-	student_model.find({}, function (err, students) {
-	  if (err) {
-	  	console.log(err);
-	  }
-	  var num_students = student_model.count({});
-	  student_model.count({}, function(err, num_students) {
-	  	// TODO: remove nesetd if
-		  if (err) {
-		  	console.log(err);
-		  }
-	  	console.log("the number of students is " + num_students);
-	  	res.render('create_students', {students : students, num_students : num_students});
-	  });
-	});
+  // user authentication
+  if (!req.isAuthenticated()) {
+    console.log("Please log in");
+    return res.redirect('/');
+  }
+  instructor_model.findOne({ email: req.user.emails[0].value }, function (err, instructor) {
+  if (err) return err;
+  // instructor is not found
+  if (instructor == null) {
+    res.redirect('/' + req.session.current_site);
+  } else { // if it is found
+
+      // loop through students collection
+      var student_model = require('./models/student_model.js');
+      // find all documents in collection students
+      student_model.find({}, function (err, students) {
+        if (err) {
+          console.log(err);
+        }
+        var num_students = student_model.count({});
+        student_model.count({}, function(err, num_students) {
+          // TODO: remove nesetd if
+          if (err) {
+            console.log(err);
+          }
+          console.log("the number of students is " + num_students);
+          res.render('create_students', {students : students, num_students : num_students});
+        });
+      });
+
+    }
+  });
+
 });
+
+
 
 
 // load students info via a csv file

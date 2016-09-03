@@ -16,7 +16,7 @@
     "line-reader": "latest",
     "moment": "^2.14.1",
     "mongodb": "latest",
-    "mongoose": "^4.4.20",
+    "mongoose": "4.4.20",
     "morgan": "~1.6.1",
     "multer": "^1.1.0",
     "passport": "^0.3.2",

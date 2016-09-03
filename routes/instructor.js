@@ -10,10 +10,9 @@ var review_schema = require("./models/review_schema.js");
 
 var passed_deadline = "cannot set a deadline which is already passed ";
 
-var feedback_questions = [];
+var question1 = "Give at least one positive comment about your peers' assignment.";
+var question2 = "Give at least one constructive comment to help your peer to improve the assignment";
 
-var student_no_submit = [];
-var num_submission = 0;
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
@@ -42,13 +41,14 @@ function init_all(req, res, site) {
 	req.session.current_site = site;
 	req.session.creating = 1;
 	req.session.create_work_name = "";
+	req.session.work_names = [];
 	req.session.create_late_penalty = "";
 	req.session.create_num_peers = 0;
 	req.session.create_required_files = [];
 	req.session.create_repo_path = "";
 	req.session.create_folder_name = "";
-	req.session.create_num_feedbacks = 0;
-	req.session.create_feedback_questions = [];
+	req.session.create_num_feedbacks = 2;
+	req.session.create_feedback_questions = [question1, question2];
   	req.session.create_student_submission_deadline = "";
 	req.session.create_release_students_code_to_peers = "";
 	req.session.create_peer_review_deadline = "";
@@ -57,12 +57,15 @@ function init_all(req, res, site) {
 	req.session.create_release_tas_reviews_to_students = "";
 	req.session.create_error_message = "";
 	req.session.instruction = "";
+	req.session.work_name_error = 0;
 	find_work_names(req, res, site);
 }
 
 function find_work_names(req, res, site) {
-	var work_names = [];
   	rule_model.find({}, function(err, rules) {
+  		for (var i = 0; i < rules.length; i ++) {
+  			req.session.work_names.push(rules[i].work_name);
+  		}
   		render(req, res, site, rules);
   });
 }
@@ -78,6 +81,7 @@ function render(req, res, site, rules) {
 	num_feedbacks: req.session.create_num_feedbacks,
 	feedback_questions: req.session.create_feedback_questions,
 	error_message: req.session.create_error_message,
+	work_name_error : req.session.work_name_error,
 	rules : rules,
 	instruction : req.session.instruction
 	});
@@ -94,6 +98,14 @@ router.post('/create_new_work', function(req, res, next) {
 	req.session.create_num_feedbacks = req.body.num_feedbacks;
 	req.session.instruction = req.body.instruction;
 
+	// append the feedback questions into array
+	var question = 0;
+	for (var key in req.body) {
+		if (key.indexOf("question") > -1) {
+			req.session.create_feedback_questions[question] = req.body[key];
+			question ++;
+		}
+	}
 	// if the button clicked is set_feedback, refreash the page
 	if ("set_feedbacks" in req.body) { // initialize the list
 		if (req.session.create_num_feedbacks < req.session.create_feedback_questions.length) {
@@ -111,14 +123,7 @@ router.post('/create_new_work', function(req, res, next) {
 		res.redirect('/instructor');
 		return;
 	}
-	// append the feedback questions into array
-	var question = 0;
-	for (var key in req.body) {
-		if (key.indexOf("question") > -1) {
-			req.session.create_feedback_questions[question] = req.body[key];
-			question ++;
-		}
-	}
+
 	var deadline_array = [];
 	// if student submission deadline is specified 0
 	if (req.body.student_submission_deadline_date != '') {
@@ -168,6 +173,12 @@ router.post('/create_new_work', function(req, res, next) {
 			// replace temp datetime by latest deadline
 			temp_datetime = deadline_array[i];
 		}
+	}
+
+	if ((req.session.create_work_name == "") || (req.session.work_names.indexOf(req.session.create_work_name) > -1)) {
+		req.session.work_name_error = 1;
+		res.redirect('/instructor');
+		return;
 	}
 	// create a new rule
 	// unspecified deadlines are empty strings
