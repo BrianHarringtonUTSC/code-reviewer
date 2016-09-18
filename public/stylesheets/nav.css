@@ -3,26 +3,32 @@
 body {
     background: #e0e0e0;
     text-align: center;
+    margin: 0;
+    margin-top: 80px;
 }
+
 
 
 /*---------- Wrapper --------------------*/
 
 .nav {
-    width: 110%;
     height: 80px;
-    margin-top: -17px;
-    margin-left: -5%;
     background: #222;
-        border-width: 0 0 1px;
+    border-width: 0 0 1px;
     border-top-width: 0px;
     border-right-width: 0px;
     border-bottom-width: 1px;
     border-left-width: 0px;
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    margin-top: -80px;
 }
 
 .nav ul {
     text-align: center;
+    margin: 0;
+    padding: 0;
 }
 
 .nav ul li {

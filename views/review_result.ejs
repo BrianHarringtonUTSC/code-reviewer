@@ -2,7 +2,7 @@
 <html >
   <head>
     <meta charset="UTF-8">
-    <title>Login Form</title>
+    <title>Result | Code Reviewer</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/tab.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
@@ -25,33 +25,14 @@
       <% entries.forEach(function(item) { %>
         <% var btn_name = "peer_" + String(i); %>
         <% var btn_value = "Peer " + String(i); %>
-        <% if (i == peer_num) { 
-              if (reviewed[item] > 0) { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab both"></input></li>
-          <% } else {%>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab active"></input></li>
-          <% } %>
-        <% } else if (reviewed[item] > 0) { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab reviewed"></input></li>
+        <% if (i == peer_num) { %>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks active"></input></li>
         <% } else { %>
-          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tab"></input></li>
+          <li><input type="submit" name="<%= btn_name%>" value="<%= btn_value %>" class="tablinks"></input></li>
         <% } %>
         <% i = i + 1;%>
       <% }); %>
     </ul>
-    <div class="stars" style=" float:right; margin-top: -70px; margin-right: 2%;">
-      <% for(var i = 2; i >= 1; i --){
-          var class_name = "star1 star1-" + String(i);
-          var id_name = "star1-" + String(i);
-          var func_name = "get_mark(" + String(i) + ")";
-          if (i == mark) { %>
-            <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked" value="N" disabled></input>
-       <% } else { %>
-            <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" value="N" disabled></input>
-       <% } %>
-          <label class="<%= class_name %>" for="<%= id_name %>"></label>
-      <% } %>
-    </div>
   </div>
 
     <div class="tabcontent">
@@ -61,6 +42,20 @@
             var id_name = "star-" + String(i);
             var func_name = "get_star(" + String(i) + ")";
             if (i == number_of_stars) { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked" value="N" disabled></input>
+         <% } else { %>
+              <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" value="N" disabled></input>
+         <% } %>
+            <label class="<%= class_name %>" for="<%= id_name %>"></label>
+        <% } %>
+
+      </div>
+      <div class="stars1" style="position:absolute; right:3%;">
+        <% for(var i = 2; i >= 1; i --){
+            var class_name = "star1 star1-" + String(i);
+            var id_name = "star1-" + String(i);
+            var func_name = "get_mark(" + String(i) + ")";
+            if (i == mark) { %>
               <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" checked="checked" value="N" disabled></input>
          <% } else { %>
               <input class="<%= class_name %>" id="<%= id_name %>" type="radio" name="star" onclick="<%= func_name%>" value="N" disabled></input>

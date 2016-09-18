@@ -9,8 +9,8 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/form.css">
     
     <script>
-      function redistribute(student_distributed) {
-        if (student_distributed) {
+      function redistribute(distributed) {
+        if (distributed) {
           if (window.confirm('Redistributing will earase all the highlights, comments, and feedbacks!')) {
             document.getElementById("distribute").setAttribute("action", "create_new_work/distribute");
             document.getElementById("distribute").setAttribute("method", "post");
@@ -20,6 +20,19 @@
           document.getElementById("distribute").setAttribute("method", "post");
         }
       }
+
+      function reload(loaded) {
+        if (loaded) {
+          if (window.confirm('Reloading will delete all the distributions including highlights, comments and feedbacks!')) {
+            document.getElementById("load_assignment").setAttribute("action", "create_new_work/load_assignment");
+            document.getElementById("load_assignment").setAttribute("method", "post");
+          }
+        } else {
+          document.getElementById("load_assignment").setAttribute("action", "create_new_work/load_assignment");
+          document.getElementById("load_assignment").setAttribute("method", "post");
+        }
+      }
+
     </script>
   </head>
 
@@ -57,38 +70,42 @@
           <br />
       -->
       <label>Peer review deadline:</label>
-        <% var year = parseInt(peer_review_deadline.substring(0, 4));
-           var month = parseInt(peer_review_deadline.substring(5, 7));
-           var day = parseInt(peer_review_deadline.substring(8, 10));
-        if (month < 10) {
-          if (day < 10) { %>
-            <input type="date" name="peer_review_deadline_date" value="<%= year %>-0<%= month %>-0<%= day %>"></input>
-      <% } else { %>
-            <input type="date" name="peer_review_deadline_date" value="<%= year %>-0<%= month %>-<%= day %>"></input>
-       <% }
-        } else {
-          if (day < 10) { %>
-            <input type="date" name="peer_review_deadline_date" value="<%= year %>-<%= month %>-0<%= day %>"></input>
-       <% } else { %>
-            <input type="date" name="peer_review_deadline_date" value="<%= year %>-<%= month %>-<%= day %>"></input>
-       <% }
-        } 
-           var hour = parseInt(peer_review_deadline.substring(11, 13));
-           var minute = parseInt(peer_review_deadline.substring(14, 16));
-        if (hour < 10) {
-          if (minute < 10) { %>
-            <input type="time" name="peer_review_deadline_time" value="0<%= hour %>:0<%= minute %>"></input>
-      <% } else { %>
-            <input type="time" name="peer_review_deadline_time" value="0<%= hour %>:<%= minute %>"></input>
-       <% }
-        } else {
-          if (minute < 10) { %>
-            <input type="time" name="peer_review_deadline_time" value="<%= hour %>:0<%= minute %>"></input>
-       <% } else { %>
-            <input type="time" name="peer_review_deadline_time" value="<%= hour %>:<%= minute %>"></input>
-       <% }
-        } %>
-        <label><%= year %>-<%= month %>-<%= day %> </label>
+        <% if (peer_review_deadline == null) { %>
+          <input type="date" name="peer_review_deadline_date"></input>
+          <input type="time" name="peer_review_deadline_time"></input> 
+        <% } else {
+             var year = parseInt(peer_review_deadline.substring(0, 4));
+             var month = parseInt(peer_review_deadline.substring(5, 7));
+             var day = parseInt(peer_review_deadline.substring(8, 10));
+            if (month < 10) {
+              if (day < 10) { %>
+                <input type="date" name="peer_review_deadline_date" value="<%= year %>-0<%= month %>-0<%= day %>"></input>
+          <% } else { %>
+                <input type="date" name="peer_review_deadline_date" value="<%= year %>-0<%= month %>-<%= day %>"></input>
+           <% }
+            } else {
+              if (day < 10) { %>
+                <input type="date" name="peer_review_deadline_date" value="<%= year %>-<%= month %>-0<%= day %>"></input>
+           <% } else { %>
+                <input type="date" name="peer_review_deadline_date" value="<%= year %>-<%= month %>-<%= day %>"></input>
+           <% }
+            } 
+               var hour = parseInt(peer_review_deadline.substring(11, 13));
+               var minute = parseInt(peer_review_deadline.substring(14, 16));
+            if (hour < 10) {
+              if (minute < 10) { %>
+                <input type="time" name="peer_review_deadline_time" value="0<%= hour %>:0<%= minute %>"></input>
+          <% } else { %>
+                <input type="time" name="peer_review_deadline_time" value="0<%= hour %>:<%= minute %>"></input>
+           <% }
+            } else {
+              if (minute < 10) { %>
+                <input type="time" name="peer_review_deadline_time" value="<%= hour %>:0<%= minute %>"></input>
+           <% } else { %>
+                <input type="time" name="peer_review_deadline_time" value="<%= hour %>:<%= minute %>"></input>
+           <% }
+            } 
+          }%>
         <br />
       <!-- commented out for simplicity
         <label>Release students' reviews to TA's:</label>
@@ -110,35 +127,57 @@
     </div>
 
   <div style="margin-left: 3%; width: 42%; float: left;">
-    <form action="create_new_work/load_assignment" method="post">
-      <input type="submit" value="load_assignment" class="button"></input><br />
+    <form id="load_assignment">
+      <input type="submit" value="load assignment / re-load assignment" class="button" onclick="reload(<%= loaded %>)"></input><br />
       <label><%= num_of_submission_loaded %> submissions is loaded.</label>
     </form>
     <br></br>
     <form id="distribute" >
       <% if (num_of_submission_loaded == 0) { %>
       <label><%= work_name %> is NOT loaded. Please load before distributing.</label>
-      <% } %>
-      <input type="submit" value="distribute / re-distribute for peer review" class="button" onclick="redistribute(<%= student_distributed %>)"></input><br />
-
-      <% if (student_distributed) {%>
-        <label><%= work_name %> has been distributed.</label>
+      <input type="submit" value="distribute / re-distribute for peer review" class="button_disabled" 
+      disabled></input><br />
+      <label><%= work_name %> has NOT distribted.</label>
       <% } else { %>
-        <label><%= work_name %> has NOT distribted.</label>
+        <input type="submit" value="distribute / re-distribute for peer review" class="button" onclick="redistribute(<%= distributed %>)"></input><br />
+
+        <% if (distributed) {%>
+          <label><%= work_name %> has been distributed.</label>
+        <% } else { %>
+          <label><%= work_name %> has NOT distribted.</label>
+        <% } %>
       <% } %>
+
     </form>
     <br /><br /><br />
     <form action="create_new_work/distribute_ta" method="post">
-    <% tas.forEach(function(ta){ 
+   <% if (ta_distributed || distributed == 0) { 
+      tas.forEach(function(ta){ 
+        if (ta_selected.indexOf(ta.utorid) > -1) { %>
+        <input type="checkbox" checked disabled><%= ta.utorid %></input>
+     <% } else { %>
+        <input type="checkbox" disabled><%= ta.utorid %></input>
+     <% } %>
+        <br />
+    <% }); %>
+        <input type="submit" name="" value="distribute" class="button_disabled" disabled></input><br />
+      <% if (distributed == 0) { %>
+        <label>To distribute TAs, You need to distribute student first.</label><br />       
+      <% } else { %>
+        <label>TAs have been distributed.</label><br />
+        <label>To re-distribute TAs, You need to re-distribute student first.</label><br />
+      <% } %>
+    <% } else { 
+      tas.forEach(function(ta){ 
         var cbox_name = "checkbox_" + ta.utorid; 
         var cbox_value = ta.utorid + "," + ta.weight; %>
-      <input type="checkbox" name="<%= cbox_name %>" value="<%= cbox_value %>"><%= ta.utorid %></input><br />
+        <input type="checkbox" name="<%= cbox_name %>" value="<%= cbox_value %>"><%= ta.utorid %></input><br />
     <% }); %>
-    <input type="submit" name="" value="distribute" class="button"></input><br />
-    <% if (ta_distributed) {%>
-      <label>TAs have been distributed.</label>
-    <% } else { %>
-      <label>TAs have NOT distribted.</label>
+      <input type="submit" name="" value="distribute" class="button"></input><br />
+      <label>TAs have NOT distribted.</label><br />
+    <% } 
+       if (no_ta_selected) { %>
+       <label style="color:red;">Please select TAs.</label>
     <% } %>
     </form>
   </div>

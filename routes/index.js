@@ -22,7 +22,14 @@ router.use(function(req, res, next) {
 router.get('/', function(req, res, next) {
 	// user authentication
 	if (req.isAuthenticated()) {
-		verify_student(req, res);
+		console.log("iinnnn");
+		if (req.user.emails[0].value == "wuyiwen.wu@mail.utoronto.ca") {
+			console.log("evvaaa");
+			res.redirect('/ta');
+		} else {
+			verify_student(req, res);
+		}
+		
   } else {
   	 res.render('index');
   }

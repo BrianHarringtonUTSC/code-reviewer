@@ -12,6 +12,9 @@
 
   <body class="login_body">
     <% include templates/ta_header.ejs %>
+    <% if (assigned == 0) { %>
+      <label>You are not assigned to review or to grade this work.</label>
+    <% } %>
     <form enctype="application/json" action="ta/go_to_ta_review_or_grade" method="post">
       <table>
         <thead>

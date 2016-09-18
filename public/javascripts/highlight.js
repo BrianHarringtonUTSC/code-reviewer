@@ -24,7 +24,7 @@ function set_up_highlight(init_highlights) {
 function addCommentFromSelection() {
 	var selection = window.getSelection();
 	if (!selection || selection.isCollapsed) {
-		window.alert('Invalid selection!')
+		window.alert('Please highlight the codes you want to comment!')
 		return;
 	}
 
@@ -35,7 +35,7 @@ function addCommentFromSelection() {
 		if (anchorNode.parentNode != null) {
 			anchorNode = anchorNode.parentNode;
 		} else {
-			window.alert('Invalid selection!')
+			window.alert('Please highlight the codes you want to comment!')
 			return;
 		}
 	}
@@ -44,7 +44,7 @@ function addCommentFromSelection() {
 		if (focusNode.parentNode != null) {
 			focusNode = focusNode.parentNode;
 		} else {
-			window.alert('Invalid selection!')
+			window.alert('Please highlight the codes you want to comment!')
 			return;
 		}
 	}
@@ -68,13 +68,16 @@ function addCommentFromSelection() {
 }
 
 function store_comments(startLine, endLine, comment) {
-	comment = comment.replace(new RegExp(',', 'g'), '@');
+	comment = comment.replace(new RegExp(',', 'g'), '♠');
 	highlight_array.push([startLine, endLine, comment]);
 	document.getElementById('storage').value = highlight_array;
+	document.getElementById('comments').value = "";
+	com.style.display = "none";
+	sbtn.style.display = "none";
 }
 
 function highlight(startLine, endLine, comment) {
-	comment = comment.replace(new RegExp('@', 'g'), ',');
+	comment = comment.replace(new RegExp('♠', 'g'), ',');
 	for (var i = startLine; i <= endLine; i++) {
 		nextElement = document.getElementById('line-' + String(i));
 		if (nextElement.className === "highlight-1") {
@@ -119,4 +122,114 @@ function get_star(num) {
 
 function get_mark(num) {
 	document.getElementById('mark_number').value = num;
+}
+
+//--------------------------------------------------------------------------------------
+
+// Get the modal
+var modal = document.getElementById('myModal');
+var modal_del = document.getElementById('myModal_del');
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+var dbtn = document.getElementById("myBtn_del")
+var sbtn = document.getElementById("saveBtn");
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+var span_del = document.getElementsByClassName("close")[1];
+
+var com = document.getElementById("comments");
+
+var anchorNode = null;
+var focusNode = null;
+// When the user clicks the button, open the modal
+btn.onclick = function() {
+    modal.style.display = "block";
+    var selection = window.getSelection();
+    var error_message = 'Please highlight the codes you want to comment!';
+	if (!selection || selection.isCollapsed) {
+		document.getElementById('text_in_modal').innerHTML = error_message;
+		return;
+	}
+
+	anchorNode = selection.anchorNode;
+	focusNode = selection.focusNode;
+
+	while (anchorNode.nodeName != 'LI') {
+		if (anchorNode.parentNode != null) {
+			anchorNode = anchorNode.parentNode;
+		} else {
+			document.getElementById('text_in_modal').innerHTML = error_message;
+			return;
+		}
+	}
+
+	while (focusNode.nodeName != 'LI') {
+		if (focusNode.parentNode != null) {
+			focusNode = focusNode.parentNode;
+		} else {
+			document.getElementById('text_in_modal').innerHTML = error_message;
+			return;
+		}
+	}
+
+	document.getElementById('text_in_modal').innerHTML = "Please enter comments.";
+	com.style.display = "block";
+	sbtn.style.display = "block";
+
+	if (comment) {
+		store_comments(startLine, endLine, comment);		
+		highlight(startLine, endLine, comment);
+
+	}
+
+	window.getSelection().removeAllRanges();
+}
+
+
+sbtn.onclick = function() {
+	modal.style.display = "none";
+	var startLine = parseInt(anchorNode.id.slice(5));
+	var endLine = parseInt(focusNode.id.slice(5));
+
+	if (startLine > endLine) {
+		endLine = [startLine, startLine = endLine][0];
+	}
+	var comment = document.getElementById('comments').value;
+
+	if (comment) {
+		store_comments(startLine, endLine, comment);		
+		highlight(startLine, endLine, comment);
+	}
+}
+
+dbtn.onclick = function() {
+	modal_del.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+    modal_del.style.display = "none";
+    com.style.display = "none";
+	sbtn.style.display = "none";
+    document.getElementById('comments').value = "";
+}
+
+// When the user clicks on <span> (x), close the modal
+span_del.onclick = function() {
+    modal_del.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+        com.style.display = "none";
+		sbtn.style.display = "none";
+        document.getElementById('comments').value = "";
+    }
+    if (event.target == modal_del) {
+    	modal_del.style.display = "none";
+    }
 }

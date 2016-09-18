@@ -30,7 +30,11 @@ var rule_schema = new mongoose.Schema({
     release_to_students : String,
     release : Number,
     release_self_review : Number,
-    release_mark : Number
+    release_mark : Number,
+    loaded : Number,
+    distributed : Number,
+    ta_distributed : Number,
+    ta_selected : [String]
 });
 
 module.exports = mongoose.model('rules', rule_schema);

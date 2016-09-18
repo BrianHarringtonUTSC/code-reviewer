@@ -9,6 +9,7 @@ var fs = require('fs');
 var code_schema = require("./models/submission_schema.js");
 var student_model = require('./models/student_model.js');
 var rule_model = require("./models/rule_model.js");
+var moment = require('moment');
 //Here we are configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded( {extended: true} ));
 
@@ -149,6 +150,8 @@ function check_submitted(req, res, site) {
   	} else {
   		if (site.indexOf('self') > -1) {
 			check_release_self(req, res, site);
+  		} else if (site == '/instruction') {
+  			check_deadline(req, res, site);
   		} else {
   			res.redirect(site);
   		}
@@ -156,9 +159,21 @@ function check_submitted(req, res, site) {
   });
 }
 
+function check_deadline(req, res, site) {
+	var current_time = moment();
+	rule_model.findOne({work_name : req.session.work_name}, function (err, rule) {
+	  if (err) return err;
+	  if (current_time.isBefore(moment(rule.peer_review_deadline, "YYYY-MM-DD HH:mm"))) {
+	  	req.session.peer_review_deadline_passed = 0;
+	  } else {
+	  	req.session.peer_review_deadline_passed = 1;
+	  }
+	  res.redirect(site);
+	});
+}
+
 function check_release_self(req, res, site) {
 	rule_model.findOne({work_name : req.session.work_name}, function (err, rule) {
-		console.log(rule);
 	  if (err) return err;
 	  if (rule.release_self_review) {
 	  	req.session.release_self = 1;

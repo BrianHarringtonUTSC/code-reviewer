@@ -2,9 +2,10 @@
 ul.tab {
     list-style-type: none;
     margin: 0;
+    margin-top: 2%;
     padding: 0;
     overflow: hidden;
-    margin-left: 2%;
+    margin:0, 2%;
     width: 96%;
 }
 
@@ -20,12 +21,15 @@ ul.tab li input {
     text-decoration: none;
     transition: 0.3s;
     font-size: 17px;*/
-    background: url(../images/user-silhouette.png) 15px 11px no-repeat #f3f3f3;
+    border: none;
+    background: url(../images/user-silhouette.png) 15px 11px no-repeat white;
     display: inline-block;
     position: relative;
     padding:  10px 15px 10px 35px;;
     text-align: center;
     font-size: 16px;
+    border: none;
+    margin-right: 3px;
 }
 
 
@@ -35,7 +39,7 @@ ul.tab li input:hover {
 
 ul.tab li input.both {
     
-    background: url(http://cssdeck.com/uploads/media/items/5/5Fm069k.png) 15px 11px no-repeat #f3f3f3;
+    background: url(http://cssdeck.com/uploads/media/items/5/5Fm069k.png) 15px 11px no-repeat white;
     font-size: 16px;
     padding: 10px 15px 10px 35px;
     background-color: #D3FFC7;
@@ -46,7 +50,7 @@ ul.tab li input.active {
 }
 
 ul.tab li input.reviewed {
-    background: url(http://cssdeck.com/uploads/media/items/5/5Fm069k.png) 15px 11px no-repeat #f3f3f3;
+    background: url(http://cssdeck.com/uploads/media/items/5/5Fm069k.png) 15px 11px no-repeat white;
     font-size: 16px;
     padding: 10px 15px 10px 35px;
 }
@@ -57,7 +61,5 @@ ul.tab li input.reviewed {
     border: 1px solid #ccc;
     border-top: none;
     background-color: white;
-    width: 95%;
-    margin-left: 2%;
 }
 

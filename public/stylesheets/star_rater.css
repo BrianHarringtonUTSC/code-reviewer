@@ -1,5 +1,6 @@
 div.stars {
   width: 270px;
+  position: relative;
   display: inline-block;
 }
 
@@ -34,6 +35,12 @@ label.star:before {
 }
 
 /* ------------------------------------------- */
+div.stars1 {
+  width: 110px;
+  display: inline-block;
+  float:right;
+}
+
 input.star1 { display: none; }
 
 label.star1 {
