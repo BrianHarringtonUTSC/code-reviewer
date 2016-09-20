@@ -200,7 +200,10 @@ router.post('/create_new_work', function(req, res, next) {
     	release_to_students : req.session.create_release_tas_reviews_to_students,
     	release : 0,
     	release_self_review : 0,
-    	release_mark : 0
+    	release_mark : 0,
+    	loaded : 0,
+    	distributed : 0,
+    	ta_distributed : 0
 	});
 	loading_code_collection_name = req.body.work_name;
 	// write a new document into database

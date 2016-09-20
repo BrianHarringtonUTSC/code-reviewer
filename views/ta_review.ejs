@@ -2,7 +2,7 @@
 <html >
   <head>
     <meta charset="UTF-8">
-    <title>Login Form</title>
+    <title>Ta Review | Code Reviewer</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/star_rater.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/tab.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/breadcrumb.css">
@@ -15,12 +15,15 @@
   </head>
   <body onload="<%- "set_up_highlight('" + String(init_highligts) + "')"%>">
     <% include templates/ta_header.ejs %>
-
-    <form enctype="application/json" action="ta_review/go_to_ta_review" method="post">
-      <input class="button" type="submit" name="prev_btn" value="previous" style="float:left;"></input>
-      <input class="button" type="submit" name="prev_10_btn" value="prev 10" style="float:left;"></input>
-      <input class="button" type="submit" name="next_btn" value="next" style="float:right;"></input>
-      <input class="button" type="submit" name="next_10_btn" value="next 10" style="float:right;"></input>
+    <form style="width:100%;" enctype="application/json" action="ta_review/go_to_ta_review" method="post">
+      <input class="button_dark" type="submit" name="prev_btn" value="prev" style="float:left;"></input>
+      <input class="button_dark" type="submit" name="prev_10_btn" value="prev 10" style="float:left;"></input>
+      <label style="padding-top:10px"><%= done_reviewed %> / <%= reviews.length%> completed.</label>
+      <% if (is_done) { %>
+        <label>All reviews are completed!</label>
+      <% } %>
+      <input class="button_dark" type="submit" name="next_btn" value="next" style="float:right;"></input>
+      <input class="button_dark" type="submit" name="next_10_btn" value="next 10" style="float:right;"></input>
     <ul class="tab">
       <% var i = 0; var index = display_index + i;
        while((index < reviews.length) && (i < 10)) {
@@ -40,8 +43,9 @@
           index = display_index + i;
        } %>
     </ul>
+
     <div class="tabcontent">
-      <label style="float:right;"><%= peer_num %> / <%= reviews.length%></label>
+      <div style="text-align: right;"> <%= peer_num %> / <%= reviews.length%></div> 
       <div class="stars">
         <% for(var i = 5; i >= 1; i --){
             var class_name = "star star-" + String(i);
@@ -59,9 +63,92 @@
       <input id="star_number" value="<%= num_stars%>" name="star_num" style="display:none;"></input>
       <input id="storage" name="highlight_storage" type="text" style="display:none;"></input>
 
-      <div>
-        <input type="button" onclick="addCommentFromSelection()" value="Add Comment!"></input>
+      <div style="width: 100%;">
+        <!-- Trigger/Open The Modal -->
+        <input type="button" id="myBtn" value="Add Comment!" class="button_blue"></input>
+        <input type="button" id="myBtn_del" value="x"></input>
       </div>
+
+
+      <!-- The Modal -->
+      <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <div class="modal-header">
+            <span class="close">×</span>
+            <h2 style="font-size: 20px;">Add Comments<h2>
+          </div>
+          <div class="modal-body">
+            <p id="text_in_modal" ></p>
+            <input class="tb1" type="textarea" id="comments" style="display:none;" value=""></input>
+          </div>
+          <div class="modal-footer">
+            <input class="btn btn-default" type="button" id="saveBtn" value="save" style="display:none;"></input>
+          </div>
+        </div>
+      </div>
+
+      <!-- The Modal -->
+      <div id="myModal_del" class="modal_del">
+
+        <!-- Modal content -->
+        <div class="modal_del-content">
+          <div class="modal_del-header">
+            <span class="close">×</span>
+            <h2 style="font-size: 20px;">Delete Comments<h2>
+          </div>
+          <div class="modal_del-body">
+            <p><%= String(init_highligts) %></p>
+          </div>
+          <div class="modal_del-footer">
+            <input class="btn btn-default" type="button" id="delBtn" value="delete" style="display:none;"></input>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <div class="border" style="text-align: left;">
         <ol class="code">
@@ -96,16 +183,15 @@
       </div>
       
 
-      <input class="button" type="submit" name="save_btn" value="save"></input>
+      <input class="button_dark" type="submit" name="save_btn" value="save"></input>
 
     </div> <!-- end of div tab_content-->
-      <input class="button" type="submit" name="prev_btn" value="previous" style="float:left;"></input>
-      <input class="button" type="submit" name="prev_10_btn" value="prev 10" style="float:left;"></input>
-      <input class="button" type="submit" name="next_btn" value="next" style="float:right;"></input>
-      <input class="button" type="submit" name="next_10_btn" value="next 10" style="float:right;"></input>
+      <input class="button_dark" type="submit" name="prev_btn" value="prev" style="float:left;"></input>
+      <input class="button_dark" type="submit" name="prev_10_btn" value="prev 10" style="float:left;"></input>
+      <input class="button_dark" type="submit" name="not_done_btn" value="go to not complete" ></input>
+      <input class="button_dark" type="submit" name="next_btn" value="next" style="float:right;"></input>
+      <input class="button_dark" type="submit" name="next_10_btn" value="next 10" style="float:right;"></input>
     </form>
-
-
 
     <script type="text/javascript" src="javascripts/test.js"></script>
     <script type="text/javascript" src="javascripts/highlight.js"></script>

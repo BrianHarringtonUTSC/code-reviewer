@@ -50,6 +50,9 @@ function init_all(req, res, site) {
   	req.session.feedback_questions = [];
   	req.session.student_review_by = [];
   	req.session.reviewed = {};
+  	req.session.sub_reviewed = {};
+  	req.session.done_reviewed = 0;
+  	req.session.is_done = 0;
   	get_feedback_questions(req, res, site);
 }
 
@@ -122,10 +125,10 @@ function find_feedbacks(req, res, site) {
   	req.session.mark = review.mark;
 
   	if ("init" in req.session.reviewed) {
-   		console.log("-----------do nothing");
+  		// do nothing
   		read_file(req, res, site);
   	} else {
-  		console.log("--------------init reviewed");
+  		// init reviewed and sub reviewed
   		req.session.reviewed["init"] = "added";
   		get_review_by_for_all_peers(req, res, site);
   	}
@@ -154,12 +157,14 @@ function get_all_marks(req, res, site, author, review_by, count) {
 	var count2 = 1;
 	for (var i = 0; i < review_by.length; i ++) {
 		review_model.findOne({ author: author, review_by: review_by[i] }, function(err, review) {
-			req.session.reviewed[review.author + ',' + review.review_by] = review.mark;
+			req.session.sub_reviewed[review.author + ',' + review.review_by] = review.mark;
 			if (review.mark > 0) {
 				req.session.reviewed[review.author] ++;
 			}
+			if (req.session.reviewed[review.author] == req.session.student_review_by.length) {
+				req.session.done_reviewed ++;
+			}
 			if (count == req.session.review_array.length && count2 == review_by.length) {
-				console.log("aaaaaaaaaaaa");
 				read_file(req, res, site);
 			}
 			count2 ++;
@@ -193,7 +198,10 @@ function read_file(req, res, site) {
 			feedback_questions: req.session.feedback_questions,
 			display_index : req.session.ta_review_display_starting_index,
 			review_by : req.session.student_review_by,
-			reviewed : req.session.reviewed
+			reviewed : req.session.reviewed,
+			sub_reviewed : req.session.sub_reviewed,
+			done_reviewed : req.session.done_reviewed,
+			is_done : req.session.is_done
 		});
 	});
 }
@@ -227,13 +235,17 @@ router.post('/go_to_ta_grade', function(req, res, next) {
 		req.session.mark = parseInt(req.body.mark_num);
 	}
 	if ((req.session.mark > 0 && 
-		req.session.reviewed[req.session.review_array[req.session.peer_number-1] + 
+		req.session.sub_reviewed[req.session.review_array[req.session.peer_number-1] + 
 		',' + req.session.student_review_by[req.session.peer_sub_number-1]] == 0) &&
 		req.session.reviewed[req.session.review_array[req.session.peer_number-1]] != req.session.student_review_by.length) {
 		req.session.reviewed[req.session.review_array[req.session.peer_number-1]] ++;
-		console.log("insideeeee");
+		if (req.session.reviewed[req.session.review_array[req.session.peer_number-1]] == 
+			req.session.student_review_by.length) {
+			req.session.done_reviewed ++;
+		}
+		
 	}
-	req.session.reviewed[req.session.review_array[req.session.peer_number-1] + 
+	req.session.sub_reviewed[req.session.review_array[req.session.peer_number-1] + 
 	',' + req.session.student_review_by[req.session.peer_sub_number-1]] = req.session.mark;
 
 
@@ -265,6 +277,7 @@ router.post('/go_to_ta_grade', function(req, res, next) {
 	var prev_10 = "prev_10_btn";
 	var next_sub = "next_sub_btn";
 	var prev_sub = "prev_sub_btn";
+	var not_done = "not_done_btn";
   	if (next_sub in req.body) {
   		req.session.peer_sub_number ++;
   		if (req.session.peer_sub_number > req.session.student_review_by.length) {
@@ -307,6 +320,28 @@ router.post('/go_to_ta_grade', function(req, res, next) {
 			req.session.peer_number -= 10;
 		}
 		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
+	} else if (not_done in req.body) {
+		var author = ''; var count = 0;
+		for (var review in req.session.reviewed) {
+			if (req.session.reviewed[review] < req.session.student_review_by.length) {
+				req.session.peer_number = req.session.review_array.indexOf(review) + 1;
+				author = review;
+				break;
+			}
+		}
+		if (author != '') {
+			for (var sub_review in req.session.sub_reviewed) {
+				if (author == sub_review.split(',')[0]) {
+					count ++;
+					if (req.session.sub_reviewed[sub_review] == 0) {
+						req.session.peer_sub_number = count;
+						break;
+					}
+				}
+			}
+		} else {
+			req.session.is_done = 1;
+		}
 	}
 
 	if ((req.session.peer_number >= 10) && (req.session.peer_number % 10 == 0)) {

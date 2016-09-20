@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 
 var fs = require('fs');
 
+
 var code_schema = require("./models/submission_schema.js");
 var review_schema = require("./models/review_schema.js");
 
@@ -155,25 +156,28 @@ function read_file(req, res, site) {
 			number_of_stars: req.session.num_stars,
 			init_highligts: req.session.highlight_str,
 			feedback_questions: req.session.feedback_questions,
-			reviewed: req.session.reviewed
+			reviewed: req.session.reviewed,
+			deadline_passed : req.session.peer_review_deadline_passed
 		});
 	});
 }
 
+
 function save(req) {
-	 var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
-	review_model.findOneAndUpdate(
-		{ author: req.session.review_array[req.session.peer_number-1],
-		  review_by: req.session.self_utorid},
-		{ $set: {feedbacks: req.session.feedbacks,
-		num_stars: req.session.num_stars,
-		highlights: req.session.highlight_str } },
-		{ new: true},
-		function(err, doc) {
-			if (err) console.log(err);
-			console.log("saved");
-		}
-	);
+	if (req.session.peer_review_deadline_passed == 0) {
+		var review_model = mongoose.model(req.session.work_name + "_reviews", review_schema);
+		review_model.findOneAndUpdate(
+			{ author: req.session.review_array[req.session.peer_number-1],
+			  review_by: req.session.self_utorid},
+			{ $set: {feedbacks: req.session.feedbacks,
+			num_stars: req.session.num_stars,
+			highlights: req.session.highlight_str } },
+			{ new: true},
+			function(err, doc) {
+				if (err) console.log(err);
+				console.log("saved");
+		});
+	}
 }
 
 router.post('/go_to_peer_review', function(req, res, next) {

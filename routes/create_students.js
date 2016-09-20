@@ -23,6 +23,7 @@ router.get('/', function(req, res, next) {
   // instructor is not found
   if (instructor == null) {
     res.redirect('/' + req.session.current_site);
+    req.session.current_site = 'create_students';
   } else { // if it is found
 
       // loop through students collection

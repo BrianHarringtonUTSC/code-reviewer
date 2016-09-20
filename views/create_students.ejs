@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/tab.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/table.css">
   </head>
 
   <body>
@@ -30,31 +31,30 @@
 
     <p> All students </p>
     <p> number of students is <%= num_students %> </p>
-    <section class="ac-container">
-      <% students.forEach( function(item) { %>
-      <p><%= item.utorid + ' ' + item.email + ' ' + item.student_number %></p>
-      <% }); %>
-    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Utroid</th>
+          <th>Email</th>
+          <th>student_number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (var i = 0; i < students.length; i ++) { %>
+        <tr>
+          <td><%= students[i].first_name %></td>
+          <td><%= students[i].last_name %></td>
+          <td><strong><%= students[i].utorid %></strong></td>
+          <td><%= students[i].email %></td>
+          <td><%= students[i].student_number %></td>
+        </tr>
+      <% } %>
+      </tbody>
+    </table>
   </body>
 
-
-
-
-    <div>
-  <ul class="pagination modal-5">
-    <li><a href="#" class="prev fa fa-arrow-left"> </a></li>
-    <li> <a href="#">1</a></li>
-    <li> <a href="#">2</a></li>
-    <li> <a href="#">3</a></li>
-    <li> <a href="#">4</a></li>
-    <li><a href="#" class="active">5</a></li>
-    <li> <a href="#">6</a></li>
-    <li> <a href="#">7</a></li>
-    <li> <a href="#">8</a></li>
-    <li> <a href="#">9</a></li>
-    <li><a href="#" class="next fa fa-arrow-right"></a></li>
-  </ul>
-  </div>
 </html>
 
 

@@ -26,12 +26,12 @@
 
 .breadcrumb a.active{
   color: white;
-  background: linear-gradient(#777777, #222222);
+  background: linear-gradient(#66a3ff, #0047b3);
 }
 
 .breadcrumb a.active:after{
   color: white;
-  background: linear-gradient(135deg, #777777, #222222);
+  background: linear-gradient(135deg, #66a3ff, #0047b3);
 }
 
 .breadcrumb a:after {

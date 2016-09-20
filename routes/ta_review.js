@@ -21,6 +21,7 @@ router.get('/', function(req, res, next) {
 		console.log("Please log in");
     return res.redirect('/');
 	}
+	console.log("aaaaaaaaaaaaaaaaa");
 	ta_model.findOne({ email: req.user.emails[0].value }, function (err, ta) {
 	  if (err) return err;
 	  if (ta == null) {
@@ -37,6 +38,8 @@ router.get('/', function(req, res, next) {
 
 function init_all(req, res, site) {
 	req.session.reviewed = {};
+	req.session.done_reviewed = 0;
+	req.session.is_done = 0;
 	req.session.ta_review_display_starting_index = 0;
 	req.session.current_site = site;
 	req.session.self_utorid = '';
@@ -119,6 +122,9 @@ function get_num_stars_for_all_peers(req, res, site) {
   for (var i = 0; i < req.session.review_array.length; i ++) {
 	  review_model.findOne({ author: req.session.review_array[i], review_by: req.session.self_utorid }, function(err, review) {
 	  	req.session.reviewed[review.author] = review.num_stars;
+	  	if (review.num_stars > 0) {
+	  		req.session.done_reviewed ++;
+	  	}
 	  	count ++;
 	  	if (count == req.session.review_array.length) {
 	  		read_file(req, res, site);
@@ -151,7 +157,9 @@ function read_file(req, res, site) {
 			init_highligts: req.session.highlight_str,
 			feedback_questions: req.session.feedback_questions,
 			display_index : req.session.ta_review_display_starting_index,
-			reviewed : req.session.reviewed
+			reviewed : req.session.reviewed,
+			done_reviewed: req.session.done_reviewed,
+			is_done : req.session.is_done
 		});
 	});
 }
@@ -181,23 +189,33 @@ router.post('/go_to_ta_review', function(req, res, next) {
 	}
 	req.session.feedbacks = temp_feedback_array;
 	req.session.highlight_str = req.body.highlight_storage;
-	req.session.num_stars = req.body.star_num;
+	req.session.num_stars = parseInt(req.body.star_num);
+	if ((req.session.reviewed[req.session.review_array[req.session.peer_number-1]] == 0) 
+		&& (req.session.num_stars > 0)) {
+		req.session.done_reviewed ++;
+	}
+	console.log(req.session.done_reviewed);
 	req.session.reviewed[req.session.review_array[req.session.peer_number-1]] = req.session.num_stars;
+
+
 
 	save(req);
 	var i = 1; var found = 0;
+	var next = "next_btn";
+	var prev = "prev_btn";
+	var next_10 = "next_10_btn";
+	var prev_10 = "prev_10_btn";
+	var not_done = "not_done_btn";
 	while ((i <= 10) && (found == 0)) {
 		var key = "peer_" + String(i);
-		var next = "next_btn";
-		var prev = "prev_btn";
-		var next_10 = "next_10_btn";
-		var prev_10 = "prev_10_btn";
+
 		if (key in req.body) {
 			req.session.peer_number = req.session.ta_review_display_starting_index + i;
 			found = 1;
 		} 
 		i ++;
   	}
+
 	if (next in req.body) {
 		req.session.peer_number ++;
 		if (req.session.peer_number > req.session.review_array.length) {
@@ -228,6 +246,22 @@ router.post('/go_to_ta_review', function(req, res, next) {
 			req.session.peer_number -= 10;
 		}
 		req.session.peer_number -= ((req.session.peer_number % 10) - 1);
+	} else if (not_done in req.body) {
+		var done_count = 0;
+		for (var review in req.session.reviewed) {
+			done_count ++;
+			if (req.session.reviewed[review] == 0) {
+				req.session.peer_number = req.session.review_array.indexOf(review) + 1;
+				break;
+			}
+		}
+		if (done_count == req.session.review_array.length) {
+			req.session.is_done = 1;
+		}
+		console.log("----");
+		console.log(done_count);
+		console.log(req.session.reviewed);
+		console.log(req.session.is_done);
 	}
 
 	if ((req.session.peer_number >= 10) && (req.session.peer_number % 10 == 0)) {

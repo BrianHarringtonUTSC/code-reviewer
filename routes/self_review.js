@@ -25,7 +25,7 @@ router.get('/', function(req, res, next) {
 	  	if (req.session.current_site != "self_review") {
 	  		init_all(req, res, 'self_review');
 	  	} else {
-	  		get_student_utorid(req, res, 'self_review');
+	  		find_feedback(req, res, 'self_review');
 	  	}
 	  }
 	 });
@@ -75,9 +75,10 @@ function get_student_utorid(req, res, site) {
 function find_student_code(req, res, site) {
 	console.log(req.session.self_utorid);
 	var code_model = mongoose.model(req.session.work_name, code_schema);
-  code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
-  	shuffle_array(req, res, code.review_by, site);
+  	code_model.findOne({ utorid: req.session.self_utorid }, function(err, code) {
   	req.session.code_path = code.code_path;
+  	req.session.review_array = code.review_by;
+  	find_feedback(req, res, site);
   });
 }
 
@@ -118,7 +119,7 @@ function read_file(req, res, site) {
 	var instream = fs.createReadStream(req.session.code_path);
 	var outstream = new stream;
 	var rl = readline.createInterface(instream, outstream);
-	var str = ""
+	var str = "";
 	rl.on('line', function(line) {
 	  str += line + "\n";
 	  //console.log(line);
@@ -135,10 +136,6 @@ function read_file(req, res, site) {
 			init_highligts: req.session.highlight_str,
 			feedback_questions: req.session.feedback_questions
 		});
-	  // do something on finish here
-	  //console.log(str);
-	  //console.log("finished");
-	  //console.log(str_array.length);
 	});
 }
 

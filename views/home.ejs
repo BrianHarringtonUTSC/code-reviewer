@@ -2,42 +2,44 @@
 <html >
   <head>
     <meta charset="UTF-8">
-    <title>Login Form</title>
+    <title>Student Home | Code Reviewer</title>
     <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/table.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pup_hint.css">
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
   </head>
 
   <body class="login_body">
-    <div>
+    <div style="top:0;">
     <% include templates/student_header.ejs %>
   </div>
+  <div>
     <% if (submitted == 0) { %>
       <label>Sorry! You did not submit this assignment.</label>
     <% } else if (release_self == 0) { %>
       <label>Self Review has not started yet. Please try again later.</label>
     <% } %>
-
     <div style="margin-top:50px;">
     <form enctype="application/json" action="home/go_to_review" method="post">
       <table>
         <thead>
           <tr>
-            <th><i class="fa fa-file-text" aria-hidden="true"></i> Assignment</th>
-            <th><i class="fa fa-user" aria-hidden="true"></i> Self Review</th>
-            <th><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Peer Review</th>
-            <th><i class="fa fa-check-square-o" aria-hidden="true"></i> Mark</th>
-            <th><i class="fa fa-eye" aria-hidden="true"></i> Result</th>
+            <th><i class="fa fa-file-text" aria-hidden="true"></i> Assignment </th>
+            <th onmouseover="nhpup.popup('Read the instruction and tips carefully and click Start to start reviewing your peers works. Highlight the codes and add comments on them. ....');"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Peer Review</th>
+            <th onmouseover="nhpup.popup('');"><i class="fa fa-user" aria-hidden="true"></i> Self Review</th>
+
+            <th onmouseover="nhpup.popup('Marks for your Peer Review, 2 marks for each review.');"><i class="fa fa-check-square-o" aria-hidden="true"></i> Mark</th>
+            <th onmouseover="nhpup.popup('Lorem ipsum dolor sit ...');"><i class="fa fa-eye" aria-hidden="true"></i> Result</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="tbody">
           <% for (var i = 0; i < rules.length; i ++) { 
             if (rules[i].release) { %>
           <tr>
-            <td><strong><%= rules[i].work_name %></strong></td>
+            <td onmouseover="nhpup.popup('Peer Review deadline:<br /><%= rules[i].peer_review_deadline %>');"><strong><%= rules[i].work_name %></strong></td>
+            <td onmouseover="nhpup.popup('Peer Review deadline:<br /><%= rules[i].peer_review_deadline %>');"><input type="submit" name="<%= rules[i].work_name + "_peer"; %>" value="Start Review" class="button_link"></input></td>
             <td><input type="submit" name="<%= rules[i].work_name + "_self"; %>" value="Check Review" class="button_link"></input></td>
-            <td><input type="submit" name="<%= rules[i].work_name + "_peer"; %>" value="Start Review" class="button_link"></input></td>
             <% if (rules[i].release_mark) { %>
             <td><%= marks[rules[i].work_name] %> / <%= rules[i].num_peers*2 %></td>
             <td><input type="submit" name="<%= rules[i].work_name + "_result";%>" value="Check Result" class="button_link"></td>
@@ -53,6 +55,8 @@
     </form>
   </div>
     <script type="text/javascript" src="javascripts/test.js"></script>
-
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="javascripts/nhpup_1.1.js"></script>
+  </div>
   </body>
 </html>

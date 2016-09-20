@@ -5,6 +5,8 @@
     <title>TA's</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/nav.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/table.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
   </head>
 
   <body>
@@ -12,15 +14,34 @@
 
     <form action="create_tas/load" method="post" enctype="multipart/form-data">
       <input type="file" value ="Upload tas file" name="rosters" required><br>
-      <input type="submit" value ="Load new tas">
+      <input type="submit" value ="Load new tas" class="button">
     </form>
 
     <p> All TA's </p>
     <p> number of TA's is <%= num_tas %> </p>
-    <section class="ac-container">
-      <% tas.forEach( function(item) { %>
-      <p><%= item.utorid + ' ' + item.email + ' ' + item.student_number + '---------' + item.weight %></p>
-      <% }); %>
-    </section>
+    <table>
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Utroid</th>
+          <th>Email</th>
+          <th>student_number</th>
+          <th>weight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (var i = 0; i < tas.length; i ++) { %>
+        <tr>
+          <td><%= tas[i].first_name %></td>
+          <td><%= tas[i].last_name %></td>
+          <td><strong><%= tas[i].utorid %></strong></td>
+          <td><%= tas[i].email %></td>
+          <td><%= tas[i].student_number %></td>
+          <td><%= tas[i].weight %></td>
+        </tr>
+      <% } %>
+      </tbody>
+    </table>
   </body>
 </html>

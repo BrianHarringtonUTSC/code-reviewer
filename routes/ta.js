@@ -10,6 +10,10 @@ var ta_model = require('./models/ta_model.js');
 
 var work_list = [];
 var rule_model = require("./models/rule_model.js");
+var ta_model = require("./models/ta_model.js");
+
+var code_schema = require("./models/submission_schema.js");
+
 //Here we are configuring express to use body-parser as middle-ware.
 router.use(bodyParser.urlencoded( {extended: true} ));
 
@@ -25,19 +29,38 @@ router.get('/', function(req, res, next) {
 	  if (ta == null) {
 	  	res.redirect('/' + req.session.current_site);
 	  } else {
-	  	req.session.current_site = "ta";
-	  	check_release(req, res, 'ta');
+	  	if (req.session.current_site != "ta") {
+	  		init_all(req, res, 'ta');
+	  	} else {
+	  		get_ta_utorid(req, res, 'ta');
+	  	}
 	  }
 	 });
 	// user authentication
 });
+
+function init_all(req, res, site) {
+	req.session.current_site = "ta";
+	req.session.self_utorid = "";
+	req.session.assigned = 1;
+	get_ta_utorid(req, res, site);
+}
+
+function get_ta_utorid(req, res, site) {
+	ta_model.findOne({ email: req.user.emails[0].value }, function (err, ta) {
+	  if (err) return err;
+	  req.session.self_utorid = ta.utorid;
+	  check_release(req, res, site);
+	 });
+}
 
 function check_release(req, res, site) {
 	rule_model.find({}, function (err, rules) {
 	  if (err) return err;
 		res.render(site, {
 			title: site,
-			rules : rules
+			rules : rules,
+			assigned : req.session.assigned
 		});
 	});
 }
@@ -64,21 +87,34 @@ function check_loaded(req, res, site, work_list) {
 		        loaded_work.push(work_list[counter-1]);
 		    } 
 		    if (counter == work_list.length) {
-				res.render(site, {
-					title: site,
-					work_list: loaded_work,
-				});
+				check_distribution(req, res, site, loaded_work);
 		    }
 		});
 	}
+}
+
+/*
+* check if the TA has been assign to review or grade 
+*/
+function check_distribution(req, res, site) {
+  var code_model = mongoose.model(req.session.work_name, code_schema);
+  code_model.findOne({ ta: req.session.self_utorid }, function(err, code) {
+  	if (code == null) {
+  		req.session.assigned = 0;
+  		res.redirect("/ta");
+  	} else {
+  		req.session.assigned = 1;
+  		res.redirect(site);
+  	}
+  });
 }
 router.post('/go_to_ta_review_or_grade', function(req, res, next) {
 	for (var key in req.body) {
 		req.session.work_name = String(key).substring(0, key.indexOf("_"));	
 		if (key.indexOf("review") > -1) {
-			res.redirect('/ta_review');
+			check_distribution(req, res, '/ta_review');
 		} else {
-			res.redirect('/ta_grade');
+			check_distribution(req, res, '/ta_grade');
 		}
 	}
 });

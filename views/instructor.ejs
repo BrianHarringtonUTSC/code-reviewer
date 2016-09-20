@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/form.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/table.css">
     <link rel="stylesheet" type="text/css" href="stylesheets/button.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pup_hint.css">
   </head>
 
   <body>
@@ -24,7 +25,7 @@
      <div class="sep"></div>
      <div class="inputs">
       <p><font size="3" color="red"><%= error_message %></font></p>
-      <label>New work name: </label><input type="text" name="work_name" value="<%= work_name %>"></input>
+      <label>New work name: </label><input type="text" name="work_name" value="<%= work_name %>" required></input>
       <label>Number of peers: </label><input type="text" name="num_peers" value="<%= num_peers %>"></input>
       <label>Required_files: </label><input type="text" name="required_files" value="<%= required_files[0] %>"></input>
       <label>Repo path: </label><input type="text" name="repo_path" value="<%= repo_path %>"></input>
@@ -52,8 +53,8 @@
           <br />
       -->
       <label>Peer review deadline:</label>
-        <input type="date" name="peer_review_deadline_date"></input>
-        <input type="time" name="peer_review_deadline_time" value="23:55"></input>
+        <input type="date" name="peer_review_deadline_date" required></input>
+        <input type="time" name="peer_review_deadline_time" value="23:55" required></input>
         <br />
       <!-- commented out for simplicity
         <label>Release students' reviews to TA's:</label>
@@ -92,9 +93,26 @@
             var release_mark = "release_mark_" + rules[i].work_name;
             var unrelease_mark = "unrelease_mark_" + rules[i].work_name;
             var release_self_review = "release_self_" + rules[i].work_name;
-            var unrelease_self_review = "unrelease_self_" + rules[i].work_name; %>
+            var unrelease_self_review = "unrelease_self_" + rules[i].work_name;
+            if (rules[i].loaded) {
+              var L = 'YES';
+            } else {
+              var L = 'NO';
+            }
+            if (rules[i].distributed) {
+              var D = 'YES';
+            } else {
+              var D = 'NO';
+            }
+            if (rules[i].ta_distributed) {
+              var T = 'YES';
+            } else {
+              var T = 'NO';
+            } 
+            %>
+
           <tr>
-            <td><strong><%= rules[i].work_name %></strong></td>
+            <td onmouseover="nhpup.popup('assignment loaded: <%= L %><br />students distributed: <%= D %><br/ >TAs distributed: <%= T %><br/ ><%= rules[i].peer_review_deadline %>');" ><strong><%= rules[i].work_name %></strong></td>
             <td><input type="submit" name="<%= rules[i].work_name %>" value="Edit, load, or distribute" class="button_link"></input></td>
             <td><input type="submit" name="<%= check_review %>" value="Check student reviews" class="button_link"></input></td>
             <td>
@@ -121,6 +139,7 @@
         </tbody>
       </table>
     </form>
-
+    <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="javascripts/nhpup_1.1.js"></script>
   </body>
 </html>
