@@ -7,3 +7,4 @@ Thumbs.db
 .env
 npm-debug.log
 a1
+*.log

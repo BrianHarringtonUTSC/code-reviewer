@@ -1,0 +1,7 @@
+{ "appenders": [ {
+    "type": "file",
+    "filename": "./code-reviewer.log",
+    "pattern": "-yyyy-MM-dd",
+    "alwaysIncludePattern": false
+  } ]
+}

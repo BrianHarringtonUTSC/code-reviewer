@@ -8,6 +8,9 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var session = require('express-session');
 var dotenv  = require('dotenv');
+var log4js = require('log4js');
+
+log4js.configure('config/log4js_config.json');
 
 var strategy = require('./setup-passport');
 // load environment variables
