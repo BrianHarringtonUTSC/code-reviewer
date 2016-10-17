@@ -1,15 +1,422 @@
 <!DOCTYPE html>
 
-<html ng-app="myApp">
-  <head>
-    <meta charset="UTF-8">
-    <title>Login Form</title>
+<html>
+    <head>
+        <title>Code Reviewer-Instructions</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.css"></link>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    </head>
 
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
-    <script type="text/javascript" src="C:\Users\admin\Desktop\code-reviewer\public\js\login.js"></script>
-  </head>
+    <body ng-app="instructionApp" ng-controller="instructionController" style="background-color: #1B1C1D;font-size: 30px;">
 
-  <body class="login_body">
+        <div class="ui inverted segment" style="margin:0px;padding-top:30px;padding-bottom:2px">
+          <div class="container-fluid">
+            <h1 class="ui inverted header">Code Reviewer</h1>
+            <div class="ui inverted big secondary pointing menu">
+              <a ng-class="getTopBarCss('Home')" ng-click="checkedInstruction('Home')">
+                  Home
+              </a>
+              <a ng-class="getTopBarCss('Signup')" ng-click="checkedInstruction('Signup')">
+                  Signup & Login
+              </a>
+              <a ng-class="getTopBarCss('Peer Review')" ng-click="checkedInstruction('Peer Review')">
+                  Peer Review
+              </a>
+              <a ng-class="getTopBarCss('Self Review')" ng-click="checkedInstruction('Self Review')">
+                  Self Review
+              </a>
+              <a ng-class="getTopBarCss('Mark')" ng-click="checkedInstruction('Mark')">
+                  Mark & Result
+                </a>
+                <!-- 
+                <a ng-class="getTopBarCss('Feedback')" ng-click="checkedInstruction('Feedback')">
+                    Feedbacks
+                </a>
+                -->
+                <div class="right menu">
+                  <button onclick="window.signin();" class="ui big purple button">
+                    Login to Code Reviewer
+                  </button>
+                </div>
+            </div>
+            <div ng-switch="checked">
+              <!-- first tab -->
+              <div ng-switch-when="Home">
+                <div class="ui one column grid">
+                  <div class="column">
+                    <div class="ui raised segment" style="width:1300px;">
+                      <a class="ui big red ribbon label">Welcome</a>
+                      <div style="width:1210px;padding-bottom:10px">
+                        <div class="ui big visible message">
+                          <p>Welcome and thank you for joining the <b> Code Reviewer </b> app!!</p>
+                          <p>In this app, you will get a chance to look at different approaches your classmates took to code their assignments.</p>
+                        </div>
+                      </div>
+                      <a class="ui big blue ribbon label">Features</a>
+                      <div class="ui list">
+                        <div class="item">
+                          <i class="users icon"></i>
+                          <div class="content">
+                            <a class="header">Peer Review Feedback</a>
+                            <div class="description">Receive quality feedback from your own classmates!</div>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <i class="exchange icon"></i>
+                          <div class="content">
+                            <a class="header">Learn new ways to solve problems</a>
+                            <div class="description">View your classmate's solutions and learn different ways of solving the solution.</div>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <i class="star icon"></i>
+                          <div class="content">
+                            <a class="header">Rate other's Assignments!</a>
+                            <div class="description">Like a solution? Give it that 5 star!</div>
+                          </div>
+                        </div>
+                        <div class="item">
+                          <i class="help icon"></i>
+                          <div class="content">
+                            <a class="header">Much much more...</a>
+                            <div class="description">Currently, these are the main features, but more will come as we continue to develop.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- second tab -->
+              <div ng-switch-when="Signup">
+                <div class="ui one column grid">
+                  <div class="column">
+                    <div class="ui raised segment" style="width:1300px;">
+                      <a class="ui big red ribbon label">Signup</a>
+                      <div style="width:1210px;padding-bottom:10px">
+                        <div class="ui big visible message">
+                          <p>If you are a first time user, click <b> Login </b> button followed by the <b> SIGN UP </b> button.</p>
+                          <p>Open your utoronto email and you will recive a comfirmation email.</p>
+                          <p>Follow the instructions given in the email and complete the comfirmation.</p>
+                          <div class="ui red message" style="width:700px;">
+                            Note: Please make sure you are signing up with your official utoronto email.
+                          </div>
+                      <div class="ui medium image">
+                        <img src="http://oi65.tinypic.com/105r1ur.jpg">
+                      </div>
+                      <img src="http://www.clipartkid.com/images/582/arrow-right-free-stock-photo-illustration-of-a-blue-curved-right-xwUIDL-clipart.png" width="50">
+                      <div class="ui large image">
+                        <img src="http://oi64.tinypic.com/35i94is.jpg">
+                      </div>
+                      <img src="http://www.clipartkid.com/images/582/arrow-right-free-stock-photo-illustration-of-a-blue-curved-right-xwUIDL-clipart.png" width="50">
+                      <div class="ui medium image">
+                        <img src="http://oi64.tinypic.com/zjtlcj.jpg">
+                      </div>
+                        </div>
+                      </div>
+                      <p></p>
+                      <div style="padding-top:10px"></div>
+                      <a class="ui big blue ribbon label"> Login</a>
+                        <div style="width:1210px;padding-bottom:10px">
+                          <div class="ui visible message">
+                            <p>Once you have an account, click <b> Login </b> button and login with your utoronto mail. </p>
+                            <p>Once you've logged in you'll see something like this:</p>
+                            <div class="ui medium image">
+                              <img src="http://oi65.tinypic.com/105r1ur.jpg">
+                            </div>
+                            <img src="http://www.clipartkid.com/images/582/arrow-right-free-stock-photo-illustration-of-a-blue-curved-right-xwUIDL-clipart.png" width="50">
+                            <div class="ui huge image">
+                              <img src="http://oi64.tinypic.com/2n7mrus.jpg">
+                            </div>
+                            <p></p>
+                            <div class="ui yellow message" style="width:600px;">
+                              If you are having trouble logging in, please ask on piazza.
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 3rd tab -->
+              <div ng-switch-when="Peer Review">
+                <div class="ui one column grid">
+                  <div class="column">
+                    <div class="ui raised segment" style="width:1300px;">
+                      <a class="ui big red ribbon label">Overview</a>
+                        <div style="width:1210px;padding-bottom:10px">
+                          <div class="ui visible message">
+                            <p>The purpose of this section is for you and your classmates to review each other's code. This is a great opportunity for the class to learn from each other. Instructors will randomly group students up for each assignment and have students in the group review each other's work.</p>
+                            <p>To get started, go to the homepage and click on the <b> Start Review </b> button under <b> Peer Review </b> for the specified assignment.</p>
+                            <div class="ui huge image">
+                              <img src="http://oi66.tinypic.com/rkse3t.jpg">
+                            </div>
+                          </div>
+                        </div>
+                      <p></p>
+                      <a class="ui big blue ribbon label">Instruction & Tips</a>
+                        <div style="width:1210px;padding-bottom:10px">
+                          <div class="ui visible message">
+                            <p>This is the first step of Peer Review: Reading instructions! Normally, the instructor will be posting instructions and tips in this section. Please go over them so you don't make any silly mistakes.</p>
+                            <div class="ui red message" style="width:600px;">
+                              NOTE: There's currently no way to go back a step once you've clicked <b>I am ready</b>!
+                            </div>
+                            <div class="ui huge image">
+                              <img src="http://oi64.tinypic.com/34ep648.jpg">
+                            </div>
+                          </div>
+                        </div>
+                      <a class="ui big green ribbon label">Give Feedback</a>
+                      <div style="width:1210px;padding-bottom:10px">
+                        <div class="ui visible message">
+                          <p>The second portion of the Peer Review: the reviewing section. You will be given a certain amount of classmates to review their code. These peer's names will be listed in the top tabs above the code. You're also given the opportunity to rate your classmate's code out of 5 stars!</p>
+                          <p><b>Adding Comments:</b>Throughout the code, if you find any sections problematic/buggy or something interest, you can highlight over the code and click <b> Add Comment </b> to add a comment to that section.</p>
+                          <p>At the bottom of the form, you'll be requested to give a positive comment and a constructive comment. Please do not be too critical.</p>
+                          <p>There's also a <b>Save</b> button which will save your work while remaining on the page. If you click the <b>Save and Go to Self Assessment</b> button, you will be directed to the next section</p>
+                          <div class="ui red message" style="width:700px;">
+                            NOTE: There's currently no way to go back a step once you've clicked <b>Save and Go to Self Assessment</b>!
+                          </div>
+                          <div class="ui huge image">
+                            <img src="http://oi65.tinypic.com/3zo1e.jpg">
+                          </div>
+                          <div class="ui huge image">
+                            <img src="http://oi64.tinypic.com/208h7q9.jpg">
+                          </div>
+                        </div>
+                      </div>
+                      <a class="ui big purple ribbon label">Self Assessment</a>
+                      <div style="width:1210px;padding-bottom:10px">
+                        <div class="ui visible message">
+                          <p>We're finally at the last section of the Peer Review. Now that you have seen many examples of you're peer's work, how well do you think your assignment compared to theirs? Please rate it out of 5 stars.</p>
+                          <p>Once you're done, scroll to the bottom and click <b>Finish</b></p>
+                          <div class="ui huge image">
+                            <img src="http://oi65.tinypic.com/35n1mc6.jpg">
+                          </div>
+                          <div class="ui huge image">
+                            <img src="http://oi63.tinypic.com/2hq9ml2.jpg">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 4th tab -->
+              <div ng-switch-when="Self Review">
+                <div class="ui one column grid">
+                  <div class="column">
+                    <div class="ui raised segment" style="width:1300px;">
+                      <a class="ui big red ribbon label">Overview</a>
+                        <div style="width:1210px;padding-bottom:10px">
+                          <div class="ui visible message">
+                            <p>The purpose of this section is for you to see the comments and feedbacks your classmates left for you.</p>
+                            <p>To get started, go to the homepage and click on the <b> Check Review </b> button under <b> Self Review </b> for the specified assignment.</p>
+                            <div class="ui huge image">
+                              <img src="http://i65.tinypic.com/33y2emw.jpg">
+                            </div>
+                          </div>
+                        </div>
+                      <p></p>
+                      <a class="ui big blue ribbon label">View Feedback</a>
+                      <div style="width:1210px;padding-bottom:10px">
+                        <div class="ui visible message">
+                          <p>This is the section where you can view the feedback your peers gave you. On the top, you'll see the names of the student who have reviewed your code.</p>
+                          <p> You can hover sections of the code that have been highlighted to see the comments/feedbacks on that section. Some comments may be on how well you did!</p>
+                          <div class="ui orange message" style="width:700px;">
+                            NOTE: Not all feedback may be great, but take the constructive ones seriously and improve upon it!
+                          </div>
+                          <div class="ui huge image">
+                            <img src="http://oi63.tinypic.com/21kc5yu.jpg">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 5th tab -->
+              <div ng-switch-when="Mark">
+                <div class="ui one column grid">
+                  <div class="column">
+                    <div class="ui raised segment" style="width:1300px;">
+                      <a class="ui big red ribbon label">Overview</a>
+                        <div style="width:1210px;padding-bottom:10px">
+                          <div class="ui visible message">
+                            <p>View your marks.</p>
+                            <p></p>
+                            <div class="ui huge image">
+                              <img src="http://oi68.tinypic.com/103gbnm.jpg">
+                            </div>
+                          </div>
+                        </div>
+                      <a class="ui big blue ribbon label">View Feedback</a>
+                        <div style="width:1210px;padding-bottom:10px">
+                          <div class="ui visible message">
+                            <p>Click on the <b> Check Result </b> to view feedbacks.</p>
+                            <p></p>
+                            <div class="ui huge image">
+                              <img src="http://oi65.tinypic.com/2nhepmw.jpg">
+                            </div>
+                          </div>
+                        </div>
+                      <p></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 6th tab -->
+              <div ng-switch-when="Feedback">
+                <div class="ui one column grid">
+                  <div class="column">
+                    <div class="ui raised segment" style="width:1300px;">
+                      <a class="ui big red ribbon label">Your Feedback</a>
+                        <div style="width:1210px;padding-bottom:10px">
+                          <div class="ui visible message">
+                            If you have any feedback, please fill in this form with your utoronto mail.
+                            <div class="ui red message">
+                              NOT FUNCTIONAL AT THE MOMENT.
+                            </div>
+                            <div class="ui large form">
+                              <div class="ui stacked secondary segment">
+                                <div ng-class="getRegistrationCss('email').textBox">
+                                  <div class="ui left icon input">
+                                    <i class="user icon"></i>
+                                    <input type="text" ng-model="opt.email" placeholder="Email">
+                                  </div>
+                                </div>
+                                <div ng-class="getRegistrationCss('content').textBox">
+                                  <textarea ng-model="opt.content" placeholder="Feedback (Max 500 Characters)"></textarea>
+                                </div>
+                                <div>
+                                  <div class="ui left large green button" ng-click="submitFeedback(opt)">Submit</div>
+                                </div>
+                                <div class="ui negative message" ng-show="feedbackVerifier.hasErrors()" style="text-align: left">
+                                  <i class="close icon" ng-click="feedbackVerifier.refresh()"></i>
+                                  <div class="header" ng-show="feedbackVerifier.getErrors().invalidEmail">
+                                    Please enter a utoronto email.
+                                  </div>
+                                  <div class="header" ng-show="feedbackVerifier.getErrors().noContent">
+                                    The feedback field cannot be empty or more than 500 characters
+                                  </div>
+                                </div>
+                                <div class="ui positive message" ng-show="opt.success" style="text-align: left">
+                                  <i class="close icon" ng-click="opt.success=false"></i>
+                                  <div class="header">
+                                    Please enter a utoronto email.
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    </body>
+<footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.4/semantic.min.js"></script>
+    <script>
+        var app = angular.module('instructionApp', []);
+        app.controller("instructionController", function($scope) {
+            var textBoxCss = {
+                error : {
+                    textBox : "field error"
+                },
+                normal : {
+                    textBox : "field"
+                }
+              },
+              Verifier = function () {
+                var err = {};
+                this.refresh = function() {
+                    err = {};
+                    return this;
+                };
+
+                this.addError = function(error) {
+                    err[error] = true;
+                    return this;
+                }
+                this.getErrors = function() {
+                    return err;
+                };
+                this.hasErrors = function() {
+                    for (var key in err) {
+                        if (err.hasOwnProperty(key)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                this.verifyEmail = function (str) {
+                    if (!str || !(new RegExp("..@.*utoronto.*\.ca").test(str))) {
+                      err.invalidEmail = true;
+                    }
+                    return this; 
+                };
+                this.verifyContent = function (str) {
+                    if (!str || str.length > 500) {
+                      err.noContent = true;
+                    }
+                    return this; 
+                };
+            };
+            $scope.feedbackVerifier = new Verifier();
+            $scope.checked = "Home";
+            $scope.checkedInstruction = function(opt) {
+                $scope.checked = opt;
+            }
+            $scope.getTopBarCss = function(opt){
+                if (opt === $scope.checked) {
+                    return "active item";
+                }
+                return "item";
+            }
+
+            $scope.getRegistrationCss = function(property, errors) {
+                var err = $scope.feedbackVerifier.getErrors();
+
+                switch(property) {
+                case "content":
+                    if (err.noContent) {
+                        return textBoxCss.error;
+                    }
+                    break;
+                case "email":
+                    if (err.invalidEmail) {
+                        return textBoxCss.error;
+                    }
+                    break;
+                default:
+                    return textBoxCss.normal;
+                }
+                return textBoxCss.normal;
+            };
+            $scope.submitFeedback = function (opt) {
+              if (opt) {
+                opt.success = false;
+              }
+              if (!opt) {
+                $scope.feedbackVerifier.refresh().addError("noContent").addError("invalidEmail");
+              } else {
+                $scope.feedbackVerifier.refresh().verifyEmail(opt.email)
+                    .verifyContent(opt.content);
+                if (!$scope.feedbackVerifier.hasErrors()) {
+                  opt.content = "";
+                  opt.email = "";
+                  opt.success = true;
+                }
+              }
+            }
+
+        });
+    </script>
     <script src="https://cdn.auth0.com/js/lock-9.1.min.js"></script>
     <script type="text/javascript">
       
@@ -26,30 +433,16 @@
         });
       }
     </script>
-    <button onclick="window.signin();">Login</button>
-    <pre>
-  Step 1: Sign Up & Log in
-  If you are a first time user,
-      Click the "Login" button and then click "SIGN UP". 
-      Make sure to sign up with your official utoronto email address, which looks like xxx@mail.utoronto.ca
-      Open your utoronto email and you will recive a comfirmation email.
-      Follow the instructions given in the email and complete the comfirmation.
-      Once you finished the comfirmation, click "Login" button again and then "LOG IN" as your utoronto email.
-  If you already signed up,
-      Click the "Login" button and "LOG IN" with your official utoronto email address.
-
-  Once you have logged in, you will see something like:
-
-  <b>Assignment    Peer Review    Self Review    Mark    Result</b>
-  a1            Start Review   Check Review   4/6     Check Result
-  a2            Start Review   Check Review   pending pending
-
-
-  Step 2: Peer Review
-  Step 3: Self Review
-  Step 4: Mark & Result
-
-    </pre>
-
-  </body>
+    <div class="ui inverted segment" style="margin:0px;padding-top:0px">
+      <div class="container-fluid">
+        <div class="ui segment" style="padding-top:2px;padding-bottom:2px;padding-right:0px;width:1300px;">
+          <div style="padding-left:1150px">
+            <div class="ui small image">
+              <img src="http://www.tpasc.ca/sites/default/files/portal_logo/utsc-portal-logo.png">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</footer>
 </html>

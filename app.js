@@ -59,6 +59,15 @@ app.use(passport.session());
 
 
 app.use('/', routes);
+/* checking authentications without adding the lines below into every routes
+app.all('*', function(req, res, next) {
+  // user authentication
+  if (!req.isAuthenticated()) {
+    console.log("Please log in");
+    return res.redirect('/');
+  }
+  next();
+});*/
 app.use('/self_review', self_review);
 app.use('/instruction', instruction);
 app.use('/peer_review', peer_review);
