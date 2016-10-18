@@ -68,8 +68,49 @@
       <input id="star_number" value="<%= number_of_stars%>" name="star_num" style="display:none;"></input>
       <input id="storage" name="highlight_storage" type="text" style="display:none;"></input>
 
-      <div>
-        <input type="button" onclick="addCommentFromSelection()" value="Add Comment!"></input>
+      <div style="width: 100%;">
+        <!-- Trigger/Open The Modal -->
+        <input type="button" id="myBtn" value="Add Comment!" class="button_blue"></input>
+        <!-- del comments button!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!-->
+        <input type="button" id="myBtn_del" value="x" style="display:none;"></input>
+      </div>
+
+
+      <!-- The Modal -->
+      <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <div class="modal-header">
+            <span class="close">×</span>
+            <h2 style="font-size: 20px;">Add Comments<h2>
+          </div>
+          <div class="modal-body">
+            <p id="text_in_modal" ></p>
+            <input class="tb1" type="textarea" id="comments" style="display:none;" value=""></input>
+          </div>
+          <div class="modal-footer">
+            <input class="btn btn-default" type="button" id="saveBtn" value="save" style="display:none;"></input>
+          </div>
+        </div>
+      </div>
+
+      <!-- The Modal -->
+      <div id="myModal_del" class="modal_del">
+
+        <!-- Modal content -->
+        <div class="modal_del-content">
+          <div class="modal_del-header">
+            <span class="close">×</span>
+            <h2 style="font-size: 20px;">Delete Comments<h2>
+          </div>
+          <div class="modal_del-body">
+            <p><%= String(init_highligts) %></p>
+          </div>
+          <div class="modal_del-footer">
+            <input class="btn btn-default" type="button" id="delBtn" value="delete" style="display:none;"></input>
+          </div>
+        </div>
       </div>
 
       <div class="border" style="text-align: left;">
