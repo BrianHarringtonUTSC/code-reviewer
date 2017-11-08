@@ -1,12 +1,34 @@
-# code-reviewer
+# Code Reviewer 1
 
-code-review is a website that allows multiple users to submit and review each other’s work in a small group environment.
-
-
-•	Collaborated with a peer and a course instructor to develop a webpage utilizes MongoDB, Node JS and Angular JS
-
-•	Supported first year computer science students who had difficulty understanding difference between working code and simple & efficient code.  Gave them a chance to review and criticize their peers’ work
-
-•	Experienced pair programming during project development adding additional features and significantly reduce number of bugs
+Code Reviewer 1 is a web app supports conducting code review online. It intends to help students to write better code and learn from their peers.
 
 
+### Features
+- Code Review (review your peers' code anonymously)
+- Authentication (Auth0 & passport)
+- Authorization
+
+
+### Requirements
+- Node 4.4+
+- MongoDB 3.4+
+- Npm 4.0+
+
+
+### Installation Instructions
+```
+git clone https://github.com/BrianHarringtonUTSC/code-reviewer.git
+cd code-reviewer
+npm install
+```
+
+#### As a developer
+-   install this project following installation instructions above
+-   create an account in Auth0 and configure a NodeJS app and copy the client_secret
+-   create a .env file contains AUTH0_CLIENT_SECRET=secret_obtained_from_auth0 in root directory
+-   npm start
+
+
+### More
+
+You can also find Code Reviewer 2 at https://github.com/BoZhaoUTSC/code-reviewer-2.0
